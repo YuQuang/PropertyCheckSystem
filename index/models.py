@@ -443,6 +443,8 @@ class Notification(models.Model):
         ('l', 'loanProperty'),
         ('r', 'ReturnProperty'),
         ('i', 'importExcel'),
+        ('y', 'agreeLoan'),
+        ('x', 'notAgreeLoan'),
         )
     # 用戶動作
     action = models.CharField(

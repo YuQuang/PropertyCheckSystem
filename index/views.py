@@ -73,6 +73,7 @@ def aboutUs(request):
 # (need login)
 # (需要觀看租借財產權限)
 # (Need index.view_lease_property)
+@login_required
 def leaseProperty(request):
     user = request.user
     # 用戶於群組內的權限
@@ -87,6 +88,7 @@ def leaseProperty(request):
 # 盤點功能
 # (需要登入)
 # (need login)
+@login_required
 def stockTaking(request):
     return render(request, "stockTaking.html")
 
@@ -97,7 +99,25 @@ def stockTaking(request):
 #   WebAPI Part
 """
 
-@login_required
+"""
+# 裝飾函數
+"""
+# 檢查登陸狀態
+def API_CheckLogin(func):
+    """
+        屬於APT的用戶登陸檢查
+    """
+    def wrapper(request):
+        if not request.user.is_authenticated:
+            return HttpResponse(status=403)
+        return func(request)
+    
+    return wrapper
+
+"""
+# 取得用戶資訊
+"""
+@API_CheckLogin
 def getUserInfo(request):
     user = request.user
 
@@ -114,7 +134,7 @@ def getUserInfo(request):
 """
 # 查詢租借財產
 # (需要租用財產權限 index.view_lease_property)
-@login_required
+@API_CheckLogin
 def getLoanProperty(request):
     user = request.user
     
@@ -221,7 +241,7 @@ def getLoanProperty(request):
 # 借用財產
 # (需要租用財產權限 index.add_lease_property)
 # 會留下提醒
-@login_required
+@API_CheckLogin
 def loanProperty(request):
     user = request.user
     # 用戶於群組內的權限
@@ -275,7 +295,7 @@ def loanProperty(request):
 
 # 同意租借財產
 # (需要租用財產權限 index.view_lease_property)
-@login_required
+@API_CheckLogin
 def agreeLoanProperty(request):
     user = request.user
 
@@ -304,7 +324,7 @@ def agreeLoanProperty(request):
 # 歸還財產
 # (需要租用財產權限 index.add_lease_property)
 # 會留下提醒
-@login_required
+@API_CheckLogin
 def returnProperty(request):
     user = request.user
 
@@ -344,7 +364,7 @@ def returnProperty(request):
 
 # 同意歸還財產
 # (需要租用財產權限)
-@login_required
+@API_CheckLogin
 def agreeReturnProperty(request):
     user = request.user
     
@@ -392,7 +412,7 @@ def agreeReturnProperty(request):
 """
 
 # 儲存檔案
-@login_required
+@API_CheckLogin
 def saveData(request):
     """
     # 儲存資料
@@ -528,7 +548,7 @@ def saveData(request):
 
 # 刪除財產
 # (需要租刪除財產權限 index.delete_property)
-@login_required
+@API_CheckLogin
 def deleteData(request):
     """
     # 取得單一資料
@@ -559,7 +579,7 @@ def deleteData(request):
     return JsonResponse({'result': 'success'})
 
 # 取得財產資訊
-@login_required
+@API_CheckLogin
 def getData(request):
     """
     # 取得資料
@@ -624,7 +644,7 @@ def getData(request):
     return JsonResponse(result)
 
 # 取得單一財產資訊
-@login_required
+@API_CheckLogin
 def getSingleData(request):
     """
     # 取得單一資料

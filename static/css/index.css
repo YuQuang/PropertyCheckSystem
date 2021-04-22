@@ -32,16 +32,9 @@
     }
 }
 
-.clock{
-}
-
-.date{
-}
-
 .clock, .date{
     text-shadow: 0 5px 5px #000000bb;
 }
-
 
 .container .container .row div{
     height: 250px;

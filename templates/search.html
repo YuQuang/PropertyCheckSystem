@@ -16,7 +16,7 @@
 {% block content %}
 {% verbatim %}
 <div id="itemCard">
-    <div v-cloak class="container mx-auto">
+    <div v-cloak class="container mx-auto" @click="hideContextMenu( $event )" @scroll="hideContextMenu( $event )">
         <!-- 搜尋欄位 -->
         <div class="py-2">
             <div class="lg:w-2/3 md:w-1/2 w-0 p-3 inline-block">
@@ -426,7 +426,6 @@
 
                 if(isReLoad){
                     this.switchSpinCircle();
-                    init();
                 }
                 
                 this.loadFlag = false;
@@ -608,7 +607,11 @@
                 $("#selectmenu").css("top", y);
                 $("#selectmenu").css("display", "block");
             },
-
+            // 隱藏右鍵選單(左鍵點擊時、滾輪滾動時)
+            hideContextMenu(e){
+                $('#selectmenu').css('display', 'none');
+            },
+            // 計算總共有幾頁
             pagesRange(){
                 pages = []
 
@@ -628,29 +631,8 @@
         mounted() {
         },
         created() {
-            this.Load(undefined,true)
+            this.Load(undefined,true);
         },
     }).mount('#itemCard');
-
-    function init() {
-        // $(".rightMenu").contextmenu((e) => {
-        //     var y = e.originalEvent['clientY'];
-        //     var x = e.originalEvent['clientX'];
-
-        //     $("#selectmenu").css("left", x);
-        //     $("#selectmenu").css("top", y);
-        //     $("#selectmenu").css("display", "block");
-        // });
-
-        // 捲動時隱藏選單
-        $(document).scroll(() => {
-            $('#selectmenu').css('display', 'none');
-        });
-
-        // 左鍵點擊時選單
-        $(document).on('click', () => {
-            $('#selectmenu').css('display', 'none');
-        });
-    }
 </script>
 {% endblock %}

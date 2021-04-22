@@ -1,34 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- MetaTag Part -->
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="zh-TW">
+    <meta name="author" content="Xu-YuQuang">
+    <meta name="keywords" content="Property check">
+
+    {% block title %}<title>{{ title }}</title>{% endblock %}
     
+
     {% load static %}
     <link rel="icon" href="{% static 'images/lab.svg' %}">
-    <link rel="stylesheet" href="{% static 'css/baseTemplate.css' %}">
+    <style>
+        @import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
+
+        body{
+            background-color: #8EC5FC;
+            background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
+            font-family: "cwTeXYen", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            overscroll-behavior: none;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
 
     <!-- Jquery -->
     <script src="{% static 'javaScripts/jquery.3.2.1.js' %}"></script>
     <!-- AxiosJS -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{% static 'javaScripts/axios.min.js' %}"></script>
     <!-- VueJS -->
     <script src="https://unpkg.com/vue@next"></script>
     <!-- Tailwind -->
     <link href="{% static 'css/app.css' %}" rel="stylesheet">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    {% block title %}
-        <title>{{ title }}</title>
-    {% endblock %}
     
     {% block style %}
     {% endblock %}
 </head>
 <body class="overflow-hidden">
-
     <div class="flex flex-col overflow-auto h-screen">
+        <!-- 上方導覽列 -->
         <div id="navbar">
             <nav class="bg-gray-800">
                 <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -82,20 +104,36 @@
                                     </button>
                                 </div>
                                 <!-- 提醒欄位 -->
-                                <div :class="'origin-top-right z-10 absolute right-0 mt-2 w-52 sm:w-96 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none '
+                                <div :class="'no-scrollbar max-h-96 overflow-y-auto origin-top-right z-10 absolute right-0 divide-y mt-2 w-52 sm:w-96 '
+                                             +'rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none '
                                              + notifyMenuCssStatus" role="menu" aria-orientation="vertical">
-                                    
-                                    {% verbatim %}
-                                    <a href="#" :class="notifyMenuItemCss" role="menuitem" v-for="item in notifyInfo">
-                                        動作:{{ item.action }}
-                                        <br>
-                                        使用者:{{ item.user }}
-                                        <br>
-                                        時間:{{ item.time }}
-                                        <br>
-                                        狀態:{{ item.status }}群組狀態:{{ item.group_status }}
-                                    </a>
-                                    {% endverbatim %}
+                                    <!-- 通知迴圈生成 -->
+                                    <div :class="notifyMenuItemCss + ' flex flex-row gap-2 p-2'" role="menuitem" v-for="item in notifyInfo">
+                                        <!-- 圖片部分 -->
+                                        <div>
+                                            <img v-if="item.action == 'ReturnProperty'" src="{% static 'images/exchange.svg' %}" class="md:h-16 h-12">
+                                            <img v-if="item.action == 'loanProperty'" src="{% static 'images/loan.svg' %}" class="md:h-16 h-12">
+                                            <img v-if="item.action == 'deleteData'" src="{% static 'images/exchange.svg' %}" class="md:h-16 h-12">
+                                        </div>
+                                        <!-- 資訊欄 -->
+                                        {% verbatim %}
+                                        <div class="flex-col flex-grow text-center">
+                                            <div class="text-base text-blue-600">{{ item.action }}</div>
+                                            <div class="text-lg">{{ item.user }}</div>
+                                            <div class="text-xs text-red-400">{{ item.time }}</div>
+                                        </div>
+                                        <!-- 提醒訊息為新通知 -->
+                                        <div class="flex-col text-center">
+                                            <div v-if="item.status == 'notRead' && userInfo.userName == item.user">
+                                                New
+                                            </div>
+                                            <div v-if="item.group_status == 'notRead' && (userInfo.userGroup.indexOf(item.group_name) != -1)">
+                                                Group New
+                                            </div>
+                                        </div>
+                                        {% endverbatim %}
+                                    </div>
+                                    <!-- 若無則顯示沒有 -->
                                     <a v-if="notifyInfo.length === 0" href="#" :class="notifyMenuItemCss" role="menuitem">
                                         目前沒有通知
                                     </a>
@@ -137,13 +175,13 @@
             </nav>
         </div>
 
+        <!-- 內容部分 -->
         <div id="main" class="flex-grow w-full">
-            {# 網站實際內容部分 #}
             {% block content %}
             {% endblock %}
         </div>
         
-        {# 網站下方 #}
+        <!-- 下方Footer -->
         {% block footer %}
         <footer class="bg-white text-gray-600 body-font w-full mt-10">
             <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
@@ -189,7 +227,6 @@
             mySocket = new WebSocket("ws://" + window.location.hostname + "/ws/notify");
             // 連結成功
             mySocket.onopen = ()=>{
-                console.log("Connected!");
                 // 向後台要求最近的通知
                 mySocket.send(JSON.stringify({"action": "getRecentNotify"}));
             };
@@ -211,8 +248,6 @@
                     if(message["action"] == '' || message["action"] == undefined)
                         return
 
-                    console.log(message);
-
                     // 後台通知有新訊息
                     if(message['action'] == 'newNotify'){
                         // 向後台要求最近的通知
@@ -222,6 +257,7 @@
                         // 若資料長度為0
                         if(message['data'].length === 0)
                             return
+                        // 取得資料部分
                         navbar.notifyInfo = message['data'];
                         
                         navbar.notifyInfo.forEach(element => {
@@ -322,7 +358,7 @@
                     if(status == undefined){
                         if(this.notifyMenuCssStatus != ""){
                             this.notifyMenuCssStatus = "";
-                            mySocket.send(JSON.stringify({"action": "userReadNotify"}));
+                            this.sendMsgToSocket({"action": "userReadNotify"});
                         }
                         else{
                             this.notifyMenuCssStatus = "hidden";
@@ -330,7 +366,7 @@
                     }
                     if(status == true){
                         this.notifyMenuCssStatus = "";
-                        mySocket.send(JSON.stringify({"action": "userReadNotify"}));
+                        this.sendMsgToSocket({"action": "userReadNotify"});
                     }
                     else if(status == false){
                         this.notifyMenuCssStatus = "hidden";
@@ -343,8 +379,16 @@
                         .then((res)=>{
                             self.userInfo = res.data;
                         })
-                        .catch((err)=>{})
+                        .catch((err)=>{
+                            self.userInfo = "NotLogin";
+                            mySocket.onclose = ()=>{};
+                        })
                         .finally(()=>{});
+                },
+                // 傳送資料至後端Socket
+                sendMsgToSocket(JsonMsg){
+                    if(mySocket.readyState == 1)
+                        mySocket.send(JSON.stringify(JsonMsg));
                 }
             },
             mounted(){
