@@ -1,0 +1,40 @@
+#select-list ul li{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    transition: 0.5s;
+}
+
+#select-list ul li:hover{
+    cursor: pointer;
+    background-color: rgb(94, 184, 236);
+}
+
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    table tbody{
+        display:block;
+        height: 63vh;
+        overflow-y:scroll;
+    }
+    table tr:hover{
+        cursor: pointer;
+    }
+
+    table thead, tbody tr {
+        display:table;
+        width:100%;
+        table-layout:fixed;
+    }
+
+    table thead {
+        width: 100%;
+    }
+}
+
+/* Small devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    table thead {
+        width: calc(100% - 1em);
+    }
+}

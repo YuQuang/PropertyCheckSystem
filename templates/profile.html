@@ -1,0 +1,111 @@
+{% extends 'baseTemplate.html' %}
+
+{% block title %}
+    <title>
+        {{ user.username }} profile
+    </title>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .main-background{
+            margin-top: 5vh;
+            background-image: linear-gradient(-225deg, #7DE2FC 0%, #B9B6E5 100%);
+            box-shadow: 10px 10px 7px gray;
+            border-radius: 10em 0 10em 0;
+            position: relative;
+            padding: 50px;
+        }
+        .form-font{
+            color: rgb(24, 98, 209);
+            margin-top: 50px;
+        }
+        .field{
+            color: black;
+            font-size: large;
+            font-weight: bolder;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container main-background">
+        <h1 class="form-font">Account</h1>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-2 field">
+                Username
+            </div>
+            <div class="form-group col-md-6">
+                {{ user.username }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2 field">
+                e-mail
+            </div>
+            <div class="form-group col-md-6">
+                {% if user.email %}
+                    {{ user.email }}
+                {% else %}
+                    You don't have email
+                {% endif %}
+            </div>
+        </div>
+        <h1 class="form-font">Profile</h1>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-2 field">
+                Your name
+            </div>
+            <div class="form-group col-md-6">
+                {% if user.get_full_name %}
+                    {{ user.get_full_name }}
+                {% else %}
+                    You don't have name
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2 field">
+                groups
+            </div>
+            <div class="form-group col-md-6">
+                {% if user.groups.all %}
+                    {% for o in user.groups.all %}
+                            {{ o.name }}
+                        {% if not forloop.last %}
+                            ,
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    You did't in any group
+                {% endif %}
+            </div>
+        </div>
+        <h1 class="form-font">Login State</h1>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-2 field">
+                joined date
+            </div>
+            <div class="form-group col-md-6">
+                {{ user.date_joined }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2 field">
+                last login time
+            </div>
+            <div class="form-group col-md-6">
+                {{ user.last_login }}
+            </div>
+        </div>
+        
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+    </script>
+{% endblock %}

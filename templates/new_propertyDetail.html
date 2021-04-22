@@ -1,0 +1,235 @@
+{% extends 'new_Template.html' %}
+{% block title %}
+    <title>Detail</title>
+{% endblock %}
+
+
+{# 此部分為css #}
+{% block style %}
+<style>
+    [v-cloak]{
+        display: none;
+    }
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+<div id="app">
+    {% verbatim %}
+    <section v-cloak class="text-gray-600 body-font">
+        <div class="container px-5 py-24 mx-auto flex flex-wrap">
+            <div class="lg:w-1/3 w-1/2 mx-auto mb-10 lg:mb-0 rounded-lg overflow-hidden">
+                <img @click="test()" alt="feature" class="object-cover object-center h-full w-full" :src="data.image">
+            </div>
+            <div class="flex flex-col flex-wrap lg:py-6 -mb-10 lg:w-2/3 lg:pl-12 lg:text-left w-full text-center">
+                <!-- 顯示產品名稱 -->
+                <div class="lg:items-start items-center mb-5">
+                    <div class="w-2/3 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">產品名稱
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.product_name }}</h1>
+                        </h2>
+                    </div>
+                    <div class="w-1/3 inline-block">
+                        <a :href="'https://www.google.com/search?q=' + data.product_name" target="_blank"
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm
+                                font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                focus:ring-offset-2 focus:ring-indigo-500">
+                            搜尋{{ data.product_name }}
+                        </a>
+                    </div>
+                </div>
+                <!-- 品牌 -->
+                <div class="lg:items-start items-center mb-5">
+                    <div class="w-2/3 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">品牌
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.brand }}</h1>
+                        </h2>
+                    </div>
+                    <div class="w-1/3 inline-block">
+                        <a :href="'https://www.google.com/search?q=' + data.brand" target="_blank"
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm
+                                font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                focus:ring-offset-2 focus:ring-indigo-500">
+                            搜尋{{ data.brand }}
+                        </a>
+                    </div>
+                </div>
+                <!-- 序號 以及 產品編號 -->
+                <div class="lg:items-start items-center mb-5">
+                    <div class="w-1/2 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">序號
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.property_number }}</h1>
+                        </h2>
+                    </div>
+                    <div class="w-1/2 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">產品編號
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.serial_number }}</h1>
+                        </h2>
+                    </div>
+                </div>
+                <!-- 實際位置 以及 產貼上位置 -->
+                <div class="lg:items-start items-center">
+                    <div class="w-1/2 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">實際位置
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.position }}</h1>
+                        </h2>
+                    </div>
+                    <div class="w-1/2 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">產貼上位置
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.label_position }}</h1>
+                        </h2>
+                    </div>
+                </div>
+                <!-- 取得日期 以及 年限 -->
+                <div class="lg:items-start items-center">
+                    <div class="w-1/2 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">取得日期
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.get_date }}</h1>
+                        </h2>
+                    </div>
+                    <div class="w-1/2 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">年限
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.expiry_date }} year(s)</h1>
+                        </h2>
+                    </div>
+                </div>
+                <!-- 取得日期 以及 年限 -->
+                <div class="lg:items-start items-center mb-5">
+                    <div class="w-1/2 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">數量
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.quantity }} /{{ data.unit }}</h1>
+                        </h2>
+                    </div>
+                    <div class="w-1/2 inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">價格
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">${{ data.price }}</h1>
+                        </h2>
+                    </div>
+                </div>
+                <!-- 品牌 -->
+                <div class="lg:items-start items-center mb-5">
+                    <div class="w-full inline-block">
+                        <h2 class="text-gray-900 text-lg title-font font-medium">備註
+                            <h1 class="text-gray-900 text-2xl title-font font-bold">{{ data.tip }}</h1>
+                        </h2>
+                    </div>
+                </div>
+                {% endverbatim %}
+                <!-- 功能按鈕 -->
+                <div class="lg:items-start items-center">
+                    <div class="w-1/3 inline-block">
+                        <a onclick="window.history.go(-1)">
+                            <button class="group relative w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent text-sm
+                                                        font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                                        focus:ring-offset-2 focus:ring-indigo-500">
+                                返回搜尋
+                            </button>
+                        </a>
+                    </div>
+                    <div class="w-1/3 inline-block">
+                        <a @click="loanProperty()">
+                            <button class="group relative w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent text-sm
+                                                            font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                                            focus:ring-offset-2 focus:ring-indigo-500">
+                                    租借這項物品
+                            </button>
+                        </a>
+                    </div>
+                    {% if user.is_staff %}
+                    <div class="w-1/3 inline-block">
+                        <a @click="toEditPage({% url 'admin:index' %})">
+                            <button class="group relative w-1/2 mx-auto flex justify-center py-2 px-4 border border-transparent text-sm
+                                                        font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                                        focus:ring-offset-2 focus:ring-indigo-500">
+                                編輯
+                            </button>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                // Restful API URL
+                getSingleData: "{% url 'getSingleData' %}",
+                loanPropertyURL: "{% url 'loanProperty' %}",
+                data:{
+                    image : "https://i.imgur.com/3ZTDX.jpeg",
+                },
+            }
+        },
+        methods:{
+            toEditPage(url){
+                url += 'index/property/' + this.data.id + '/change/';
+                window.open(url,'_blank');
+            },
+            loanProperty(){
+                axios.get(this.loanPropertyURL,{
+                            params:{
+                                'product_number': this.data.property_number,
+                                'serial_number': this.data.serial_number,
+                            },
+                        })
+                        .then(function (response){
+                            if(response.data.result == 'success'){
+                                alert("成功預約，請等管理員同意");
+                            }else if(response.data.result == 'empty'){
+                                alert("序號以及編號有錯，聯絡管理員");
+                            }else if(response.data.result == 'loaning'){
+                                alert("物品於租借中");
+                            }else if(response.data.result == 'duplicate'){
+                                alert("預約重複");
+                            }else if(response.data.result == 'permission_deny'){
+                                alert("您沒有權限");
+                            }else{
+
+                            }
+                        })
+                        .catch(function (error) {
+
+                        })
+                        .then(function () {
+
+                        })
+            }
+        },
+        mounted(){
+        },
+        created(){
+            // 取得網頁上方GET參數
+            let uri = window.location.search.substring(1); 
+            let params = new URLSearchParams(uri);
+            id = params.get("id");
+
+            // 從後台獲取產品資訊
+            var self = this;
+            axios.get(this.getSingleData,{
+                    params:{
+                        "id": id,
+                    }
+                }).then(function (response) {
+                    // handle success
+                    if(response.data.result == 'success')
+                        self.data = response.data.data;
+                }).catch(function (error) {
+                    // handle error
+                    console.log(error);
+                }).then(function () {
+                    // always executed
+                });
+        },
+    }).mount('#app');
+
+</script>
+{% endblock %}

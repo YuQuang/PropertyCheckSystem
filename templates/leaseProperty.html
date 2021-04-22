@@ -1,0 +1,366 @@
+{% extends 'new_Template.html' %}
+
+
+{% block title %}
+    <title>lease</title>
+{% endblock %}
+
+{% block style %}
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+    <div id="leaseTable">
+        <div class="container mx-auto">
+            <!-- 上方分頁標籤 -->
+            <div class="bg-white w-full">
+                <nav class="flex flex-col sm:flex-row">
+                    <button @click="changeTab(1)" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + borrowTabCss">
+                        租借
+                    </button><button @click="changeTab(2)" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + returnTabCss">
+                        歸還
+                    </button>
+                </nav>
+            </div>
+
+            <!-- 租借頁面 -->
+            <div :class="'container ' + borrowContainerCss">
+                <!-- 待審核部分 -->
+                <div class="my-4 text-4xl text-center">
+                    等待核准
+                </div>
+                <!-- 待審核表格 -->
+                <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
+                    <div class="min-w-full rounded-lg flex flex-col h-full divide-y divide-gray-200">
+                        <!-- 表格 HEAD -->
+                        <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
+                            <div>財產</div>
+                            <div>借用人</div>
+                            <div>申請日期</div>
+                            {% if user.is_superuser %}
+                                <div>同意</div>
+                            {% endif %}
+                        </div>
+                        <!-- 表格 BODY -->
+                        <div class="bg-white divide-y divide-gray-200 h-full overflow-auto text-left text-lg font-bold resize-y">
+                            <div v-cloak v-for="waiting in waiting_data" class="p-3 font-medium uppercase text-center">
+                                {% if user.is_superuser %}
+                                    <div class="w-1/4 inline-block">
+                                        {% verbatim %}
+                                        {{ waiting.leaseProperty }}
+                                    </div>
+                                    <div class="w-1/4 inline-block">{{ waiting.borrower }}</div>
+                                    <div class="w-1/4 inline-block">{{ waiting.borrow_date }}</div>
+                                    <div class="w-1/4 inline-block">
+                                        <div class="grid grid-flow-col grid-cols-2 gap-10">
+                                            <button type="button" class="group relative h-full justify-center border border-transparent
+                                                text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                                focus:ring-offset-2 focus:ring-indigo-500"
+                                                @click="agree(waiting.id, true, false)"
+                                                >Agree</button>
+                                            <button type="button" class="group relative h-full justify-center border border-transparent
+                                                text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                                focus:ring-offset-2 focus:ring-indigo-500"
+                                                @click="agree(waiting.id, false, false)"
+                                                >Disagree</button>
+                                        </div>
+                                    </div>
+                                    {% endverbatim %}
+                                {% else %}
+                                    {% verbatim %}
+                                    <div class="w-1/3 inline-block">{{ waiting.leaseProperty }}</div>
+                                    <div class="w-1/3 inline-block">{{ waiting.borrower }}</div>
+                                    <div class="w-1/3 inline-block">{{ waiting.borrow_date }}</div>
+                                    {% endverbatim %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 已經借出的物品 -->
+                <div class="my-4 text-4xl text-center">
+                    借出中
+                </div>
+                <!-- 借出表格 -->
+                <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
+                    <div class="min-w-full rounded-lg flex flex-col h-full divide-y divide-gray-200">
+                        <!-- 表格 HEAD -->
+                        <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
+                            <div>財產</div>
+                            <div>借用人</div>
+                            <div>申請日期</div>
+                            <div>同意借用人</div>
+                            <div>同意日期</div>
+                            <div>歸還</div>
+                        </div>
+                        <!-- 表格 BODY -->
+                        <div class="bg-white divide-y divide-gray-200 h-full overflow-auto text-left text-lg font-bold resize-y">
+                            <div v-cloak v-for="loaning in loaning_data" class="p-3 font-medium uppercase text-center flex justify-around">
+                                {% verbatim %}
+                                    <div>{{ loaning.leaseProperty }}</div>
+                                    <div>{{ loaning.borrower }}</div>
+                                    <div>{{ loaning.borrow_date }}</div>
+                                    
+                                    <div>{{ loaning.borrow_administrator }}</div>
+                                    <div>{{ loaning.agree_date }}</div>
+                                    <div v-if="username == loaning.borrower || (perm.change_leaseproperty && perm.delete_leaseproperty && 
+                                        perm.add_leaseproperty && perm.view_leaseproperty)">
+                                        <button type="button" class="group relative justify-center border border-transparent
+                                            text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                            focus:ring-offset-2 focus:ring-indigo-500"
+                                            @click="returnProperty(loaning.id)"
+                                            >Return</button>
+                                    </div>
+                                {% endverbatim %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 歸還頁面 -->
+            <div :class="'container ' + returnContainerCss">
+                <div class="my-4 text-4xl text-center">
+                    等待核准歸還
+                </div>
+                <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
+                    <div class="min-w-full rounded-lg flex flex-col h-full divide-y divide-gray-200">
+                        <!-- 表格 HEAD -->
+                        <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
+                            <div>財產</div>
+                            <div>借用人</div>
+                            <div>同意借用人</div>
+                            <div>歸還人</div>
+                            {% if user.is_superuser %}
+                                <div>同意</div>
+                            {% endif %}
+                        </div>
+                        <!-- 表格 BODY -->
+                        <div v-cloak class="bg-white divide-y divide-gray-200 h-full overflow-auto text-left text-lg font-bold resize-y">
+                            <div v-for="waiting_return in waiting_return_data" class="p-3 font-medium flex justify-around">
+                                {% verbatim %}
+                                    <div>{{ waiting_return.leaseProperty }}</div>
+                                    <div>{{ waiting_return.borrower }}</div>
+                                    <div>{{ waiting_return.borrow_administrator }}</div>
+                                    <div>{{ waiting_return.returner }}</div>
+                                {% endverbatim %}
+                                {% if user.is_superuser %}
+                                    <div v-if="username == waiting_return.borrower || (perm.change_leaseproperty && perm.delete_leaseproperty && 
+                                        perm.add_leaseproperty && perm.view_leaseproperty)">
+                                        <button type="button" class="group relative h-full border border-transparent p-2
+                                            text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
+                                            focus:ring-offset-2 focus:ring-indigo-500"
+                                            @click="agree(waiting_return.id, true, true)"
+                                            >Return</button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="my-4 text-4xl text-center">
+                    歸還紀錄
+                </div>
+                <div class="my-2 overflow-x-auto resize-y overflow-auto" style="min-height: 20rem; height: 20rem;">
+                    <table class="w-full">
+                        <thead class="text-xl bg-white">
+                            <th class="w-1/6">財產</th>
+                            <th class="w-1/6">借用人</th>
+                            <th class="w-1/6">同意借用人</th>
+                            <th class="w-1/6">歸還人</th>
+                            <th class="w-1/6">同意歸還人</th>
+                            <th class="w-1/6">同意歸還日期</th>
+                        </thead>
+                        <tbody v-cloak class="text-xl text-center divide-y">
+                            <tr v-for="returned in returned_data">
+                                <td class="w-1/6 font-extrabold">
+                                    <a :href="'/newpropertydetail?id=' + returned.leasePropertyID">
+                                        {% verbatim %}
+                                        {{ returned.leaseProperty }}
+                                    </a>
+                                </td>
+                                <td class="w-1/6">{{ returned.borrower }}</td>
+                                <td class="w-1/6">{{ returned.borrow_administrator }}</td>
+                                <td class="w-1/6">{{ returned.returner }}</td>
+                                <td class="w-1/6">{{ returned.returner_administrator }}</td>
+                                <td class="w-1/6">{{ returned.return_date }}</td>
+                                {% endverbatim %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{# 此部分為javaScript #}
+{% block javascript %}
+    <script>
+        navbar.$data.navbarMenuLeasePropertyCss = navbar.$data.navbarMainMenuCss;
+
+        const app = Vue.createApp({
+            data(){
+                return{
+                    getLoanProperty: "{% url 'getLoanProperty' %}",
+                    agreeReturnProperty: "{% url 'agreeReturnProperty' %}",
+                    agreeLoanProperty: "{% url 'agreeLoanProperty' %}",
+                    returnPropertyURL: "{% url 'returnProperty' %}",
+                    waiting_data: [],
+                    loaning_data: [],
+                    waiting_return_data: [],
+                    returned_data: [],
+                    username: "{{ user }}",
+                    perm: {},
+
+                    TabSelectCss: "border-b-2 font-medium border-blue-500",
+                    borrowTabCss: "border-b-2 font-medium border-blue-500",
+                    returnTabCss: "",
+
+                    ContainerCss: "show",
+                    borrowContainerCss: "show",
+                    returnContainerCss: "hidden",
+                }
+            },
+            methods:{
+                // 更換Tab
+                changeTab(tabNum){
+                    switch(tabNum){
+                        case 1:
+                            this.borrowTabCss = this.TabSelectCss;
+                            this.returnTabCss = "";
+                            this.borrowContainerCss = this.ContainerCss;
+                            this.returnContainerCss = "hidden";
+                            break;
+                        case 2:
+                            this.borrowTabCss = "";
+                            this.returnTabCss = this.TabSelectCss;
+                            this.returnContainerCss = this.ContainerCss;
+                            this.borrowContainerCss = "hidden";
+                            break;
+                    }
+                },
+                // 與伺服器要求資料重整介面
+                reLoad(){
+                    let self = this;
+                    axios.get(this.getLoanProperty)
+                        .then(function(response){
+                            self.waiting_data = response.data.waiting_data;
+                            self.loaning_data = response.data.loaning_data;
+                            self.waiting_return_data = response.data.waiting_return_data;
+                            self.returned_data = response.data.returned_data;
+                            self.perm = response.data.perm;
+                        })
+                        .catch(function (error) {
+                        })
+                        .then(function(){
+                        })
+                },
+                // 同意租借功能
+                agreeBorrow(id, agree){
+                    if(agree){
+                        axios.get(this.agreeLoanProperty,{
+                                params:{
+                                    "id": id,
+                                    "agree": "True",
+                                },
+                            })
+                            .then(function(response){
+                                location.reload();
+                            })
+                            .catch(function (error) {
+                            })
+                            .then(function(){
+                            })
+                    }
+                    else{
+                        axios.get(this.agreeLoanProperty,{
+                                params:{
+                                    "id": id,
+                                    "agree": "False",
+                                },
+                            })
+                            .then(function(response){
+                                location.reload();
+                            })
+                            .catch(function (error) {
+                            })
+                            .then(function(){
+                            })
+                    }
+                },
+                // 同意歸還功能
+                agreeReturn(id, agree){
+                    if(agree){
+                        axios.get(this.agreeReturnProperty,{
+                                params:{
+                                    "id": id,
+                                    "agree": "True",
+                                },
+                            })
+                            .then(function(response){
+                                location.reload();
+                            })
+                            .catch(function (error) {
+                            })
+                            .then(function(){
+                            })
+                    }
+                    else{
+                        axios.get(this.agreeReturnProperty,{
+                                params:{
+                                    "id": id,
+                                    "agree": "False",
+                                },
+                            })
+                            .then(function(response){
+                                location.reload();
+                            })
+                            .catch(function (error) {
+                            })
+                            .then(function(){
+                            })
+                    }
+                },
+                // 統合
+                agree(id, agree, RetOrBor){
+                    // 租借功能
+                    if(RetOrBor == false){
+                        this.agreeBorrow(id, agree);
+                    }
+                    // 歸還功能
+                    else if(RetOrBor == true){
+                        this.agreeReturn(id, agree);
+                    }
+                },
+                // 歸還租借物品
+                returnProperty(id){
+                    axios.get(this.returnPropertyURL,{
+                            params:{
+                                "id": id,
+                            },
+                        })
+                        .then(function(response){
+                            location.reload();
+                        })
+                        .catch(function (error) {
+                        })
+                        .then(function(){
+                        })
+                },
+            },
+            mounted(){
+
+            },
+            created(){
+                this.reLoad();        
+            },
+        }).mount("#leaseTable")
+    </script>
+{% endblock %}

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+          crossorigin="anonymous">
+
+    {% load static %}
+    <link rel="icon" href="{% static 'images/lab.svg' %}">
+
+    <title>Login</title>
+
+    <style>
+        {% load static %}
+        @import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
+
+
+        @media (min-width: 0px) {
+            body{
+                font-family: 'cwTeXYen', sans-serif;
+                background-color: #4158D0;
+                background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+            }
+            .container{
+                height: 100vh;
+            }
+            .login-container{
+                top: 25vh;
+                height: 50vh;
+                width: 100%;
+                background: rgba(212, 212, 212, 0.5);  
+                position: relative;
+                overflow: hidden;
+
+                /* stylings */
+                padding: 1em 0;
+                border-radius: .8em;
+                max-width: 500px;
+                margin: 0 auto;
+                box-shadow: 0 0 0 1px hsla(0,0%,100%,.3) inset,
+                                0 .5em 1em rgba(0, 0, 0, 0.6);
+                text-shadow: 0 1px 1px hsla(0,0%,100%,.3);
+            }
+            .login-container::before{
+                content: '';
+                position: absolute;
+                top:0; right:0; bottom:0; left:0;
+                filter: blur(20px);
+                z-index: -1;
+                margin: -10px;
+            }
+            .login-font{
+                margin-top: 2vh;
+                margin-bottom: 2vh;
+                font-size: 5vh;
+                font-weight: bolder;
+                text-align: center;
+            }
+            .login-hint{
+                font-size: 2vh;
+                font-weight: bolder;
+                text-align: center;
+            }
+            .login-input input{
+                background-color: rgba(53, 53, 53, 0.3);
+                border: solid black;
+                border-left-width: 0px;
+                border-top-width: 0px;
+                border-bottom-width: 2px; 
+                border-radius: 1em;
+                position: relative;
+                left: 15%;
+                width: 70%;
+                height: 5vh;
+            }
+            .login-input input::placeholder{
+                color: black;
+                font-size: 2vh;
+            }
+            .login-username input{
+                margin-top: 2%;
+                margin-bottom: 2%;
+            }
+            .login-password input{
+                margin-top: 2%;
+                margin-bottom: 2%;
+            }
+            .login-button{
+                background-color: rgba(53, 53, 53, 0.3);
+                border: solid black;
+                border-left-width: 0px;
+                border-top-width: 0px;
+                border-bottom-width: 2px; 
+                border-radius: 1em;
+                position: relative;
+                left: 35%;
+                width: 30%;
+                height: 5vh;
+                font-size: 3vh;
+                margin-top: 2vh;
+                color: black;
+            }
+            .login-forgot{
+                text-align: center;
+                position: relative;
+                margin-top: 1vh;
+            }
+            .login-forgot a{
+                color: black;
+                font-size: 2vh;
+            }
+        }
+
+        /* Small devices (landscape phones, 576px and up) */
+        @media (min-width: 576px) {
+            
+        }
+
+        /* Medium devices (tablets, 768px and up) */
+        @media (min-width: 768px) {
+
+        }
+
+        /* Large devices (desktops, 992px and up) */
+        @media (min-width: 992px) {
+
+        }
+
+        /* Extra large devices (large desktops, 1200px and up) */
+        @media (min-width: 1200px) {
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="login-font">
+                login
+            </div>
+            {% if user.is_authenticated %}
+                <p>You already login now</p>
+                <a href="{% url 'index' %}">return to index</a>
+            {% else %}
+
+                {% if form.errors %}
+                    <p class="login-hint">username or password is incorrect.</p>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                        <p class="login-hint">Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.</p>
+                    {% else %}
+                        <p class="login-hint">Please login to see this page.</p>
+                    {% endif %}
+                {% endif %}
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="login-input">
+                        <div class="login-username">
+                            <input type="text" name="username" placeholder="Username"
+                            autocapitalize="none" autocomplete="username"
+                            maxlength="150" required="" id="id_username" onkeyup="value=value.replace(/[\W]/g,'')">
+                        </div>
+                        <div class="login-password">
+                            <input type="password" name="password" placeholder="Password"
+                            autocomplete="current-password" required=""
+                            id="id_password" onkeyup="value=value.replace(/[\W]/g,'')">
+                        </div>
+                    </div>
+                    <div style="left: 5vw; position: relative;color: black;">
+                        <input class="form-check-input" type="checkbox" id="remember">
+                        <label class="form-check-label" for="remember">
+                            Remember me
+                        </label>
+                    </div>
+                    <div>
+                        <input type="submit" value="login" class="login-button" id="login-button"/>
+                        <input type="hidden" name="next" value="{{ next }}" />
+                    </div>
+                </form>
+                {# Assumes you setup the password_reset view in your URLconf #}
+                <p class="login-forgot"><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(()=>{
+            if(getCookie('username') != undefined){
+                $('#id_username').val(getCookie('username'));
+                $('#id_password').focus();
+                $('#remember').attr('checked', 'true');
+            }else{
+                $('#id_username').focus();
+            }
+
+
+            $('#login-button').on('click', ()=>{
+                if($('#remember:checked').val() == undefined){
+                    delCookie('username');
+                }else{
+                    SetCookie('username', $('#id_username').val());
+                }
+            });
+        });
+
+
+        //兩個引數，一個是cookie的名子，一個是值
+        function SetCookie(name,value){
+            var Days = 7;//此 cookie 將被儲存 7 天
+            var exp = new Date();//new Date("December 31, 9998");
+            exp.setTime(exp.getTime() + Days*24*60*60*1000);
+            
+            document.cookie = name + "=" + escape (value) + ";expires=" + exp.toGMTString();
+        }
+
+
+        // 刪除cookie依照名稱
+        function delCookie(name){
+            var exp = new Date();
+            exp.setTime(exp.getTime() - 1);
+            var cval = getCookie(name);
+            if (cval != null) document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+        }
+
+        // 讀取cookies函式  
+        function getCookie(name){
+            var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+            if (arr != null) return unescape(arr[2]); return null;
+        }
+
+        // 自動登出
+        function auto_logout(){
+        }
+    </script>
+</body>
+</html>

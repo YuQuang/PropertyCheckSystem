@@ -1,0 +1,656 @@
+{% extends 'new_Template.html' %}
+{% block title %}
+<title>Search Data</title>
+{% endblock %}
+
+{# 此部分為css #}
+{% block style %}
+<style>
+    [v-cloak]{
+        display: none;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+{% verbatim %}
+<div id="itemCard">
+    <div v-cloak class="container mx-auto">
+        <!-- 搜尋欄位 -->
+        <div class="py-2">
+            <div class="lg:w-2/3 md:w-1/2 w-0 p-3 inline-block">
+            </div>
+            <div class="lg:w-1/3 md:w-1/2 w-full p-3 inline-block">
+                <input v-model="searchInput" v-on:keydown="search" class="py-3 px-4 bg-white rounded-lg placeholder-gray-400
+                    text-gray-900 appearance-none shadow-md w-full focus:outline-none
+                    focus:ring-2 focus:ring-blue-600" placeholder="Search">
+            </div>
+        </div>
+        <!-- 讀取畫面 -->
+        <div class="w-1/2 mx-auto">
+            <svg :class="[ spinCircleCss, spinCircleStatus]" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+        </div>
+        <!-- 卡片樣本迴圈生成 -->
+        <section class="text-gray-600 body-font">
+            <div class="container px-5 py-5 mx-auto">
+                <div class="flex flex-wrap -m-4">
+                    <div v-for="singleData in pagePropertyData" class="xl:w-1/4 md:w-1/3 w-1/2 p-4">
+                        <div :class="'rightMenu rounded-xl hover:bg-gray-200 hover:opacity-75 cursor-pointer ' + ((singleData.status == 'a') ? 'bg-gray-100' : 'bg-red-100')"
+                            ondragstart='return false' @click="href( singleData )"
+                            @contextMenu="contextmenu( $event , singleData );" oncontextmenu="return false;">
+                            <img class="h-40 rounded w-full object-cover object-center rounded-t-xl"
+                                :src="singleData.image" alt="content">
+                            <div class="select-none mt-2 p-4">
+                                <h3 class="uppercase tracking-wide text-indigo-500 text-md title-font break-words">{{
+                                    singleData.product_name }}</h3>
+                                <h2
+                                    class="block mt-2 sm:text-md text-lg leading-tight font-medium text-black break-words">
+                                    編號: {{ singleData.product_number }}</h2>
+                                <h2
+                                    class="block mt-1 sm:text-md text-lg leading-tight font-medium text-black break-words">
+                                    序號: {{ singleData.number }}</h2>
+                                <div class="inline-block sm:text-md w-1/2 break-words">位置: {{ singleData.position }}
+                                </div>
+                                <div class="inline-block sm:text-md w-1/2 break-words">數量: {{ singleData.quantity }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 下方頁面選擇欄位 -->
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-2xl">
+            <div class="flex-1 flex justify-between sm:hidden">
+                <div class="relative inline-flex items-center">
+                    <a v-if="now_page-1 > 0" @click="reLoad(now_page-1)" class="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md
+                         text-gray-700 bg-white hover:text-gray-500">
+                        Previous
+                    </a>
+                </div>
+                <a v-if="now_page+1 <= total_page" @click="reLoad(now_page+1)"
+                    class="ml-3 relative inline-flex items-center px-4 py-2
+                         border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:text-gray-500">
+                    Next
+                </a>
+            </div>
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm text-gray-700">
+                        Showing
+                        <span class="font-medium">{{ (now_page-1)*num_one_page+1 }}</span>
+                        to
+                        <span class="font-medium">{{ propertyData.length > now_page*num_one_page? now_page*num_one_page
+                            : propertyData.length }}</span>
+                        of
+                        <span class="font-medium">{{ propertyData.length }}</span>
+                        results
+                        <span class="font-medium">{{ total_page }} pages</span>
+                    </p>
+                </div>
+                <div>
+                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                        <a v-if="now_page-1 > 0" @click="Load(now_page-1, true)" class="relative inline-flex items-center px-2 py-2 rounded-l-md border
+                            border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Previous</span>
+                            <!-- Heroicon name: solid/chevron-left -->
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+
+                        <a @click="Load(1, true)" class="cursor-pointer relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm
+                            font-medium text-gray-700 hover:bg-gray-50">
+                            First
+                        </a>
+                        
+                        <a v-for="i in pagesRange()" @click="Load(i)"
+                            class="select-none cursor-pointer hidden md:inline-flex relative
+                                items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            {{ i }}
+                        </a>
+                        <a @click="Load(total_page)" class="cursor-pointer relative inline-flex items-center px-4 py-2 border border-gray-300
+                            bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            Last
+                        </a>
+
+                        <a v-if="now_page + 1 <= total_page" @click="Load(now_page+1, true)"
+                            class="select-none relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <span class="sr-only">Next</span>
+                            <!-- Heroicon name: solid/chevron-right -->
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 彈跳視窗 對話框 -->
+    <div v-cloak :class="[ dialogBackgroundCss, dialogBackgroundStatus ]" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex flex-wrap justify-center content-center text-center sm:p-0 h-full p-3">
+            <!-- 背景黑色 -->
+            <div @click="vanishDialog(false)" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"></div>
+
+            <!-- 對話框實體 sm:align-middle sm:max-w-lg  -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left shadow-xl transform transition-all
+                        duration-75 sm:max-w-2xl sm:w-10/12 w-full max-h-full">
+                <!-- 關閉叉叉按鈕 -->
+                <div @click="vanishDialog(false)"
+                    class="absolute right-0 w-8 h-8 flex flex-wrap justify-center content-center m-2 rounded-lg hover:bg-red-200 active:bg-blue-400 active:text-white transition-all duration-500">
+                    <svg class="w-3 h-3" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.001 512.001"
+                        style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve">
+                        <g>
+                            <path d="M284.286,256.002L506.143,34.144c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L256,227.717
+                                L34.143,5.859c-7.811-7.811-20.475-7.811-28.285,0c-7.81,7.811-7.811,20.475,0,28.285l221.857,221.857L5.858,477.859
+                                c-7.811,7.811-7.811,20.475,0,28.285c3.905,3.905,9.024,5.857,14.143,5.857c5.119,0,10.237-1.952,14.143-5.857L256,284.287
+                                l221.857,221.857c3.905,3.905,9.024,5.857,14.143,5.857s10.237-1.952,14.143-5.857c7.811-7.811,7.811-20.475,0-28.285
+                                L284.286,256.002z" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="bg-white pt-5 pb-4 sm:pb-4 flex flex-col h-full overflow-hidden rounded-lg">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Property Information
+                        </h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                            Property details and links.
+                        </p>
+                    </div>
+                    <div class="border-t border-gray-200 overflow-y-auto">
+                        <dl>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Full name
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.product_name }}
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Brand
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.brand }}
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Number
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.product_number }}-{{ currentData.number }}
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Position
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.position }}
+                                </dd>
+                                <dt class="text-sm font-medium text-gray-500">
+                                    LabelPosition
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.label_position }}
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    GetDate
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.get_date }}
+                                </dd>
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Expiry
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.age_limit }}
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Price
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    ${{ currentData.single_value }}
+                                </dd>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.quantity }}/{{ currentData.unit }}
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Tips
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.tip }}
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Link
+                                </dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
+                                        <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                            <div class="w-0 flex-1 flex items-center">
+                                                <!-- Heroicon name: solid/paper-clip -->
+                                                <svg class="flex-shrink-0 h-5 w-5 text-gray-400"
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                    fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd"
+                                                        d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                <span class="ml-2 flex-1 w-0 truncate">
+                                                    resume_back_end_developer.pdf
+                                                </span>
+                                            </div>
+                                            <div class="ml-4 flex-shrink-0">
+                                                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+                                                    Download
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                            <div class="w-0 flex-1 flex items-center">
+                                                <!-- Heroicon name: solid/paper-clip -->
+                                                <svg class="flex-shrink-0 h-5 w-5 text-gray-400"
+                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                    fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd"
+                                                        d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                                <span class="ml-2 flex-1 w-0 truncate">
+                                                    coverletter_back_end_developer.pdf
+                                                </span>
+                                            </div>
+                                            <div class="ml-4 flex-shrink-0">
+                                                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+                                                    Download
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+    <!-- 右鍵選單 -->
+    <div v-cloak id="selectmenu" class="select-none cursor-pointer hidden origin-top-right fixed top-0 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5
+     focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+        <div class="py-1" role="none">
+            <a @click="vanishDialog(true)"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+                Detail(詳細資料)</a>
+            <a @click="loanProperty()"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+                Rent(租借)</a>
+            {% if user.is_staff %}
+            <a @click="deleteData()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                role="menuitem">Delete(刪除)</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+    navbar.navbarMenuSearchCss = navbar.navbarMainMenuCss;
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                // Restful API URL
+                getData: "{% url 'getData' %}",
+                propertyDetail: "{% url 'newpropertydetail' %}",
+                deleteDataURL: "{% url 'deleteData' %}",
+                loanPropertyURL: "{% url 'loanProperty' %}",
+
+                propertyData: [],
+                pagePropertyData: [],
+                dialogBackgroundCss: "fixed z-10 inset-0 overflow-y-auto transition duration-300",
+                dialogBackgroundStatus: "hidden",
+                spinCircleCss: "animate-spin text-white mt-10 h-full w-full",
+                spinCircleStatus: "hidden",
+                searchInput: "",
+                currentData: "",
+
+                loadFlag: false,
+
+                // 當前頁數 、 總頁數 、 一頁幾筆
+                now_page: 1,
+                total_page: 1,
+                num_one_page: 12,
+            }
+        },
+        methods: {
+            async Load(numPage, isReLoad=false) {
+                if(this.loadFlag)
+                    return;
+
+                this.loadFlag = true;
+
+                if(isReLoad){
+                    this.switchSpinCircle();
+                }
+
+                // 提取URL參數存成變數
+                let uri = window.location.search.substring(1);
+                let params = new URLSearchParams(uri);
+                page = params.get("page");
+                search = params.get("search");
+                this.searchInput = search;
+
+
+                
+                var queryParams = new URLSearchParams(window.location.search);
+                //console.log(queryParams.get("page"));
+                // 檢查頁碼
+                if (page == NaN || page == undefined) {
+                    this.pagePropertyData = []
+                    queryParams.set("page", numPage);
+                    this.now_page = numPage;
+                }
+                else if (numPage != NaN && numPage != undefined) {
+                    page = numPage;
+                    this.pagePropertyData = []
+                    queryParams.set("page", page);
+                    this.now_page = page;
+                }
+                history.replaceState(null, null, "?" + queryParams.toString());
+
+                
+
+                //////////////////////////////////////////////////////
+                if(isReLoad){
+                    let response =  await axios.get(this.getData, {
+                        params: {
+                            "search": search,
+                        },
+                    });
+
+                    // 接收完整資料
+                    this.propertyData = response.data.data;
+
+                    // 計算總共有幾頁
+                    this.total_page = parseInt(this.propertyData.length / this.num_one_page) + 1;
+
+                    // 檢查頁碼有無錯誤
+                    try {
+                        page = parseInt(page);
+                        if (isNaN(page) || page < 1) {
+                            this.now_page = 1;
+                        } else if (page > this.total_page) {
+                            this.now_page = this.total_page;
+                        } else {
+                            this.now_page = page;
+                        }
+                    } catch (error) {
+                        this.now_page = 1;
+                    }
+                }
+                //////////////////////////////////////////////////////
+
+                // 初始化
+                this.pagePropertyData = []
+                // 頁面當前陣列資料
+                for (i = (this.now_page - 1) * this.num_one_page, o = 0; i < this.now_page * this.num_one_page && i < this.propertyData.length; i++, o++)
+                    this.pagePropertyData[o] = this.propertyData[i]
+
+                if(isReLoad){
+                    this.switchSpinCircle();
+                    init();
+                }
+                
+                this.loadFlag = false;
+            },
+            // 重整頁面，會與伺服器重新要求資料
+            reLoad(numPage) {
+                this.switchSpinCircle();
+                let uri = window.location.search.substring(1);
+                let params = new URLSearchParams(uri);
+                page = params.get("page");
+                search = params.get("search");
+                this.searchInput = search;
+
+                if (numPage != NaN && numPage != undefined) {
+                    page = numPage;
+                    this.pagePropertyData = []
+                    var queryParams = new URLSearchParams(window.location.search);
+                    queryParams.set("page", page);
+                    history.replaceState(null, null, "?" + queryParams.toString());
+                }
+
+                var self = this;
+                axios.get(this.getData, {
+                    params: {
+                        "search": search,
+                    },
+                })
+                    .then(function (response) {
+                        // 接收完整資料
+                        self.propertyData = response.data.data;
+                        // 計算總共有幾頁
+                        self.total_page = parseInt(self.propertyData.length / self.num_one_page) + 1;
+
+                        // 檢查頁碼有無錯誤
+                        try {
+                            page = parseInt(page);
+                            if (isNaN(page) || page < 1) {
+                                self.now_page = 1;
+                            } else if (page > self.total_page) {
+                                self.now_page = self.total_page;
+                            } else {
+                                self.now_page = page;
+                            }
+                        } catch (error) {
+                            self.now_page = 1;
+                        }
+
+                        // 初始化
+                        self.pagePropertyData = []
+                        // 頁面當前陣列資料
+                        for (i = (self.now_page - 1) * self.num_one_page, o = 0; i < self.now_page * self.num_one_page && i < self.propertyData.length; i++, o++)
+                            self.pagePropertyData[o] = self.propertyData[i]
+                    })
+                    .catch(function (error) {
+                        // handle error
+                        console.log(error);
+                    })
+                    .then(function () {
+                        // always executed
+                        self.switchSpinCircle();
+                        init()
+                    });
+
+            },
+            // 使對話框改變
+            vanishDialog(isShow) {
+                if (isShow) {
+                    this.dialogBackgroundStatus = "";
+                    this.dialogBackgroundStatus = "opacity-100";
+                } else {
+                    this.dialogBackgroundStatus = "opacity-0";
+                    setTimeout(() => {
+                        this.dialogBackgroundStatus = "hidden";
+                    }, 300)
+                }
+            },
+            // 使消失加載畫面
+            switchSpinCircle() {
+                if (this.spinCircleStatus == "hidden")
+                    this.spinCircleStatus = "show";
+                else
+                    this.spinCircleStatus = "hidden";
+            },
+            // 動態更新畫面(不重新要求資料)，但會更改上方URL參數
+            changePage(numPage) {
+                if (numPage < 1 || isNaN(numPage))
+                    numPage = 1;
+                else if (numPage > this.total_page)
+                    numPage = this.total_page;
+
+                this.now_page = numPage;
+
+                this.pagePropertyData = []
+                // 頁面當前陣列資料
+                for (i = (this.now_page - 1) * this.num_one_page, o = 0; i < this.now_page * this.num_one_page && i < this.propertyData.length; i++, o++)
+                    this.pagePropertyData[o] = this.propertyData[i];
+
+                // Construct URLSearchParams object instance from current URL querystring.
+                var queryParams = new URLSearchParams(window.location.search);
+                // Set new or modify existing parameter value. 
+                queryParams.set("page", this.now_page);
+                // Replace current querystring with the new one.
+                history.replaceState(null, null, "?" + queryParams.toString());
+            },
+            // 測試
+            search(event) {
+                if (event.keyCode == 13) {    // Enter keycode is 13
+                    // 搜尋結果，並將頁面重設為第一頁
+                    window.location.href = location.protocol + '//' + location.host + location.pathname + "?page=1&search=" + this.searchInput;
+                }
+            },
+            // 刪除一項產品
+            deleteData() {
+                var result = confirm("確認刪除?");
+                if (!result) {
+                    return 0;
+                }
+                let self = this;
+                axios.get(this.deleteDataURL, {
+                    params: {
+                        "id": self.currentData.id,
+                    },
+                })
+                    .then(function (response) {
+                        alert(response.data.result);
+                        self.reLoad(self.now_page);
+                    })
+                    .catch(function (error) {
+                    })
+                    .then(function () {
+                    })
+            },
+            // 租借一項物品
+            loanProperty(){
+                var result = confirm("確認租借?");
+                if (!result) {
+                    return 0;
+                }
+                let self = this;
+                axios.get(this.loanPropertyURL,{
+                            params: {
+                                "id": self.currentData.id,
+                            },
+                        })
+                        .then(function (response){
+                            if(response.data.result == 'success'){
+                                alert("成功預約，請等管理員同意");
+                                mySocket.send(JSON.stringify({"action": "getRecentNotify"}));
+                            }else if(response.data.result == 'empty'){
+                                alert("序號以及編號有錯，聯絡管理員");
+                            }else if(response.data.result == 'loaning'){
+                                alert("物品於租借中");
+                            }else if(response.data.result == 'duplicate'){
+                                alert("預約重複");
+                            }else if(response.data.result == 'permission_deny'){
+                                alert("您沒有權限");
+                            }else{
+
+                            }
+                        })
+                        .catch(function (error) {
+
+                        })
+                        .then(function () {
+
+                        })
+            },
+            // 重新導向到詳細資料
+            href(sd) {
+                window.location = this.propertyDetail + '?id=' + sd.id;
+            },
+            // 取得右鍵所選物品
+            contextmenu(e, property) {
+                this.currentData = property;
+                var y = e.clientY;
+                var x = e.clientX;
+
+                $("#selectmenu").css("left", x);
+                $("#selectmenu").css("top", y);
+                $("#selectmenu").css("display", "block");
+            },
+
+            pagesRange(){
+                pages = []
+
+                if(!this.loadFlag){
+                    nowPage = this.now_page
+
+                    for( i=nowPage-2;(i < nowPage) && (i > 0);i++ )
+                        pages.push(i)
+
+                    for( i=nowPage;i <= nowPage+2 && i <= this.total_page;i++)
+                        pages.push(i)
+                }
+
+                return pages
+            }
+        },
+        mounted() {
+        },
+        created() {
+            this.Load(undefined,true)
+        },
+    }).mount('#itemCard');
+
+    function init() {
+        // $(".rightMenu").contextmenu((e) => {
+        //     var y = e.originalEvent['clientY'];
+        //     var x = e.originalEvent['clientX'];
+
+        //     $("#selectmenu").css("left", x);
+        //     $("#selectmenu").css("top", y);
+        //     $("#selectmenu").css("display", "block");
+        // });
+
+        // 捲動時隱藏選單
+        $(document).scroll(() => {
+            $('#selectmenu').css('display', 'none');
+        });
+
+        // 左鍵點擊時選單
+        $(document).on('click', () => {
+            $('#selectmenu').css('display', 'none');
+        });
+    }
+</script>
+{% endblock %}

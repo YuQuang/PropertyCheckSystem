@@ -1,0 +1,95 @@
+/*字體來源網址*/
+@import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
+
+/**
+ * 背景設定
+ */
+body{
+    background-color: #8EC5FC;
+    background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
+    font-family: "cwTeXYen", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
+    min-height: 100vh;
+}
+/**
+ * 導航欄位
+ */
+.navbar{
+    font-size: 28px;
+}
+
+.navbar-toggler{
+    width: 100px;
+    height: 100px;
+}
+
+.navbar-toggler-icon{
+    width: 100%;
+    height: 100%;
+}
+
+.navbar-brand img{
+    width: 100px;
+    height: 100px;
+}
+
+.navbar-brand{
+    font-size: 40px;
+}
+
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+    
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    /**
+     * 導航欄位
+     */
+    .navbar{
+        font-size: 18px;
+    }
+    .navbar-toggler{
+        width: 50px;
+        height: 500px;
+    }
+    .navbar-brand img{
+        width: 40px;
+        height: 40px;
+    }
+    .navbar-brand{
+        font-size: 24px;
+    }
+    /**
+     * 導航欄位超連結底線動畫
+     */
+    #navbarSupportedContent ul li:not(:last-child) a{
+        text-decoration: none;
+        position: relative;
+    }
+    
+    #navbarSupportedContent ul li:not(:last-child) a:after{
+        content: '';
+        position: absolute;
+        bottom: 6px;
+        left: 0;
+        width: 0%;
+        border-bottom: 2px solid grey;
+        transition: 0.4s;
+    }
+    
+    #navbarSupportedContent ul li:hover:not(:last-child) a:after{
+        width: 90%;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+
+}

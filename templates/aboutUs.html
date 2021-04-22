@@ -1,0 +1,252 @@
+{% extends "new_Template.html" %}
+
+{% block title %}
+  <title>About Us</title>
+{% endblock %}
+
+{% block style %}
+  <style>
+    .wrapper:after, .wrapper:before {
+      box-sizing: border-box;
+      display: block;
+      font-size: 4em;
+      padding: 1em;
+      width: 6em;
+      height: 3em;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      z-index: -2;
+    }
+    .wrapper:after {
+      content: " ";
+      font-weight: bold;
+      text-align: center;
+      background: #fff;
+      color: #000;
+      mix-blend-mode: lighten;
+    }
+    section {
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      isolation: isolate;
+      position: relative;
+      height: 100vh;
+      padding: 1em;
+      z-index: -3;
+    }
+    .wrapper {
+      clip: rect(auto auto auto auto);
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    .wrapper:before {
+      content: " ";
+      padding: 2em 3.5em;
+      mix-blend-mode: darken;
+    }
+    .one {
+      background-image: url(https://source.unsplash.com/1920x1080?nature);
+    }
+    .one .wrapper:before {
+      background: red;
+    }
+    .one .wrapper:after {
+      content: "OurCrew";
+    }
+    .two {
+      background-image: url(https://source.unsplash.com/1920x1080?portrait);
+    }
+    .two .wrapper:before {
+      background: #faaa54;
+      mix-blend-mode: difference;
+    }
+    .two .wrapper:after {
+      content: "Adviser";
+    }
+    .three {
+      background-image: url(https://source.unsplash.com/1920x1080?landscape);
+    }
+    .three .wrapper:before {
+      background: #6c320a;
+      mix-blend-mode: screen;
+    }
+    .three .wrapper:after {
+      content: "Equip";
+    }
+    .four {
+      background-image: url(https://source.unsplash.com/1920x1080?stars);
+    }
+    .four .wrapper:before {
+      background: #e4135d;
+    }
+    .four .wrapper:after {
+      content: "Future";
+    }
+    .content_block{
+      width: 100wv;
+      position: relative;
+    }
+    .content_block:before{
+      content: " ";
+      z-index: -1;
+      position: absolute;
+      display: inline-block;
+      background-color: white;
+      top: 0;left: 0;right: 0;bottom: 0;
+      min-height: 40vh;
+    }
+    .content_block:nth-child(4n+3):before{
+      transform: skew(0deg, 4deg) scaleY(1.4);
+    }
+    .content_block:nth-child(4n+1):before{
+      transform: skew(0deg, -4deg) scaleY(1.4);
+    }
+    .content_block h1{
+      margin: 0px;
+      padding: 20px;
+      text-align: center;
+    }
+    .content_block p{
+      padding-left: 5vw;
+      padding-right: 5vw;
+      text-align: center;
+      font-size: larger;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <section class="one">
+    <div class="wrapper"></div>
+  </section>
+  
+  <div class="content_block">
+    <h1>About our Crewmates</h1>
+    <p>
+      Hi, We are labmate in NCUT laboratory.<br>
+      We have some inventions can make your life more convinient.<br>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eget arcu ex.
+      In tortor odio, laoreet sed risus quis, mattis rhoncus dolor.
+      Proin ultricies nibh massa, vel consectetur nunc dapibus vel.
+      Suspendisse nec cursus mauris.
+      Nullam et risus sit amet elit aliquam auctor. Nullam sit amet mollis lectus, ut aliquam nisi.
+      Vivamus varius a lorem vel pellentesque.
+
+      Mauris lacinia sapien non est pulvinar rutrum ac a erat.
+      Fusce viverra, ante quis gravida euismod, neque mauris facilisis risus, facilisis lobortis mauris libero eu turpis.
+      Fusce pellentesque magna vulputate, ullamcorper lectus sed, molestie est.
+      Sed libero diam, mattis ac vehicula in, consequat in tortor. Vestibulum id vehicula mi.
+      Nulla ac justo sit amet lacus blandit molestie quis vitae turpis.
+      Aenean risus odio, fringilla sit amet rhoncus ut, placerat semper libero.
+      Donec velit nunc, elementum ac fermentum et, ornare rutrum libero.
+
+      Morbi sodales nibh eget sollicitudin sagittis.
+      Sed euismod orci justo, eu maximus dui maximus ut.
+      Proin in velit in ipsum viverra ornare. Praesent ac mauris vestibulum, sagittis ex sed, semper ligula.
+      Praesent elementum auctor nunc, volutpat porttitor mauris volutpat a. Nunc dapibus turpis a commodo dignissim.
+      Nulla metus arcu, elementum vitae sollicitudin eu, pellentesque sit amet neque.
+      Fusce sollicitudin pharetra ipsum id congue. Integer finibus id lorem a lacinia.
+      Suspendisse ultrices lectus id quam facilisis finibus.
+      Donec turpis arcu, accumsan et sagittis ac, ullamcorper et libero.
+      Donec auctor ligula libero, quis fringilla diam faucibus sit amet.
+      Morbi et molestie massa.
+
+      Fusce velit felis, aliquet in tellus in, accumsan luctus odio.
+      In hendrerit, sem sed pretium scelerisque, erat massa pretium erat, vitae faucibus nulla orci in est.
+      Vestibulum ut justo at leo convallis venenatis nec eu ex. Cras ut odio ut arcu pulvinar malesuada quis ac ex.
+      Sed rutrum pretium molestie. Quisque lacinia nisi a interdum varius. Nullam tincidunt quis est ut commodo.
+      Nunc eget tortor viverra, dapibus enim et, molestie ante. Donec convallis venenatis mollis.
+
+      Aenean mi orci, convallis eu metus eu, hendrerit tempus sem.
+      Sed sed lacinia sem.
+      Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+      Proin ligula sem, gravida ut scelerisque at, varius at urna. Aenean facilisis accumsan rutrum.
+      Pellentesque at congue erat, vel hendrerit justo. Praesent suscipit arcu velit, et eleifend leo sodales a.
+      Quisque mattis scelerisque turpis. Nulla blandit mauris ut leo mollis cursus.
+      Nulla in efficitur quam, ac condimentum sem.
+    </p>
+  </div>
+
+  <section class="two">
+    <div class="wrapper"></div>
+  </section>
+
+  <div class="content_block">
+    <h1>Our Adivser, Professor Wong</h1>
+    <p>
+      
+    </p>
+  </div>
+
+  <section class="three">
+    <div class="wrapper"></div>
+  </section>
+
+  <div class="content_block">
+    <h1>Our Laboratory Equipment</h1>
+    <p>
+      
+    </p>
+  </div>
+
+  <section class="four">
+    <div class="wrapper"></div>
+  </section>
+
+  <div class="content_block" style="background-color: white;">
+    <h1>About our Crewmates</h1>
+    <p>
+      Hi, We are labmate in NCUT laboratory.<br>
+      We have some inventions can make your life more convinient.<br>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eget arcu ex.
+      In tortor odio, laoreet sed risus quis, mattis rhoncus dolor.
+      Proin ultricies nibh massa, vel consectetur nunc dapibus vel.
+      Suspendisse nec cursus mauris.
+      Nullam et risus sit amet elit aliquam auctor. Nullam sit amet mollis lectus, ut aliquam nisi.
+      Vivamus varius a lorem vel pellentesque.
+
+      Mauris lacinia sapien non est pulvinar rutrum ac a erat.
+      Fusce viverra, ante quis gravida euismod, neque mauris facilisis risus, facilisis lobortis mauris libero eu turpis.
+      Fusce pellentesque magna vulputate, ullamcorper lectus sed, molestie est.
+      Sed libero diam, mattis ac vehicula in, consequat in tortor. Vestibulum id vehicula mi.
+      Nulla ac justo sit amet lacus blandit molestie quis vitae turpis.
+      Aenean risus odio, fringilla sit amet rhoncus ut, placerat semper libero.
+      Donec velit nunc, elementum ac fermentum et, ornare rutrum libero.
+
+      Morbi sodales nibh eget sollicitudin sagittis.
+      Sed euismod orci justo, eu maximus dui maximus ut.
+      Proin in velit in ipsum viverra ornare. Praesent ac mauris vestibulum, sagittis ex sed, semper ligula.
+      Praesent elementum auctor nunc, volutpat porttitor mauris volutpat a. Nunc dapibus turpis a commodo dignissim.
+      Nulla metus arcu, elementum vitae sollicitudin eu, pellentesque sit amet neque.
+      Fusce sollicitudin pharetra ipsum id congue. Integer finibus id lorem a lacinia.
+      Suspendisse ultrices lectus id quam facilisis finibus.
+      Donec turpis arcu, accumsan et sagittis ac, ullamcorper et libero.
+      Donec auctor ligula libero, quis fringilla diam faucibus sit amet.
+      Morbi et molestie massa.
+
+      Fusce velit felis, aliquet in tellus in, accumsan luctus odio.
+      In hendrerit, sem sed pretium scelerisque, erat massa pretium erat, vitae faucibus nulla orci in est.
+      Vestibulum ut justo at leo convallis venenatis nec eu ex. Cras ut odio ut arcu pulvinar malesuada quis ac ex.
+      Sed rutrum pretium molestie. Quisque lacinia nisi a interdum varius. Nullam tincidunt quis est ut commodo.
+      Nunc eget tortor viverra, dapibus enim et, molestie ante. Donec convallis venenatis mollis.
+
+      Aenean mi orci, convallis eu metus eu, hendrerit tempus sem.
+      Sed sed lacinia sem.
+      Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+      Proin ligula sem, gravida ut scelerisque at, varius at urna. Aenean facilisis accumsan rutrum.
+      Pellentesque at congue erat, vel hendrerit justo. Praesent suscipit arcu velit, et eleifend leo sodales a.
+      Quisque mattis scelerisque turpis. Nulla blandit mauris ut leo mollis cursus.
+      Nulla in efficitur quam, ac condimentum sem.
+    </p>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  
+{% endblock %}

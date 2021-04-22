@@ -1,0 +1,41 @@
+{% extends 'new_Template.html' %}
+
+{% block title %}
+<title>StockTaking</title>
+{% endblock %}
+
+{% block style %}
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div id="stockTaking">
+</div>
+{% endblock %}
+
+
+{# 此部分為javaScript #}
+{% block javascript %}
+<script>
+    navbar.$data.navbarMenuStockTakingCss = navbar.$data.navbarMainMenuCss;
+
+    const app = Vue.createApp({
+        data() {
+            return {
+
+            }
+        },
+        methods: {
+        },
+        mounted() {
+        },
+        created() {
+        },
+    }).mount("#stockTaking")
+</script>
+{% endblock %}

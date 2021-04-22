@@ -1,0 +1,48 @@
+from django.urls import path
+from django.conf.urls import include
+from . import views
+
+
+urlpatterns = [
+    # Account Part
+    path('accounts/', include('django.contrib.auth.urls')),
+
+
+    # HomePage
+    path('', view=views.index, name='index'),
+    
+
+    # 網頁部分
+    path('importExcel/', views.importExcel, name='importExcel'),
+    path('search', view=views.search, name='search'),
+    path('addData/', views.addData, name='addData'),
+    path('aboutUs/', views.aboutUs, name='aboutUs'),
+    path('leaseProperty/', views.leaseProperty, name='leaseProperty'),
+    path('stockTaking/', views.stockTaking, name='stockTaking'),
+
+
+    # 新版介面
+    path('newpropertydetail', view=views.newPropertyDetail, name='newpropertydetail'),
+
+    # 舊版搜尋介面
+    path('oldsearch', view=views.oldSearch, name='oldsearch'),
+
+    ###########
+    # API部分 #
+    ###########
+
+    # 儲存資料
+    path('saveData/', views.saveData, name='saveData'),
+    # 取得資料、取得單一資料、刪除單筆資料
+    path('getData/', views.getData, name='getData'),
+    path('getSingleData/', views.getSingleData, name='getSingleData'),
+    path('deleteData/', views.deleteData, name='deleteData'),
+    # 取得 等待審核租借、租借中、等待審核歸還、已歸還
+    path('getLoanProperty/', views.getLoanProperty, name='getLoanProperty'),
+    # 歸還與租借
+    path('loanProperty/', views.loanProperty, name='loanProperty'),
+    path('returnProperty/', views.returnProperty, name='returnProperty'),
+    # 同意歸還與同意租借
+    path('agreeLoanProperty/', views.agreeLoanProperty, name='agreeLoanProperty'),
+    path('agreeReturnProperty/', views.agreeReturnProperty, name='agreeReturnProperty'),
+]

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    
+    {% load static %}
+    <link rel="icon" href="{% static 'images/lab.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/baseTemplate.css' %}">
+
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+          crossorigin="anonymous">
+
+    {% block title %}
+        <title>{{ title }}</title>
+    {% endblock %}
+    
+    {% block style %}
+    {% endblock %}
+</head>
+<body>
+    {% load static %}
+    {#  網站上方導覽欄位 The navbar on the website #}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+        {#  超連結LOGO Href LOGO #}
+        <a class="navbar-brand" href="{% url 'index' %}">
+            {% load static %}
+            <img src="{% static 'images/lab.svg' %}" width="40px">
+            Laboratory
+        </a>
+
+        {#  畫面小於尺寸會自動縮排，並出現此按鈕 It will disappear when the size smaller than 902px #}
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'importExcel' %}">Import</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'search' %}">Search</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'addData' %}">Add</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Profile</a>
+                        <a class="dropdown-item" href="{% url 'aboutUs' %}">About Us</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+            </ul>
+            {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    <a class="nav-link" href="{% url 'admin:index' %}" id="profile-link">Go To Admin</a>
+                {% endif %}
+                <a class="nav-link" href="#" id="profile-link">{{ user.username }}</a>
+                <a class="nav-link" href="{% url 'logout' %}" id="logout-link">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" id="login-link">Login</a>
+            {% endif %}
+
+        </div>
+    </nav>
+
+    {# 網站實際內容部分 #}
+    {% block content %}
+    {% endblock %}
+
+
+    {# JavaScript of JQuery and Bootstrap #}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+            crossorigin="anonymous"></script>
+
+    {% block javascript %}
+    {% endblock %}
+</body>
+</html>

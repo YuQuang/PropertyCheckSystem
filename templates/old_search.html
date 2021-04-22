@@ -1,0 +1,404 @@
+{% extends 'baseTemplate.html' %}
+
+{% block title %}
+    <title>Search Data</title>
+{% endblock %}
+
+{# 此部分為css #}
+{% block style %}
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/search.css' %}">
+
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <br>
+        <div class="row">
+            <div class="col-sm">
+                Sort by:
+                <select class="custom-select" id="sort_by">
+                    <option value="0" selected>All</option>
+                    <option value="1">Is Checked</option>
+                    <option value="2">Real Position</option>
+                    <option value="3">Property Number</option>
+                    <option value="4">Property Single Value</option>
+                    <option value="5">Amount</option>
+                    <option value="6">Age Limit</option>
+                    <option value="7">Getting Date</option>
+                </select>
+            </div>
+            <div class="col-sm">
+                Filter:
+                <select class="custom-select" id="filter">
+                    <option value="0" selected>All</option>
+                    <option value="1">Expired Property</option>
+                    <option value="2">Not Expired Property</option>
+                    <option value="3">Has Checked</option>
+                    <option value="4">Not Be Checked</option>
+                </select>
+            </div>
+            <div class="col-sm">
+                Search:
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Enter Keyword" id="keyword">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="button" id="search-Btn">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th scope="col" style="width: 60px">盤點</th>
+                    <th scope="col">實際位置</th>
+                    <th scope="col">備註</th>
+                    <th scope="col">產貼位置地點</th>
+                    <th scope="col">財產編號</th>
+                    <th scope="col">序號</th>
+                    <th scope="col">財產名稱</th>
+                    <th scope="col">廠牌型式</th>
+                    <th scope="col" style='width: 110px'>取得日期</th>
+                    <th scope="col" style='width: 60px'>年限</th>
+                    <th scope="col" style='width: 60px'>數量</th>
+                    <th scope="col" style='width: 60px'>單位</th>
+                    <th scope="col" style='width: 100px'>單價</th>
+                </tr>
+            </thead>
+            <tbody
+                id="form_content"
+                ondragstart='return false' onContextMenu='return false'>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 可選清單選項 -->
+    <div 
+        class="card" id="select-list"
+        style="width: 18rem; display: none; position: fixed;"
+        ondragstart='return false' onselectstart='return false' onContextMenu='return false'>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" onclick="rentItem()">Rent this item(租借)</li>
+          <li class="list-group-item" onclick="deleteItem()">Delete this item(刪除)</li>
+          <li class="list-group-item" onclick="showDetail()">See more detail(詳細)</li>
+          <li class="list-group-item" onclick="reviseItem()">Revise this item(修改)</li>
+        </ul>
+    </div>
+
+    <!-- 詳細資訊模態窗 -->
+    <div class="modal fade" id="detailModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="detailModalTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" id="detailModalBody" style="font-size: 1.5em">
+                
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 更改資料的模態窗 -->
+    <div class="modal fade" id="revisionModal" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="revisionModalTitle">revision</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body" id="revisionModalBody" style="font-size: 1.5em">
+                    是否盤點<input type="checkbox" class="form-control" id="is_checked">
+                    實際位置<input type="text" class="form-control" placeholder="Enter real position" id="position">
+                    標籤位置<input type="text" class="form-control" placeholder="Position on the label" id="label_position">
+                    產品名稱<input type="text" class="form-control" placeholder="Enter product name" id="product_name">
+                    產品編號<input type="text" class="form-control" placeholder="Enter product number" id="product_number">
+                    序號<input type="text" class="form-control" placeholder="Enter number" id="number">
+                    廠牌型式<input type="text" class="form-control" placeholder="Enter brand" id="brand">
+                    取得日期<input type="date" class="form-control" id="get_date">
+                    年限<input type="number" class="form-control" placeholder="Property's age limit" id="age_limit">
+                    單位<input type="text" class="form-control" placeholder="Property's unit" id="unit">
+                    數量<input type="number" class="form-control" placeholder="Total number of items" id="quantity">
+                    單價<input type="number" class="form-control" placeholder="Item price" id="single_value">
+                </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {% load static %}
+
+    <script>
+        $(document).ready(()=>{
+            getData();
+        });
+
+        var get_url = '{% url 'getData' %}';
+        var cross_img = '{% static 'images/cross.svg' %}';
+        var tick_img = '{% static 'images/tick.svg' %}';
+
+        var current_tr = null;
+        
+        // 捲動時隱藏選單
+        $("#form_content").scroll(()=>{
+            $('#select-list').css('display', 'none');
+        });
+
+        // 左鍵點擊時選單
+        $("body").on('click',()=>{
+            $('#select-list').css('display', 'none');
+        });
+
+        // 當Enter按下時
+        $('#keyword').keypress((event)=>{
+            if(event.key == 'Enter'){
+                var sort_by = $('#sort_by option:checked').val();
+                var filter = $('#filter option:checked').val();
+                var keyword = $('#keyword').val();
+                getData(sort_by, filter, keyword);
+            }
+        });
+
+        // 當搜索按鈕按下時
+        $('#search-Btn').on('click',()=>{
+            var sort_by = $('#sort_by option:checked').val();
+            var filter = $('#filter option:checked').val();
+            var keyword = $('#keyword').val();
+            getData(sort_by, filter, keyword);
+        });
+
+        // 當排序選項選擇時
+        $('#sort_by').on('change',()=>{
+            var sort_by = $('#sort_by option:checked').val();
+            var filter = $('#filter option:checked').val();
+            var keyword = $('#keyword').val();
+            getData(sort_by, filter, keyword);
+        });
+
+        // 當過濾選項選擇時
+        $('#filter').on('change',()=>{
+            var sort_by = $('#sort_by option:checked').val();
+            var filter = $('#filter option:checked').val();
+            var keyword = $('#keyword').val();
+            getData(sort_by, filter, keyword);
+        });
+
+        // 讀取Cookie
+        function readCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // Ajax取得檔案
+        function getData(sort_by=0, filter=0, keyword=''){
+            var csrftoken = readCookie("csrftoken");
+            $.ajax({
+                url: get_url,
+                timeout: 3000,
+                dataType: 'json',
+                headers: {"X-CSRFToken": csrftoken},
+                type: 'GET',
+                data: {'sort_by': sort_by, 'filter': filter, 'keyword': keyword},
+                success: (res)=>{
+                    if(res['result']){
+                        showData(res['data']);
+                        if(keyword != ''){
+                            $("#form_content tr").find(":contains('" + keyword + "')").wrapInner("<strong></strong>").css("color", "red");
+                            $("#form_content").find("tr:not(:contains('" + keyword + "'))").hide();
+                        }
+                    }else{
+                        console.log('伺服器獲取資料錯誤');
+                    }
+                },
+                complete: (res)=>{
+                    
+                },
+            });
+        }
+
+        // 顯示取得的檔案
+        function showData(data){
+
+            // 暫時存放變數
+            var is_checked, tip, unit, singleValue,
+            position, deadline, number, brand,
+            labelPosition, productName, productNumber;
+
+            total_form = "";
+            // 產品總價值
+            var total_value = 0;
+
+            for(let i = 0;i < data.length;i++)
+            {
+                 /**
+                    對資料先做處理
+                    ，預防產生未知的錯誤，並過濾掉沒有數值的資料
+                */
+                is_checked    = data[i]['is_check'];
+                position      = data[i]['position'];
+                tip           = data[i]['tip'];
+                labelPosition = data[i]['label_position'];
+                productNumber = data[i]['product_number'];
+                number        = data[i]['number'];
+                productName   = data[i]['product_name'];
+                brand         = data[i]['brand'];
+                getDate       = data[i]['get_date'];
+                deadline      = data[i]['age_limit'];
+                unit          = data[i]['unit'];
+                quantity      = data[i]['quantity'];
+                singleValue   = data[i]['single_value'];
+
+
+                // 計算總價格，並過濾未知情況
+                try{
+                    total_value += quantity * singleValue;
+                }catch(e){
+                    console.log(i + "Can't to number");
+                }
+
+
+                total_form += "<tr>";
+                // 產生表格html內容
+                total_form += "<td style='width: 60px'>";
+                if(is_checked == "v"){
+                    total_form += "<img src='" + tick_img + "' width='30px'>";
+                    total_form += "<p style='display: none;'>V</p>";
+                }else{
+                    total_form += "<img src='" + cross_img +  "' width='30px'>";
+                    total_form += "<p style='display: none;'>N</p>";
+                }
+                total_form += "</td>";
+                total_form += "<td>" + position + "</td>";
+                total_form += "<td>" + tip + "</td>";
+                total_form += "<td>" + labelPosition + "</td>";
+                total_form += "<td>" + productNumber + "</td>";
+                total_form += "<td>" + number + "</td>";
+                total_form += "<td>" + productName + "</td>";
+                total_form += "<td>" + brand + "</td>";
+                total_form += "<td style='width: 110px'>" + getDate + "</td>";
+                total_form += "<td style='width: 60px'>" + deadline + "</td>";
+                total_form += "<td style='width: 60px'>" + quantity + "</td>";
+                total_form += "<td style='width: 60px'>" + unit + "</td>";
+                total_form += "<td style='width: 100px'>" + singleValue + "</td>";
+                total_form += "</tr>";
+            }
+
+            // 更新表格
+            $("#form_content").html(total_form);
+
+            // 將表格內容與右鍵結
+            $("#form_content tr").contextmenu((e)=>{
+                var x = e.originalEvent['clientY'];
+                var y = e.originalEvent['clientX'];
+
+                $("#select-list").css("left", y);
+                $("#select-list").css("top", x);
+                $("#select-list").css("display", "block");
+
+                current_tr = e.currentTarget;
+            });
+
+            return 0;
+        }
+
+        // 清除表格
+        function clearForm(){
+
+        }
+
+        // 租借這項物品
+        function rentItem(){
+            console.log(current_tr);
+        }
+
+        // 顯示詳細資訊
+        function showDetail(){
+            $('#detailModal').modal('show');
+            if($(current_tr).find("td")[6].innerText != "")
+                $('#detailModalTitle').text($(current_tr).find("td")[6].innerText + "Detail");
+            
+            var text = '是否盤點' + $(current_tr).find("td")[0].innerHTML + '<br>';
+            text += '實際位置<br>&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[1].innerHTML + '<br>';
+            text += '產貼位置地點<br>&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[3].innerHTML + '<br>';
+            text += '財產編號<br>&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[4].innerHTML + '<br>';
+            text += '序號<br>&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[5].innerHTML + '<br>';
+            text += '財產名稱<br>&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[6].innerHTML + '<br>';
+            text += '廠牌型式<br>&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[7].innerHTML + '<br>';
+            text += '取得日期<br>&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[8].innerHTML + '<br>';
+            text += '年限&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[9].innerHTML + '<br>';
+            text += '數量&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[10].innerHTML + '<br>';
+            text += '單價&nbsp&nbsp&nbsp&nbsp' + $(current_tr).find("td")[12].innerHTML + "/" + $(current_tr).find("td")[11].innerHTML + '<br>';
+            text += '備註<br>' + $(current_tr).find("td")[2].innerHTML + '<br>';
+            $('#detailModalBody').html(text);
+        }
+
+        // 刪除這項物品
+        function deleteItem(){
+            
+        }
+
+        // 修改這項物品
+        function reviseItem(){
+            // 顯示視窗
+            $('#revisionModal').modal('show');
+
+            // 修改視窗標題
+            if($(current_tr).find("td")[6].innerText != "")
+                $('#revisionModalTitle').text("修改" + $(current_tr).find("td")[6].innerText);
+
+            // 盤點按鈕
+            if($(current_tr).find("td p")[0].innerText == "V")
+                $("#is_checked").prop('checked',true);
+            else $("#is_checked").prop('checked',false);
+            // 實際位置
+            $('#position').val($(current_tr).find("td")[1].innerText);
+            // 標籤位置
+            $('#label_position').val($(current_tr).find("td")[3].innerText);
+            // 產品編號
+            $('#product_number').val($(current_tr).find("td")[4].innerText);
+            // 產品名稱
+            $('#product_name').val($(current_tr).find("td")[6].innerText);
+            // 序號
+            $('#number').val($(current_tr).find("td")[5].innerText);
+            // 廠牌型式
+            $('#brand').val($(current_tr).find("td")[7].innerText);
+            // 取得日期
+            $('#get_date').val($(current_tr).find("td")[8].innerText);
+            // 年限
+            $('#age_limit').val($(current_tr).find("td")[9].innerText);
+            // 數量
+            $('#quantity').val($(current_tr).find("td")[10].innerText);
+            // 單位
+            $('#unit').val($(current_tr).find("td")[11].innerText);
+            // 單價
+            $('#single_value').val($(current_tr).find("td")[12].innerText); 
+        }
+    </script>
+
+    <script src="{% static 'javaScripts/search.js' %}"></script>
+
+{% endblock %}

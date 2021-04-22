@@ -1,0 +1,14 @@
+{% extends "baseTemplate.html" %}
+
+{% block title %}
+  <title>Reset Password</title>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <p>You'r logged out</p>
+    <p>What's next</p>
+    <p><a href="{% url 'login'%}">Return to login page.</a></p>
+    <p><a href="{% url 'index'%}">Return to Home page.</a></p>
+  </div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'new_Template.html' %}
+
+
+{% block title %}
+    <title>E419 Property Check System</title>
+{% endblock %}
+
+{% block style %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+
+{% block content %}
+    {% load static %}
+    <div class="container mx-auto">
+        {# 時鐘部分 #}
+        <div class="mx-auto clock-container">
+            <div class="clock-box my-5">
+                <div class="md:text-6xl text-5xl clock">
+                    HH : MM : SS
+                </div>
+                <div class="md:text-6xl text-5xl date">
+                    DD - MM - YYYY
+                </div>
+            </div>
+        </div>
+        {# 選項部分 #}
+        <div class="container lg:w-2/3 px-5 py-5 mx-auto w-full">
+            <div class="flex flex-wrap -m-4">
+                <div class="lg:w-1/4 md:w-1/3 w-1/2 inline-block p-5">
+                    <a href="{% url 'importExcel' %}">
+                        <div class="p-5 cursor-pointer bg-gray-50 bg-opacity-30 rounded-2xl" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
+                            <img src="{% static 'images/import.svg' %}"/>
+                        </div>
+                    </a>
+                </div>
+                <div class="lg:w-1/4 md:w-1/3 w-1/2 inline-block p-5">
+                    <a href="{% url 'search' %}">
+                        <div class="p-5 cursor-pointer bg-gray-50 bg-opacity-30 rounded-2xl" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
+                            <img src="{% static 'images/search.svg' %}"/>
+                        </div>
+                    </a>
+                </div>
+                <div class="lg:w-1/4 md:w-1/3 w-1/2 inline-block p-5">
+                    <a href="{% url 'admin:index' %}">
+                        <div class="p-5 cursor-pointer bg-gray-50 bg-opacity-30 rounded-2xl" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
+                            <img src="{% static 'images/add.svg' %}"/>
+                        </div>
+                    </a>
+                </div>
+                <div class="lg:w-1/4 md:w-1/3 w-1/2 inline-block p-5">
+                    <a href="{% url 'leaseProperty' %}">
+                        <div class="p-5 cursor-pointer bg-gray-50 bg-opacity-30 rounded-2xl" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
+                            <img src="{% static 'images/lease.svg' %}"/>
+                        </div>
+                    </a>
+                </div>
+                <div class="lg:w-1/4 md:w-1/3 w-1/2 inline-block p-5">
+                    <div class="p-5 cursor-pointer bg-gray-50 bg-opacity-30 rounded-2xl" onclick="location.href='#'" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
+                        <img src="{% static 'images/profile.svg' %}"/>
+                    </div>
+                </div>
+                <div class="lg:w-1/4 md:w-1/3 w-1/2 inline-block p-5">
+                    <div class="p-5 cursor-pointer bg-gray-50 bg-opacity-30 rounded-2xl" onclick="location.href='{% url 'aboutUs' %}'" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
+                        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m367.398438 231.898438c0 8.285156-6.714844 15-15 15-8.28125 0-15-6.714844-15-15 0-8.28125 6.71875-15 15-15 8.285156 0 15 6.71875 15 15zm0 0" />
+                            <path d="m352.382812 72.300781c-30.449218 0-55.148437 24.640625-55.148437 55.148438v.019531c0 8.28125 6.714844 14.992188 15 14.992188s15-6.726563 15-15.011719c0-13.867188 11.214844-25.148438 25.167969-25.148438 13.875 0 25.164062 11.289063 25.164062 25.167969 0 13.875-11.289062 25.164062-25.164062 25.164062-8.285156 0-15 6.71875-15 15v16.066407c0 8.285156 6.714844 15 15 15 8.28125 0 15-6.714844 15-15v-3.136719c23.152344-6.550781 40.164062-27.875 40.164062-53.09375 0-30.421875-24.746094-55.167969-55.183594-55.167969zm0 0" />
+                            <path d="m143.9375 382.8125c18.640625-14.515625 30.664062-37.148438 30.664062-62.546875 0-43.707031-35.5625-79.265625-79.269531-79.265625s-79.265625 35.558594-79.265625 79.265625c0 25.398437 12.023438 48.03125 30.660156 62.546875-26.304687 15.648438-46.726562 45.203125-46.726562 82.054688v32.132812c0 8.285156 6.714844 15 15 15h160.667969c8.28125 0 15-6.714844 15-15v-32.132812c0-36.84375-20.417969-66.402344-46.730469-82.054688zm-97.871094-62.546875c0-27.164063 22.101563-49.265625 49.269532-49.265625 27.164062 0 49.265624 22.101562 49.265624 49.265625 0 27.167969-22.101562 49.269531-49.265624 49.269531-27.167969 0-49.269532-22.101562-49.269532-49.269531zm114.601563 161.734375h-130.667969v-17.132812c0-36.085938 29.195312-65.332032 65.332031-65.332032 36.085938 0 65.332031 29.195313 65.332031 65.332032v17.132812zm0 0" />
+                            <path d="m448.800781 0h-192.800781c-34.90625 0-63.199219 28.242188-63.199219 63.199219v289.199219c0 12.269531 14.070313 19.445312 24 12l60.265625-45.199219h171.734375c34.90625 0 63.199219-28.242188 63.199219-63.199219v-192.800781c0-34.90625-28.242188-63.199219-63.199219-63.199219zm33.199219 256c0 18.351562-14.839844 33.199219-33.199219 33.199219h-176.734375c-3.246094 0-6.402344 1.054687-9 3l-40.265625 30.199219v-259.199219c0-18.351563 14.839844-33.199219 33.199219-33.199219h192.800781c18.351563 0 33.199219 14.839844 33.199219 33.199219zm0 0" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="lg:w-1/4 md:w-1/3 w-1/2 inline-block p-5">
+                    <div class="p-5 cursor-pointer bg-gray-50 bg-opacity-30 rounded-2xl" onclick="location.href='{% url 'stockTaking' %}'" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
+                        <svg enable-background="new 0 0 512.051 512.051" viewBox="0 0 512.051 512.051" xmlns="http://www.w3.org/2000/svg">
+                            <path d="m512.026 272.067c0-3.979-1.581-7.793-4.394-10.606l-45.444-45.444c-.148-.148-5.741-6.173-14.429-3.88v-197.137c0-8.284-6.716-15-15-15h-417.733c-8.284 0-15 6.716-15 15v417.733c0 8.284 6.716 15 15 15h193.411c109.983 142.333 332.636 28.188 279.5-145.365l19.696-19.696c2.812-2.812 4.393-6.627 4.393-10.605zm-321.334-242.067h66.4v50.333h-66.4zm-160.666 387.733v-387.733h130.667v65.333c0 8.284 6.716 15 15 15h96.4c8.284 0 15-6.716 15-15v-65.333h130.667v185.125c-133.93-78.429-289.718 60.66-227.038 202.608zm306.333 64.267c-71.462 0-129.6-58.138-129.6-129.6-.885-103.737 119.761-166.393 203.961-106.126l-74.36 74.359-24.283-24.284c-5.859-5.859-15.361-5.852-21.213 0l-45.444 45.444c-5.859 5.859-5.852 15.361 0 21.213l80.333 80.333c5.857 5.858 15.355 5.858 21.213 0l116.481-116.481c16.619 78.861-46.355 156.042-127.088 155.142zm0-70.48-59.12-59.12 24.23-24.23 24.283 24.284c5.859 5.859 15.361 5.852 21.213 0l104.616-104.617 24.231 24.23z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascript %}
+    <script src="{% static 'javaScripts/vanilla-tilt.min.js' %}"></script>
+    <script>
+        navbar.navbarMenuHomeCss = navbar.navbarMainMenuCss;
+
+        VanillaTilt.init(document.querySelectorAll(".float-glass"), {
+		    max: 25,
+		    speed: 400
+	    });
+
+        function padding(str){
+            return str.toString().padStart(2,"0");
+        }
+
+        let c = document.querySelector(".clock");
+        let d = document.querySelector(".date");
+
+        $(document).ready(function(){
+            let today = new Date();
+            let hh = today.getHours();
+            let mm = today.getMinutes();
+            let ss = today.getSeconds();
+            let date = today.toDateString();
+            c.innerText = `${padding(hh)} : ${padding(mm)} : ${padding(ss)}`;
+            d.innerText = date;
+        });
+
+        setInterval(()=>{
+            let today = new Date();
+            let hh = today.getHours();
+            let mm = today.getMinutes();
+            let ss = today.getSeconds();
+
+            let date = today.toDateString();
+
+            c.innerText = `${padding(hh)} : ${padding(mm)} : ${padding(ss)}`;
+            d.innerText = date;
+        }, 1000);
+
+        
+    </script>
+    {% load static %}
+    <script src="{% static 'javaScripts/index.js' %}"></script>
+{% endblock %}

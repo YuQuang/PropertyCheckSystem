@@ -1,0 +1,390 @@
+{% extends 'baseTemplate.html' %}
+
+{% block title %}
+    <title>Add new Data</title>
+{% endblock %}
+
+{% block style %}
+    <style>
+        .form-row .form-group{
+            font-size: 18px;
+            line-height: 36px;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% load static %}
+
+    <div class="container">
+
+        <br>
+        <h1 style="display: block; text-align: center;">Add new property</h1>
+        <h1 style="display: block; text-align: center;">新增一項財產</h1>
+
+        <div class="alert alert-danger" role="alert" style="display: none;" id="warning-div">
+        </div>
+        <div class="alert alert-success" role="alert" style="display: none;" id="success-div">
+        </div>
+
+        <form id="total_form">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <img src="{% static 'images/checked.svg' %}" width="20px" for="is_checked">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="is_checked">Checked</label>
+                        </div>
+                        <div class="form-group col-md-7">
+                            <input type="checkbox" class="form-control" id="is_checked">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/location-pointer.svg' %}" width="30px" for="position">
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="position">Position</label>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" placeholder="Enter real position" id="position" list="position-list">
+                            <datalist id="position-list">
+                                <option value="Austria">
+                                <option value="Belgium">
+                                <option value="Czech Republic">
+                                <option value="Denmark">
+                                <option value="Estonia">
+                                <option value="France">
+                                <option value="Germany">
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/tag.svg' %}" width="30px" for="label_position">
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="label_position">Label Position</label>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" placeholder="Position on the label" id="label_position">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/tag.svg' %}" width="30px" for="product_name">
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="product_name">Product Name</label>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" placeholder="Enter product name" id="product_name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-7">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/productNumber.svg' %}" width="30px" for="product_number">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="product_number" aria-required="true">Product Number</label>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <input type="text" class="form-control" placeholder="Enter product number" id="product_number">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-5">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/number.svg' %}" width="30px" for="number">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="number" aria-required="true">Number</label>
+                        </div>
+                        <div class="form-group col-md-7">
+                            <input type="text" class="form-control" placeholder="Enter number" id="number">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-7">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/brand.svg' %}" width="30px" for="brand">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="brand">Brand</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <input type="text" class="form-control" placeholder="Enter brand" id="brand">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-5">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/calendar.svg' %}" width="30px" for="get_date">
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="get_date">Get Date</label>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="date" class="form-control" id="get_date">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/time.svg' %}" width="30px" for="age_limit">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="age_limit">Age Limit</label>
+                        </div>
+                        <div class="form-group col-md-7">
+                            <input type="number" class="form-control" placeholder="Property's age limit" id="age_limit">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/unit.svg' %}" width="30px" for="unit">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="unit">Unit</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <input type="text" class="form-control" placeholder="Property's unit" id="unit">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/quantity.svg' %}" width="30px" for="quantity">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="quantity">Quantity</label>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <input type="number" class="form-control" placeholder="Total number of items" id="quantity">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="form-row">
+                        <div class="form-group col-md-1">
+                            <img src="{% static 'images/coin.svg' %}" width="30px" for="single_value">
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="single_value">Single Value</label>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="number" class="form-control" placeholder="Item price" id="single_value">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="form-group col-md-1">
+                        <img src="{% static 'images/remark.svg' %}" width="30px" for="tips">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="tips">Tips</label>
+                    </div>
+                </div>
+                <textarea class="form-control" id="tips" rows="3" placeholder="Leaves some remark"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+
+                </div>
+                <div class="form-group col-md-2">
+                    <button type="button" class="btn btn-primary" id="clear">Clear</button>
+                </div>
+                <div class="form-group col-md-2">
+                </div>
+                <div class="form-group col-md-2">
+                    <button type="button" class="btn btn-primary" id="save">
+                        <div class="spinner-border" role="status" style="display: none;width: 20px; height: 20px;" id="save-spinner">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        Save
+                    </button>
+                </div>
+                <div class="form-group col-md-3">
+ 
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        // 清除按鈕按下時
+        $("#clear").on("click",()=>{
+            clearForm();
+        });
+
+        // 儲存按鈕按下時
+        $("#save").on("click",()=>{
+            var number = $("#number").val();
+            var product_number = $("#product_number").val();
+            if(number == "" || product_number == ""){
+                var warning = "你沒有填寫編號與產品編號<br>You don't fill number and product number"
+                $("#product_number").css("box-shadow", "0 0 8px #CC0000");
+                $("#number").css("box-shadow", "0 0 8px #CC0000");
+                $("#warning-div").html(warning);
+                $("#warning-div").slideDown();
+                setTimeout(()=>{
+                    $("#warning-div").slideUp();
+                }, 3000);
+            }else{
+                $("#product_number").css("box-shadow", "none");
+                $("#number").css("box-shadow", "none");
+                saveForm();
+            }
+        });
+
+        // 讀取Cookie
+        function readCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // 清除表格內資料
+        function clearForm(){
+            $("#quantity").val('');
+            $("#single_value").val('');
+            $("#age_limit").val('');
+            $("#unit").val('');
+            $("#get_date").val('');
+            $("#brand").val('');
+            $("#number").val('');
+            $("#product_number").val('');
+            $("#label_position").val('');
+            $("#position").val('');
+            $("#tips").val('');
+            $("#product_name").val('');
+            $("#is_checked").prop('checked',false);
+        }
+
+        // 儲存表格資訊
+        function saveForm(){
+            // 禁止按鈕
+            $("#save").attr("disabled", true);
+            // 顯示旋轉進度
+            $("#save-spinner").show();
+            // 暫時取消click功能
+            $("#save").off("click");
+
+            // 獲取表格內資料
+            var quantity = $("#quantity").val();
+            var single_value = $("#single_value").val();
+            var age_limit  = $("#age_limit").val();
+            var unit = $("#unit").val();
+            var get_date = $("#get_date").val();
+            var brand = $("#brand").val();
+            var number = $("#number").val();
+            var product_name = $("#product_name").val();
+            var product_number = $("#product_number").val();
+            var label_postion = $("#label_position").val();
+            var position = $("#position").val();
+            var tips = $("#tips").val();
+            if($("#is_checked:checked").val() != undefined)
+                var is_checked = 'V';
+            else var is_checked = 'X';
+
+            // 將資料整理為Json格式
+            data_list = [];
+            data = {};
+
+            data['quantity'] = quantity;
+            data['single_value'] = single_value;
+            data['age_limit'] = age_limit;
+            data['unit'] = unit;
+            data['get_date'] = get_date;
+            data['brand'] = brand;
+            data['number'] = number;
+            data['product_number'] = product_number;
+            data['product_name'] = product_name;
+            data['label_position'] = label_postion;
+            data['position'] = position;
+            data['tip'] = tips;
+            data['is_check'] = is_checked;
+            data_list.push(data);
+
+            send_data(data);
+        }
+
+        // 將資料送往後台
+        function send_data(data){
+            var csrftoken = readCookie("csrftoken");
+            $.ajax({
+                url: "{% url 'saveData' %}",
+                timeout: 3000,
+                type: "POST",
+                data: {'data': JSON.stringify(data_list)},
+                headers: {"X-CSRFToken": csrftoken},
+                complete:()=>{
+                    $("#save").on("click",()=>{
+                        saveForm();
+                    });
+                    $("#save-spinner").hide();
+                    $("#save").attr("disabled", false);
+                },
+                error: (res)=>{
+                    alert("Error occurred while uploading...");
+                },
+                success: (res)=>{
+                    if(res['result'] != 'failed'){
+                        $("#success-div").html("上傳成功");
+                        $("#success-div").slideDown();
+                        setTimeout(()=>{
+                            $("#success-div").slideUp();
+                        }, 3000);
+                    }else
+                        alert("Data have some error");
+                    clearForm();
+                }
+            });
+        }
+
+        // check is duplicate
+        function check_duplicate(){
+        }
+    </script>
+{% endblock %}
