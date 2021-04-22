@@ -227,7 +227,10 @@
                         navbar.notifyInfo = message['data'];
                         
                         navbar.notifyInfo.forEach(element => {
-                            if(element.status == 'notRead' || element.group_status == 'notRead'){
+                            if(element.status == 'notRead' && navbar.userInfo.userName == element.user){
+                                navbar.showNotify(true);
+                                return;
+                            }else if(element.group_status == 'notRead' && (navbar.userInfo.userGroup.indexOf(element.group_name) != -1)){
                                 navbar.showNotify(true);
                                 return;
                             }
@@ -318,26 +321,29 @@
                 },
                 // 切換提醒欄位 status不給自動切換
                 switchNotifyMenu(status){
-                    if(this.notifyMenuCssStatus != ""){
-                        this.notifyMenuCssStatus = "";
-                        mySocket.send(JSON.stringify({"action": "userReadNotify"}));
-                    }
-                    else{
-                        this.notifyMenuCssStatus = "hidden";
+                    if(status == undefined){
+                        if(this.notifyMenuCssStatus != ""){
+                            this.notifyMenuCssStatus = "";
+                            mySocket.send(JSON.stringify({"action": "userReadNotify"}));
+                        }
+                        else{
+                            this.notifyMenuCssStatus = "hidden";
+                        }
                     }
                     if(status == true){
                         this.notifyMenuCssStatus = "";
-                        mySocket.send(JSON.stringify({"action": "userReadNotify"}))
+                        mySocket.send(JSON.stringify({"action": "userReadNotify"}));
                     }
                     else if(status == false){
                         this.notifyMenuCssStatus = "hidden";
                     }
                 },
+                // 取得用戶資料
                 getUserInfo(){
                     let self = this;
                     axios.get(this.getUserInfoUrl)
                         .then((res)=>{
-                            console.log(res.data);
+                            self.userInfo = res.data;
                         })
                         .catch((err)=>{})
                         .finally(()=>{});

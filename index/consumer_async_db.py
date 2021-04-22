@@ -61,6 +61,7 @@ def get_recentNotify(user_id, group_name):
         STATUS_DICT = dict(item.READ_STATUS)
         notify_dict.setdefault("status", str(STATUS_DICT[item.status]))
         notify_dict.setdefault("group_status", str(STATUS_DICT[item.group_status]))
+        notify_dict.setdefault("group_name", str(item.notify_group.name))
 
         notify_list.append(notify_dict)
 
