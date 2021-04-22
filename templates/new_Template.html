@@ -254,6 +254,7 @@
                     addData: "{% url 'addData' %}",
                     stockTaking: "{% url 'stockTaking' %}",
                     leaseProperty: "{% url 'leaseProperty' %}",
+                    getUserInfoUrl: "{% url 'getUserInfo' %}",
 
                     // Navbar Menu CSS
                     navbarMenuStatus: 'hidden',
@@ -281,6 +282,8 @@
 
                     notifyInfo: [
                     ],
+
+                    userInfo: "",
                 }
             },
             methods:{
@@ -329,6 +332,15 @@
                     else if(status == false){
                         this.notifyMenuCssStatus = "hidden";
                     }
+                },
+                getUserInfo(){
+                    let self = this;
+                    axios.get(this.getUserInfoUrl)
+                        .then((res)=>{
+                            console.log(res.data);
+                        })
+                        .catch((err)=>{})
+                        .finally(()=>{});
                 }
             },
             mounted(){
@@ -338,6 +350,7 @@
                 this.navbarMenuAddCss = this.navbarSubMenuCss;
                 this.navbarMenuStockTakingCss = this.navbarSubMenuCss;
                 this.navbarMenuLeasePropertyCss = this.navbarSubMenuCss;
+                this.getUserInfo();
             }
         }).mount('#navbar')
     </script>

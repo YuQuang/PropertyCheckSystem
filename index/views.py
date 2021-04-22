@@ -97,6 +97,17 @@ def stockTaking(request):
 #   WebAPI Part
 """
 
+@login_required
+def getUserInfo(request):
+    user = request.user
+
+    userGroup = []
+    for group in user.groups.all():
+        userGroup.append(group.__str__())
+    
+    userName = user.username
+
+    return JsonResponse({"userName": userName, "userGroup": userGroup})
 
 """
 # 租借與歸還、同意租借與同意歸還

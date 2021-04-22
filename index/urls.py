@@ -30,7 +30,9 @@ urlpatterns = [
     ###########
     # API部分 #
     ###########
-
+    
+    # 取得用戶資料
+    path('getUserInfo/', views.getUserInfo, name='getUserInfo'),
     # 儲存資料
     path('saveData/', views.saveData, name='saveData'),
     # 取得資料、取得單一資料、刪除單筆資料
