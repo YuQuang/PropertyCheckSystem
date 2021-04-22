@@ -41,8 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'index.apps.IndexConfig',
     'channels',
-    'tailwind',
-    'theme'
 ]
 
 MIDDLEWARE = [
@@ -164,13 +162,3 @@ STATICFILES_DIRS = [
 #   Redirect to home URL after login (Default redirects to /accounts/profile/)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 LOGIN_REDIRECT_URL = '/'
-
-"""
-"""
-TAILWIND_APP_NAME = 'theme'
-
-INTERNAL_IPS = [
-    "0.0.0.0",
-]
-
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"

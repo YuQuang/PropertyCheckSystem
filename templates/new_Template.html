@@ -1,4 +1,3 @@
-{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,8 +14,7 @@
     <!-- VueJS -->
     <script src="https://unpkg.com/vue@next"></script>
     <!-- Tailwind -->
-    {% tailwind_css %}
-    {% comment %} <link href="{% static 'css/app.css' %}" rel="stylesheet"> {% endcomment %}
+    <link href="{% static 'css/app.css' %}" rel="stylesheet">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
