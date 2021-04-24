@@ -90,7 +90,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
                 await userReadNotify(self.now_user_id, self.now_group)
 
         except Exception as e:
-            print("接收錯誤")
+            print("Websocket接收錯誤")
             print(e)
     
     #################
