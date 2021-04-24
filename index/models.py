@@ -125,9 +125,9 @@ class PropertyImage(models.Model):
             default='None'
         )
     image = models.ImageField(
-        upload_to='static/PropertyImage',
-        verbose_name='財產圖片',
-    )
+            upload_to='static/PropertyImage',
+            verbose_name='財產圖片',
+        )
 
     # Metadata
     class Meta:
