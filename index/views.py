@@ -105,7 +105,7 @@ def stockTaking(request):
 # 檢查登陸狀態
 def API_CheckLogin(func):
     """
-        屬於APT的用戶登陸檢查
+        屬於API的用戶登陸檢查
     """
     def wrapper(request):
         if not request.user.is_authenticated:
@@ -117,6 +117,7 @@ def API_CheckLogin(func):
 """
 # 取得用戶資訊
 """
+# 取得該用戶基本資訊
 @API_CheckLogin
 def getUserInfo(request):
     user = request.user
@@ -128,6 +129,28 @@ def getUserInfo(request):
     userName = user.username
 
     return JsonResponse({"userName": userName, "userGroup": userGroup})
+
+# 取得所有位置
+@API_CheckLogin
+def getPosition(request):
+    position = Position.objects.all()
+    
+    positionList = []
+    for p in position:
+        positionList.append(p.name.__str__())
+    
+    return JsonResponse({"position":positionList})
+
+# 取得所有廠牌
+@API_CheckLogin
+def getBrand(request):
+    brand = Brand.objects.all()
+
+    brandList = []
+    for b in brand:
+        brandList.append(b.name.__str__())
+    
+    return JsonResponse({"brand": brandList})
 
 """
 # 租借與歸還、同意租借與同意歸還
@@ -546,6 +569,13 @@ def saveData(request):
     print(f"{saveData.__name__ }() Done!\n")
     return JsonResponse({'result': 'success', 'duplicatelist': duplicatePropertyList})
 
+# 儲存單一檔案帶圖片
+@API_CheckLogin
+def saveSingleData(request):
+    files = request.POST
+    print(files)
+    return JsonResponse({})
+
 # 刪除財產
 # (需要租刪除財產權限 index.delete_property)
 @API_CheckLogin
@@ -687,3 +717,5 @@ def getSingleData(request):
         data.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
 
     return JsonResponse({'result': 'success', 'data': data})
+
+

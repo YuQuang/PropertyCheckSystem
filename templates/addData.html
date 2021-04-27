@@ -8,84 +8,267 @@
 {% endblock %}
 
 {% block content %}
+<div id="add_data">
+    <!-- 表格部分 -->
     <div class="container pt-5 mx-auto">
         <div class="lg:w-4/5 mx-auto flex flex-wrap">
-            <div class="lg:w-1/3 w-fullmd:m-0 mx-auto">
-                <div class="lg:w-72 sm:w-64 w-40 relative lg:h-72 sm:h-64 h-40">
-                    <img alt="ecommerce" class="bg-cover absolute left-0 top-0 w-full h-full rounded" src="https://dummyimage.com/400x400"/>
-                    <input name="progressbarTW_img" type="file" class="opacity-0 absolute left-0 top-0 w-full h-full" accept="image/gif, image/jpeg, image/png"/ >
+            <!-- 上方上傳圖片以及預覽圖片 -->
+            <div class="lg:w-1/3 w-full md:m-0 self-center">
+                <div class="relative">
+                    <img id="preview_img" alt="ecommerce" class="bg-cover bg-center mx-auto rounded-lg" :src="productImg"/>
+                    <input name="progressbarTW_img" type="file" class="opacity-0 absolute left-0 top-0 w-full h-full"
+                            accept="image/gif, image/jpeg, image/png" @change="getPreviewImg($event)" />
                 </div>
             </div>
-            <div class="lg:w-2/3 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0 p-5 flex-wrap flex gap-y-4">
-                <div class="lg:w-1/3 sm:w-1/2 w-full text-center">
+            <!-- 填寫資料表格 -->
+            <div class="lg:w-2/3 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0 p-5 flex-wrap flex gap-y-2">
+                <!--
+                    分隔標題
+                -->
+                <div class="w-full text-center text-2xl font-bold">
+                    產品相關訊息
+                    <div class="w-full bg-gray-600 h-1 rounded-full"></div>
+                </div>
+                <!-- 產品名稱 -->
+                <div class="sm:w-1/2 w-full text-center">
                     <h2 class="text-lg title-font text-gray-800 tracking-widest">Name</h2>
-                    <input class="w-2/3" type="text"/>
-                </div>   
-                <div class="lg:w-1/3 sm:w-1/2 w-full text-center"> 
+                    <input class="w-2/3" type="text" v-model="productName"/>
+                </div>
+                <!-- 產品品牌 -->  
+                <div class="sm:w-1/2 w-full text-center"> 
                     <h2 class="text-lg title-font text-gray-800 tracking-widest">Brand</h2>
-                    <input class="w-2/3" type="text"/>
+                    <input v-model="productBrand" class="w-3/4" type="text" list="brandSelect">
+                    <datalist id="brandSelect">
+                        <option disabled selected>Choose</option>
+                        {% verbatim  %}
+                            <option v-for="b in brandList">
+                                {{ b }}
+                            </option>
+                        {% endverbatim  %}
+                    </datalist>
                 </div>
-                <div class="lg:w-1/3 sm:w-1/2 w-full text-center"> 
+                <!--
+                    分隔標題
+                -->
+                <div class="w-full flex flex-wrap mt-7">
+                    <div class="md:w-1/3 w-1/3 bg-gray-600 h-1 rounded-full self-center"></div>
+                    <div class="md:w-1/3 w-1/3 text-center text-2xl font-bold">編號</div>
+                    <div class="md:w-1/3 w-1/3 bg-gray-600 h-1 rounded-full self-center"></div>
+                </div>
+                <!-- 產品流水號 -->
+                <div class="sm:w-1/2 w-full text-center"> 
                     <h2 class="text-lg title-font text-gray-800 tracking-widest">Serial</h2>
-                    <input class="w-2/3" type="text"/>
+                    <input class="w-2/3" type="text" v-model="productSerial"/>
                 </div>
-                <div class="lg:w-1/3 sm:w-1/2 w-full text-center"> 
+                <!-- 產品編號 -->
+                <div class="sm:w-1/2 w-full text-center"> 
                     <h2 class="text-lg title-font text-gray-800 tracking-widest">Number</h2>
-                    <input class="w-2/3" type="text"/>
+                    <input class="w-2/3" type="text" v-model="productNumber"/>
                 </div>
-                <div class="lg:w-1/3 sm:w-1/2 w-full flex items-center">
-                    <span class="mr-3">Position</span>
-                    <div class="relative">
-                        <select class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
-                            <option>E420</option>
-                            <option>E423</option>
-                            <option>E419</option>
-                            <option>E670</option>
-                        </select>
-                        <span class="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
-                            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4" viewBox="0 0 24 24">
-                            <path d="M6 9l6 6 6-6"></path>
-                            </svg>
-                        </span>
-                    </div>
+                <!--
+                    分隔標題
+                -->
+                <div class="w-full flex flex-wrap mt-7">
+                    <div class="md:w-1/4 w-1/3 text-center text-2xl font-bold">細節</div>
+                    <div class="md:w-3/4 w-2/3 bg-gray-600 h-1 rounded-full self-center"></div>
                 </div>
-                <div class="lg:w-1/3 sm:w-1/2 w-full flex items-center"> 
-                    <span class="mr-3">RealPosition</span>
-                    <div class="relative">
-                        <select class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-3 pr-10">
-                            <option>E420</option>
-                                <option>E423</option>
-                                <option>E419</option>
-                                <option>E670</option>
-                        </select>
-                        <span class="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
-                            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4" viewBox="0 0 24 24">
-                            <path d="M6 9l6 6 6-6"></path>
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-                <div class="lg:w-1/3 sm:w-1/2 w-full text-center"> 
-                    <h2 class="text-lg title-font text-gray-800 tracking-widest">GetDate</h2>
-                    <input class="w-2/3" type="date"/>
-                </div>
-                <div class="lg:w-1/3 sm:w-1/2 w-full text-center"> 
-                    <h2 class="text-lg title-font text-gray-800 tracking-widest">ExpiryDate</h2>
-                    <input class="w-2/3" type="number" min="0" value="0"/>
-                </div>
+                <!-- 產品取得日期 -->
                 <div class="lg:w-1/3 sm:w-1/2 w-full text-center">
-                    <h2 class="text-lg title-font text-gray-800 tracking-widest">Price</h2>
-                    <span class="title-font font-medium text-sm text-gray-900">$</span>
-                    <input class="w-2/3" type="number" min="0" value="0"/>
+                    <span class="text-base title-font text-gray-800">GetDate</span>
+                    <input class="w-2/3" type="date" v-model="productGetDate"/>
                 </div>
-                <div class="w-full">Tips</div>
-                <textarea class="w-full h-64 resize-y bg-white overflow-auto"></textarea>
-                <button class="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">Button</button>
+                <!-- 產品年限 -->
+                <div class="lg:w-1/3 sm:w-1/2 w-full text-center"> 
+                    <span class="text-lg title-font text-gray-800">
+                    Expiry
+                    <input class="w-1/4" type="number" min="0" value="0"/>
+                    /years</span>
+                </div>
+                <!-- 產品價格 -->
+                <div class="lg:w-1/3 sm:w-1/2 w-full text-center">
+                    <span class="text-lg title-font text-gray-800 tracking-widest">Price $</span>
+                    <input class="w-1/3" type="number" min="0" value="0"/>
+                </div>
+                <!--
+                    分隔標題
+                -->
+                <div class="w-full flex flex-wrap mt-7">
+                    <div class="md:w-3/4 w-2/3 bg-gray-600 h-1 rounded-full self-center"></div>
+                    <div class="md:w-1/4 w-1/3 text-center text-2xl font-bold">位置</div>
+                </div>
+                <!-- 產品位置 -->
+                <div class="sm:w-1/2 w-full flex items-center">
+                    <span class="mr-3">Position</span>
+                    <input v-model="productPosition" type="text" class="w-3/4" list="PositionSelect">
+                    <datalist id="PositionSelect">
+                        <option disabled selected>Choose</option>
+                        {% verbatim  %}
+                            <option v-for="p in positionList">
+                                {{ p }}
+                            </option>
+                        {% endverbatim  %}
+                    </datalist>
+                </div>
+                <!-- 產品真實位置 -->
+                <div class="sm:w-1/2 w-full flex items-center"> 
+                    <span class="mr-3">RealPosition</span>
+                    <input v-model="productRealPosition" class="w-3/4" type="text" list="RealPositionSelect">
+                    <datalist id="RealPositionSelect">
+                        <option disabled selected>Choose</option>
+                        {% verbatim  %}
+                            <option v-for="p in positionList">
+                                {{ p }}
+                            </option>
+                        {% endverbatim  %}
+                    </datalist>
+                </div>
+                <!--
+                    分隔標題
+                -->
+                <div class="w-full flex flex-wrap mt-7">
+                    <div class="w-1/3 bg-gray-600 h-1 rounded-full self-center"></div>
+                    <div class="w-1/3 text-center text-2xl font-bold">備註</div>
+                    <div class="w-1/3 bg-gray-600 h-1 rounded-full self-center"></div>
+                </div>
+                <!-- 送出按鈕 -->
+                <textarea v-model="productTips" class="w-full h-40 resize-y bg-white overflow-auto"></textarea>
+                <div class="w-full flex flex-wrap mt-7">
+                    <div class="w-1/5 bg-gray-600 h-1 rounded-full self-center"></div>
+                    <div class="w-1/5 "></div>
+                    <button @click="saveSingleData()" class="w-1/5 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">Send</button>
+                    <div class="w-1/5 "></div>
+                    <div class="w-1/5 bg-gray-600 h-1 rounded-full self-center"></div>
+                </div>
             </div>
         </div>
     </div>
+    <!-- 彈跳視窗 -->
+    <div v-cloak class="fixed z-10 inset-0 overflow-y-auto transition duration-300 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex flex-wrap justify-center content-center text-center sm:p-0 h-full p-3">
+            <!-- 背景黑色 -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"></div>
+
+            <!-- 對話框實體 sm:align-middle sm:max-w-lg  -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left shadow-xl transform transition-all
+                        duration-75 sm:max-w-2xl sm:w-10/12 w-full max-h-full">
+                <!-- 關閉叉叉按鈕 -->
+                <div class="absolute right-0 w-8 h-8 flex flex-wrap justify-center content-center m-2 rounded-lg hover:bg-red-200 active:bg-blue-400 active:text-white transition-all duration-500">
+                    <svg class="w-3 h-3" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.001 512.001"
+                        style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve">
+                        <g>
+                            <path d="M284.286,256.002L506.143,34.144c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L256,227.717
+                                L34.143,5.859c-7.811-7.811-20.475-7.811-28.285,0c-7.81,7.811-7.811,20.475,0,28.285l221.857,221.857L5.858,477.859
+                                c-7.811,7.811-7.811,20.475,0,28.285c3.905,3.905,9.024,5.857,14.143,5.857c5.119,0,10.237-1.952,14.143-5.857L256,284.287
+                                l221.857,221.857c3.905,3.905,9.024,5.857,14.143,5.857s10.237-1.952,14.143-5.857c7.811-7.811,7.811-20.475,0-28.285
+                                L284.286,256.002z" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="bg-white pt-5 pb-4 sm:pb-4 flex flex-col h-full overflow-hidden rounded-lg">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block javascript %}
-    
+    <script>
+        const add_data = Vue.createApp({
+            data(){
+                return{
+                    saveSingleDataUrl: "{% url 'saveSingleData' %}",
+                    getPositionUrl: "{% url 'getPosition' %}",
+                    getBrandUrl: "{% url 'getBrand' %}",
+
+                    // 位置清單
+                    positionList: [],
+                    // 廠商清單
+                    brandList: [],
+
+                    // 表格資料
+                    Image: "",
+                    productImg: "https://hbimg.huabanimg.com/e83292f9395ca9e261afdbc75874d9ee3e27c6d187388-pnMfk1_fw658",
+                    productName: "",
+                    productBrand: "",
+                    productSerial: "",
+                    productNumber: "",
+                    productPosition: "",
+                    productRealPosition: "",
+                    productGetDate: "",
+                    productTips: "",
+                }
+            },
+            methods:{
+                // 接收上傳圖片以及預覽圖片
+                getPreviewImg(e){
+                    let files = e.target.files;
+                    if(files.length == 0)
+                        return;
+                    var reader = new FileReader();
+                    let self = this;
+                    reader.onload = function (e) {
+                        self.productImg = e.target.result;
+                    }
+                    reader.readAsDataURL(files[0]);
+                    this.Image = files[0];
+                },
+                // 查詢當前可選位置
+                getPosition(){
+                    let self = this;
+                    axios.get(this.getPositionUrl,{params:{}})
+                    .then((res)=>{
+                        self.positionList = res.data.position;
+                    })
+                    .catch(()=>{})
+                    .finally(()=>{})
+                },
+                // 查詢當前廠商
+                getBrand(){
+                    let self = this;
+                    axios.get(this.getBrandUrl,{params:{}})
+                    .then((res)=>{
+                        self.brandList = res.data.brand;
+                    })
+                    .catch(()=>{})
+                    .finally(()=>{})
+                },
+                readCookie(name) {
+                    var nameEQ = name + "=";
+                    var ca = document.cookie.split(';');
+                    for (var i = 0; i < ca.length; i++) {
+                        var c = ca[i];
+                        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                    }
+                    return null;
+                },
+                // 儲存檔案
+                saveSingleData(){
+                    let myformData = new FormData();
+                    myformData.append('file', this.Image);
+                    axios.post(this.saveSingleDataUrl ,{
+                        data: myformData,
+                    },
+                    {
+                        headers: { 'X-CSRFToken': this.readCookie('csrftoken') },
+                    })
+                },
+                // 取得當前日期
+                setToday(){
+                    let date = new Date();
+                    this.getDate = date.toISOString().substring(0, 10);
+                },
+            },
+            mounted(){
+                this.getPosition();
+                this.getBrand();
+                this.setToday();
+            },
+        }).mount("#add_data");
+    </script>
 {% endblock %}
