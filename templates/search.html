@@ -618,11 +618,11 @@
                 if(!this.loadFlag){
                     nowPage = this.now_page
 
-                    for( i=nowPage-2;(i < nowPage) && (i > 0);i++ )
-                        pages.push(i)
-
-                    for( i=nowPage;i <= nowPage+2 && i <= this.total_page;i++)
-                        pages.push(i)
+                    if(nowPage-2 > 0) pages.push(nowPage-2);
+                    if(nowPage-1 > 0) pages.push(nowPage-1);
+                    pages.push(nowPage);
+                    if(nowPage+1 < this.total_page) pages.push(nowPage+1);
+                    if(nowPage+2 < this.total_page) pages.push(nowPage+2);
                 }
 
                 return pages

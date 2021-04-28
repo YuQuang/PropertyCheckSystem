@@ -3,11 +3,9 @@ from django.contrib.auth.models import User, Group
 from django.utils import timezone
 import uuid
 
-
-# Create your models here.
-
 """
 # The Keeper Table
+# 保管人資料表
 """
 class Keeper(models.Model):
     id = models.AutoField(
@@ -35,6 +33,7 @@ class Keeper(models.Model):
 
 """
 # The Position Table
+# 位置資料表
 """
 class Position(models.Model):
     id = models.AutoField(
@@ -60,6 +59,7 @@ class Position(models.Model):
 
 """
 # The Unit Table
+# 單位資料表
 """
 class Unit(models.Model):
     id = models.AutoField(
@@ -84,7 +84,8 @@ class Unit(models.Model):
         return f'{self.name}'
 
 """
-# The Unit Table
+# The Brand Table
+# 品牌資料表
 """
 class Brand(models.Model):
     id = models.AutoField(
@@ -110,6 +111,7 @@ class Brand(models.Model):
 
 """
 # The Property Image
+# 財產圖片
 """
 class PropertyImage(models.Model):
     id = models.AutoField(
@@ -139,6 +141,7 @@ class PropertyImage(models.Model):
 
 """
 # The Property Table
+# 財產資料表
 """
 class Property(models.Model):
     # Property ID
@@ -193,8 +196,9 @@ class Property(models.Model):
             'Keeper',
             verbose_name='管理人',
             help_text='Choose Keeper',
-            default=1,
-            on_delete=models.PROTECT,
+            null=True,
+            blank=True,
+            on_delete=models.SET_NULL,
         )
     label_position = models.ForeignKey(
             'Position',
@@ -276,6 +280,7 @@ class Property(models.Model):
 
 """
 # The Lease Table
+# 租借表(等待歸還後便會存至永久記錄)
 """
 class LeaseProperty(models.Model):
     id = models.AutoField(
@@ -360,6 +365,7 @@ class LeaseProperty(models.Model):
 
 """
 # The Lease History
+# 租借紀錄(永久)
 """
 class LeaseHistory(models.Model):
     id = models.AutoField(

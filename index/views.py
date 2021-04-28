@@ -8,7 +8,8 @@ from django.contrib.auth.decorators import login_required
 import json
 import sys, os, datetime, asyncio
 #
-from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification
+from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage
+from .form import PropertyImageForm, PropertyImportantForm
 #
 from .consumers import NotifyConsumer
 from .consumers import sendToAllGroup, sendToGroup
@@ -570,11 +571,149 @@ def saveData(request):
     return JsonResponse({'result': 'success', 'duplicatelist': duplicatePropertyList})
 
 # 儲存單一檔案帶圖片
+# (需要新增財產權限 index.add_property)
 @API_CheckLogin
 def saveSingleData(request):
-    files = request.POST
-    print(files)
-    return JsonResponse({})
+    user = request.user
+    if not user.has_perm('index.add_property'):
+        return HttpResponse(status=403)
+
+    # 從前端接收檔案
+    files = request.FILES.get('file')
+    # 必要訊息
+    name = request.POST.get('name')
+    number = request.POST.get('number')
+    serial = request.POST.get('serial')
+    # 附加詳細資料
+    brand = request.POST.get('brand', '')
+    position = request.POST.get('position', '')
+    realPosition = request.POST.get('realPosition', '')
+    tips = request.POST.get('tips', '')
+    getDate = request.POST.get('getDate', '')
+    expiryDate = request.POST.get('expiryDate', '')
+    amount = request.POST.get('amount', '')
+    price = request.POST.get('price', '')
+
+    """""""""""""""""""""""""""""""""
+        檢查重要資訊
+    """""""""""""""""""""""""""""""""
+    # 檢查名稱、流水號、編號
+    Importantform = PropertyImportantForm(request.POST, request.FILES)
+    if not Importantform.is_valid():
+        # 資料缺失或格式不符
+        return JsonResponse({
+            'result': 'failed',
+            'reason': 'InfoEmpty'
+        })
+
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查重複
+    """""""""""""""""""""""""""""""""""""""""""""
+    if Property.objects.filter(property_number=number, serial_number=serial).exists():
+        # 產品重複
+        return JsonResponse({
+            'result': 'failed',
+            'reason': 'Duplicated'
+        })
+    
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查有外鍵之部分，外鍵是否存在
+    """""""""""""""""""""""""""""""""""""""""""""
+    brand = brand.replace(' ','')   # 去掉空白
+    # 檢查品牌是否存在
+    b = Brand.objects.filter(name=brand)
+    if not b.exists():
+        print(f"品牌不存在創建{brand}.")
+        b = Brand.objects.create(name=brand)
+        b.save()
+    else: b = b.first()
+    
+    position = position.replace(' ','') # 去掉空白
+    # 檢查位置是否存在
+    p = Position.objects.filter(name=position)
+    if not p.exists():
+        print(f"位置不存在創建{position}.")
+        p = Position.objects.create(name=position)
+        p.save()
+    else: p = p.first()
+    
+    realPosition = realPosition.replace(' ','') # 去掉空白
+    # 檢查真實位置是否存在
+    rp = Position.objects.filter(name=realPosition)
+    if not rp.exists():
+        print(f"真實位置不存在創建{realPosition}.")
+        rp = Position.objects.create(name=realPosition)
+        rp.save()
+    else: rp = rp.first()
+    
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查數字是否正確
+    """""""""""""""""""""""""""""""""""""""""""""
+    try:
+        expiryDate = float(expiryDate)
+        amount = float(amount)
+        price = float(price)
+    except Exception as e:
+        expiryDate = 0
+        amount = 0
+        price = 0
+        print("數字轉換錯誤...使用預設都為0")
+    
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查日期是否正確
+    """""""""""""""""""""""""""""""""""""""""""""
+    try:
+        year = int(getDate[:4])
+        month = int(getDate[5:7])
+        day = int(getDate[8:10])
+        datetime.date(year, month, day)
+    except Exception as e:
+        getDate = datetime.datetime.now().strftime("%Y-%m-%d")
+        print("日期格式不正確...使用預設當前日期")
+
+    """""""""""""""""""""""""""""""""""""""""""""
+    # 資訊暫時儲存
+    """""""""""""""""""""""""""""""""""""""""""""
+    prop = Property()
+    prop.name = name
+    prop.serial_number = serial
+    prop.property_number = number
+    prop.tips = tips
+    prop.brand = b
+    prop.position = rp
+    prop.label_position = p
+    prop.expiry_date = expiryDate
+    prop.quantity = amount
+    prop.price = price
+    prop.get_date = getDate
+
+    """""""""""""""""""""""""""""""""""""""""""""
+    # 圖片檢查、確定有圖片上傳
+    """""""""""""""""""""""""""""""""""""""""""""
+    Imageform = PropertyImageForm(request.POST, request.FILES)
+    # 若圖片不存在則上傳圖片，若重複則更新舊圖片
+    if Imageform.is_valid():
+        imageName = name + serial + number
+        pi = PropertyImage.objects.filter(image_name=imageName)
+        if not pi.exists():
+            pi = PropertyImage()
+            pi.image = files
+            pi.image_name = imageName
+            pi.save()
+        else:
+            pi = pi.first()
+            pi.image = files
+            pi.update()
+        prop.image = pi
+    else: 
+        print('沒有上傳圖片')
+
+    """""""""""""""""""""""""""""""""""""""""""""
+    # 寫入資料庫
+    """""""""""""""""""""""""""""""""""""""""""""
+    prop.save()
+
+    return JsonResponse({'result': 'success'})
 
 # 刪除財產
 # (需要租刪除財產權限 index.delete_property)
@@ -717,5 +856,3 @@ def getSingleData(request):
         data.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
 
     return JsonResponse({'result': 'success', 'data': data})
-
-
