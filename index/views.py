@@ -6,7 +6,7 @@ from django.contrib.auth.models import User, Permission, Group
 from django.contrib.auth.decorators import login_required
 #
 import json
-import sys, os, datetime, asyncio
+import sys, os, datetime, asyncio, re, os.path
 #
 from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage
 from .form import PropertyImageForm, PropertyImportantForm
@@ -171,17 +171,28 @@ def getLoanProperty(request):
     waiting_return_data = []
     returned_data = []
 
-    # 等待核准清單
+    loaning_list = None
     waiting_list = None
+    waiting_return_list = None
+    returned_list = None
     if user.has_perm('index.change_leaseproperty') and user.has_perm('index.delete_leaseproperty'):
         waiting_list = LeaseProperty.objects.filter(status='w').all()
+        loaning_list = LeaseProperty.objects.filter(status='l').all()
+        waiting_return_list = LeaseProperty.objects.filter(status='c').all()
+        returned_list = LeaseHistory.objects.all()
     else:
         waiting_list = LeaseProperty.objects.filter(status='w', borrower=user.__str__()).all()
+        loaning_list = LeaseProperty.objects.filter(status='l', borrower=user.__str__()).all()
+        waiting_return_list = LeaseProperty.objects.filter(status='c', returner=user.__str__()).all()
+        returned_list = LeaseHistory.objects.filter(returner=user.__str__()).all()
+    
+    # 等待核准清單
     for waiting in waiting_list:
         waiting_dict = {}
         waiting_dict.setdefault("id", waiting.id.__str__())
         waiting_dict.setdefault("borrower", waiting.borrower.__str__())
         waiting_dict.setdefault("leaseProperty", waiting.leaseProperty.__str__())
+        waiting_dict.setdefault("leasePropertyId", waiting.leaseProperty.id.__str__())
         waiting_dict.setdefault("serial_number", waiting.leaseProperty.serial_number.__str__())
         waiting_dict.setdefault("product_number", waiting.leaseProperty.property_number.__str__())
         waiting_dict.setdefault("borrow_administrator", waiting.borrow_administrator.__str__())
@@ -190,15 +201,11 @@ def getLoanProperty(request):
         waiting_data.append(waiting_dict)
 
     # 正在租借中的物品清單
-    loaning_list = None
-    if user.has_perm('index.change_leaseproperty') and user.has_perm('index.delete_leaseproperty'):
-        loaning_list = LeaseProperty.objects.filter(status='l').all()
-    else:
-        loaning_list = LeaseProperty.objects.filter(status='l', borrower=user.__str__()).all()
     for loaning in loaning_list:
         loaning_dict = {}
         loaning_dict.setdefault("id", loaning.id.__str__())
         loaning_dict.setdefault("leaseProperty", loaning.leaseProperty.__str__())
+        loaning_dict.setdefault("leasePropertyId", loaning.leaseProperty.id.__str__())
         loaning_dict.setdefault("serial_number", loaning.leaseProperty.serial_number.__str__())
         loaning_dict.setdefault("product_number", loaning.leaseProperty.property_number.__str__())
         loaning_dict.setdefault("borrow_administrator", loaning.borrow_administrator.__str__())
@@ -211,15 +218,11 @@ def getLoanProperty(request):
         loaning_data.append(loaning_dict)
     
     # 等待核准清單
-    waiting_return_list = None
-    if user.has_perm('index.change_leaseproperty') and user.has_perm('index.delete_leaseproperty'):
-        waiting_return_list = LeaseProperty.objects.filter(status='c').all()
-    else:
-        waiting_return_list = LeaseProperty.objects.filter(status='c', returner=user.__str__()).all()
     for waiting_return in waiting_return_list:
         waiting_return_dict = {}
         waiting_return_dict.setdefault("id", waiting_return.id.__str__())
         waiting_return_dict.setdefault("leaseProperty", waiting_return.leaseProperty.__str__())
+        waiting_return_dict.setdefault("leasePropertyId", waiting_return.leaseProperty.id.__str__())
         waiting_return_dict.setdefault("serial_number", waiting_return.leaseProperty.serial_number.__str__())
         waiting_return_dict.setdefault("product_number", waiting_return.leaseProperty.property_number.__str__())
         waiting_return_dict.setdefault("borrow_administrator", waiting_return.borrow_administrator.__str__())
@@ -232,11 +235,6 @@ def getLoanProperty(request):
         waiting_return_data.append(waiting_return_dict)
 
     # 已歸還物品清單
-    returned_list = None
-    if user.has_perm('index.change_leaseproperty') and user.has_perm('index.delete_leaseproperty'):
-        returned_list = LeaseHistory.objects.all()
-    else:
-        returned_list = LeaseHistory.objects.filter(returner=user.__str__()).all()
     for returned in returned_list:
         returned_dict = {}
         returned_dict.setdefault("id", returned.id.__str__())
@@ -318,29 +316,36 @@ def loanProperty(request):
     return JsonResponse({'result': 'success'})
 
 # 同意租借財產
-# (需要租用財產權限 index.view_lease_property)
+# (需要租用財產權限 index.view_leaseproperty, index.change_leaseproperty, index.delete_leaseproperty, index.add_leaseproperty)
 @API_CheckLogin
 def agreeLoanProperty(request):
     user = request.user
 
-    if not user.has_perm('index.change_leaseproperty') and not user.has_perm('index.delete_leaseproperty') and not user.has_perm('index.add_leaseproperty'):
+    if not user.has_perm('index.view_leaseproperty') and not user.has_perm('index.change_leaseproperty') and not user.has_perm('index.delete_leaseproperty') and not user.has_perm('index.add_leaseproperty'):
         return JsonResponse({'result': 'permissionDeny'})
 
     # 取得序號以及產品編號
-    product_id = request.GET.get('id')
+    leaseId = request.GET.get('id')
     agree = request.GET.get('agree')
+    leasePropertyId = request.GET.get('leasePropertyId')
+
+    print("財產:", leasePropertyId)
 
     if agree == "True":
-        leasing = LeaseProperty.objects.filter(id=product_id).first()
+        leasing = LeaseProperty.objects.filter(id=leaseId).first()
         leasing.borrow_administrator = user.__str__()
         leasing.agree_date = datetime.datetime.now()
         leasing.leaseProperty.status = 'o'
         leasing.status = 'l'
         leasing.leaseProperty.save()
         leasing.save()
+
+        other_leasing = LeaseProperty.objects.exclude(id=leaseId).filter(leaseProperty__id=leasePropertyId)
+        other_leasing.delete()
     else:
-        leasing = LeaseProperty.objects.filter(id=product_id).first()
+        leasing = LeaseProperty.objects.filter(id=leaseId).first()
         leasing.delete()
+
 
 
     return JsonResponse({'result': 'success'})
@@ -436,6 +441,7 @@ def agreeReturnProperty(request):
 """
 
 # 儲存檔案
+# (需要新增財產權限 index.add_property)
 @API_CheckLogin
 def saveData(request):
     """
@@ -443,6 +449,10 @@ def saveData(request):
     # (需要登入)
     # (need login)
     """
+    user = request.user
+    if not user.has_perm('index.add_property'):
+        return HttpResponse(status=403)
+
     if request.POST.get('data') is None:
         # Check the data that client send is empty or not
         data = {'result': 'empty'}
@@ -693,7 +703,20 @@ def saveSingleData(request):
     Imageform = PropertyImageForm(request.POST, request.FILES)
     # 若圖片不存在則上傳圖片，若重複則更新舊圖片
     if Imageform.is_valid():
+        # 副檔名
+        extension = re.findall(r".[a-zA-Z]+$", files._name)
+        # 若檔案沒有副檔名
+        if not extension:
+            extension = ['.jpg']
+        # 圖片於資料庫內的名稱
         imageName = name + serial + number
+        # 更改檔名
+        files._name = imageName + extension[0]
+        imagePosition = os.path.abspath(os.getcwd()) + "/static/PropertyImage/"
+        if os.path.isfile(imagePosition + files._name):
+            os.remove(imagePosition + files._name)
+            print(f"刪除原有圖檔{files._name}")
+
         pi = PropertyImage.objects.filter(image_name=imageName)
         if not pi.exists():
             pi = PropertyImage()
@@ -703,7 +726,7 @@ def saveSingleData(request):
         else:
             pi = pi.first()
             pi.image = files
-            pi.update()
+            pi.save()
         prop.image = pi
     else: 
         print('沒有上傳圖片')

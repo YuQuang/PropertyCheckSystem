@@ -16,12 +16,30 @@
 {% block content %}
 {% verbatim %}
 <div id="itemCard">
-    <div v-cloak class="container mx-auto" @click="hideContextMenu( $event )" @scroll="hideContextMenu( $event )">
+    <div v-cloak class="container mx-auto px-2" @scroll="hideContextMenu( $event )">
         <!-- 搜尋欄位 -->
         <div class="py-2">
-            <div class="lg:w-2/3 md:w-1/2 w-0 p-3 inline-block">
+            <div class="lg:w-2/3 md:w-1/2 w-1/2 p-3 inline-block">
+                <svg class="inline-block mr-3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" x="0px" y="0px" viewBox="0 0 301.219 301.219" style="enable-background:new 0 0 301.219 301.219;" xml:space="preserve">
+                    <path d="M159.365,23.736v-10c0-5.523-4.477-10-10-10H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h139.365   C154.888,33.736,159.365,29.259,159.365,23.736z"/>
+                    <path d="M130.586,66.736H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h120.586c5.523,0,10-4.477,10-10v-10   C140.586,71.213,136.109,66.736,130.586,66.736z"/>
+                    <path d="M111.805,129.736H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h101.805c5.523,0,10-4.477,10-10v-10   C121.805,134.213,117.328,129.736,111.805,129.736z"/>
+                    <path d="M93.025,199.736H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h83.025c5.522,0,10-4.477,10-10v-10   C103.025,204.213,98.548,199.736,93.025,199.736z"/>
+                    <path d="M74.244,262.736H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h64.244c5.522,0,10-4.477,10-10v-10   C84.244,267.213,79.767,262.736,74.244,262.736z"/>
+                    <path d="M298.29,216.877l-7.071-7.071c-1.875-1.875-4.419-2.929-7.071-2.929c-2.652,0-5.196,1.054-7.072,2.929l-34.393,34.393   V18.736c0-5.523-4.477-10-10-10h-10c-5.523,0-10,4.477-10,10v225.462l-34.393-34.393c-1.876-1.875-4.419-2.929-7.071-2.929   c-2.652,0-5.196,1.054-7.071,2.929l-7.072,7.071c-3.904,3.905-3.904,10.237,0,14.142l63.536,63.536   c1.953,1.953,4.512,2.929,7.071,2.929c2.559,0,5.119-0.976,7.071-2.929l63.536-63.536   C302.195,227.113,302.195,220.781,298.29,216.877z"/>
+                </svg>
+                <select class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 
+                             focus:border-indigo-500 text-base pl-3 pr-10">
+                    <option>名稱</option>
+                    <option>編號</option>
+                    <option>地點</option>
+                    <option>地點</option>
+                    <option>取得日期</option>
+                    <option>登記日期</option>
+                    <option>價格</option>
+                </select>
             </div>
-            <div class="lg:w-1/3 md:w-1/2 w-full p-3 inline-block">
+            <div class="lg:w-1/3 md:w-1/2 w-1/2 p-3 inline-block">
                 <input v-model="searchInput" v-on:keydown="search" class="py-3 px-4 bg-white rounded-lg placeholder-gray-400
                     text-gray-900 appearance-none shadow-md w-full focus:outline-none
                     focus:ring-2 focus:ring-blue-600" placeholder="Search">
@@ -38,8 +56,8 @@
             </svg>
         </div>
         <!-- 卡片樣本迴圈生成 -->
-        <section class="text-gray-600 body-font">
-            <div class="container px-5 py-5 mx-auto">
+        <section class="text-gray-600 body-font px-2">
+            <div class="container py-5 mx-auto">
                 <div class="flex flex-wrap -m-4">
                     <div v-for="singleData in pagePropertyData" class="xl:w-1/4 md:w-1/3 w-1/2 p-4">
                         <div :class="'rightMenu rounded-xl hover:bg-gray-200 hover:opacity-75 cursor-pointer ' + ((singleData.status == 'a') ? 'bg-gray-100' : 'bg-red-100')"
@@ -74,6 +92,12 @@
                          text-gray-700 bg-white hover:text-gray-500">
                         Previous
                     </a>
+                </div>
+                <div class="relative inline-flex items-center">
+                    <select style="appearance: none;-webkit-appearance: none;-moz-appearance: none;-ms-appearance: none;text-align-last: center;"
+                            class="w-10 text-center bg-opacity-0" @change="phoneChangePage($event)">
+                        <option v-for="n in total_page" :value="n">{{n}}</option>
+                    </select>
                 </div>
                 <a v-if="now_page+1 <= total_page" @click="reLoad(now_page+1)"
                     class="ml-3 relative inline-flex items-center px-4 py-2
@@ -626,9 +650,15 @@
                 }
 
                 return pages
+            },
+            // 手機板更改畫面
+            phoneChangePage(e){
+                this.changePage(e.target.options.selectedIndex+1)
             }
         },
         mounted() {
+            window.addEventListener('click', this.hideContextMenu);
+            window.addEventListener('scroll', this.hideContextMenu, true);
         },
         created() {
             this.Load(undefined,true);

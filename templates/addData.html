@@ -170,6 +170,8 @@
 
 {% block javascript %}
     <script>
+        navbar.navbarMenuAddCss = navbar.navbarMainMenuCss;
+
         const add_data = Vue.createApp({
             data(){
                 return{
@@ -232,6 +234,7 @@
                     .catch(()=>{})
                     .finally(()=>{})
                 },
+                // 讀取Cookie
                 readCookie(name) {
                     var nameEQ = name + "=";
                     var ca = document.cookie.split(';');
@@ -241,6 +244,21 @@
                         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
                     }
                     return null;
+                },
+                // 清除表格資料
+                clearForm(){
+                    this.productImg = "https://hbimg.huabanimg.com/e83292f9395ca9e261afdbc75874d9ee3e27c6d187388-pnMfk1_fw658";
+                    this.productName =  "";
+                    this.productBrand =  "";
+                    this.productSerial = "";
+                    this.productNumber = "";
+                    this.productPosition = "";
+                    this.productRealPosition = "";
+                    this.productExpiry = 0;
+                    this.productPrice = 0;
+                    this.productAmount = 0;
+                    this.productTips = "";
+                    this.setToday();
                 },
                 // 儲存檔案
                 saveSingleData(){
@@ -258,6 +276,7 @@
                     myformData.append('price', this.productPrice);
                     myformData.append('tips', this.productTips);
                     
+                    let self = this;
                     axios({
                         method: "post",
                         url: this.saveSingleDataUrl,
@@ -268,10 +287,24 @@
                         data: myformData,
                     })
                     .then((res)=>{
-                        alert(res.data.result);
+                        result = res.data.result;
+                        // 成功則顯示成功，然後退出
+                        if(result != "failed"){
+                            alert(result);
+                            self.clearForm();
+                            return
+                        }
+                        // 失敗看原因
+                        reason = res.data.reason;
+                        if(reason == "InfoEmpty"){
+                            alert("Name, Serial, Number其中一欄為空");
+                        }else if(reason == "Duplicated"){
+                            alert("已經有這筆資料位於資料庫內");
+                        }
                     })
-                    .catch(()=>{
-
+                    .catch((err)=>{
+                        status = err.response.status;
+                        if(status) alert("你!沒有!權限!");
                     });
                 },
                 // 取得當前日期

@@ -6,11 +6,6 @@
 {% endblock %}
 
 {% block style %}
-<style>
-    [v-cloak] {
-        display: none;
-    }
-</style>
 {% endblock %}
 
 
@@ -19,11 +14,15 @@
         <div class="container mx-auto">
             <!-- 上方分頁標籤 -->
             <div class="bg-white w-full">
-                <nav class="flex flex-col sm:flex-row">
+                <nav class="flex flex-row">
                     <button @click="changeTab(1)" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + borrowTabCss">
                         租借
-                    </button><button @click="changeTab(2)" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + returnTabCss">
+                    </button>
+                    <button @click="changeTab(2)" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + returnTabCss">
                         歸還
+                    </button>
+                    <button @click="" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + historyTabCss">
+                        歷史紀錄
                     </button>
                 </nav>
             </div>
@@ -61,12 +60,12 @@
                                             <button type="button" class="group relative h-full justify-center border border-transparent
                                                 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
                                                 focus:ring-offset-2 focus:ring-indigo-500"
-                                                @click="agree(waiting.id, true, false)"
+                                                @click="agree(waiting.id, waiting.leasePropertyId, true, false)"
                                                 >Agree</button>
                                             <button type="button" class="group relative h-full justify-center border border-transparent
                                                 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
                                                 focus:ring-offset-2 focus:ring-indigo-500"
-                                                @click="agree(waiting.id, false, false)"
+                                                @click="agree(waiting.id, waiting.leasePropertyId, false, false)"
                                                 >Disagree</button>
                                         </div>
                                     </div>
@@ -155,7 +154,7 @@
                                         <button type="button" class="group relative h-full border border-transparent p-2
                                             text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
                                             focus:ring-offset-2 focus:ring-indigo-500"
-                                            @click="agree(waiting_return.id, true, true)"
+                                            @click="agree(waiting_return.id, None, true, true)"
                                             >Return</button>
                                     </div>
                                 {% endif %}
@@ -263,11 +262,12 @@
                         })
                 },
                 // 同意租借功能
-                agreeBorrow(id, agree){
+                agreeBorrow(id, leasePropertyId, agree){
                     if(agree){
                         axios.get(this.agreeLoanProperty,{
                                 params:{
                                     "id": id,
+                                    "leasePropertyId": leasePropertyId,
                                     "agree": "True",
                                 },
                             })
@@ -283,6 +283,7 @@
                         axios.get(this.agreeLoanProperty,{
                                 params:{
                                     "id": id,
+                                    "leasePropertyId": leasePropertyId,
                                     "agree": "False",
                                 },
                             })
@@ -329,10 +330,10 @@
                     }
                 },
                 // 統合
-                agree(id, agree, RetOrBor){
+                agree(id, leasePropertyId, agree, RetOrBor){
                     // 租借功能
                     if(RetOrBor == false){
-                        this.agreeBorrow(id, agree);
+                        this.agreeBorrow(id, leasePropertyId, agree);
                     }
                     // 歸還功能
                     else if(RetOrBor == true){

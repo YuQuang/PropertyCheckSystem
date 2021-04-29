@@ -33,6 +33,9 @@
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
+        [v-cloak] {
+            display: none;
+        }
     </style>
 
     <!-- Jquery -->
@@ -85,7 +88,6 @@
                                     <a :href="search" :class="navbarMenuSearchCss">Search</a>
                                     <a :href="addData" :class="navbarMenuAddCss">Add</a>
                                     <a :href="leaseProperty" :class="navbarMenuLeasePropertyCss">leaseProperty</a>
-                                    <a :href="stockTaking" :class="navbarMenuStockTakingCss">StockTaking</a>
                                 </div>
                             </div>
                         </div>
@@ -176,7 +178,7 @@
         </div>
 
         <!-- 內容部分 -->
-        <div id="main" class="flex-grow w-full">
+        <div id="main" class="flex-grow w-full" onclick="navbar.switchProfileMenu(false); navbar.switchNotifyMenu(false)">
             {% block content %}
             {% endblock %}
         </div>
@@ -392,6 +394,9 @@
                 }
             },
             mounted(){
+                window.addEventListener('scroll', ()=>{
+                    this.switchProfileMenu(false);
+                }, true);
                 this.navbarMenuHomeCss = this.navbarSubMenuCss;
                 this.navbarMenuImportCss = this.navbarSubMenuCss;
                 this.navbarMenuSearchCss = this.navbarSubMenuCss;
