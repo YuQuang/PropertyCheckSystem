@@ -8,8 +8,7 @@ from django.contrib.auth.decorators import login_required
 import json
 import sys, os, datetime, asyncio, re, os.path
 #
-from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage
-from .form import PropertyImageForm, PropertyImportantForm
+from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage, CurrentCheckProperty
 #
 from .consumers import NotifyConsumer
 from .consumers import sendToAllGroup, sendToGroup
@@ -93,6 +92,12 @@ def leaseProperty(request):
 def stockTaking(request):
     return render(request, "stockTaking.html")
 
+# 使用者詳細訊息
+# (需要登入)
+# (need login)
+@login_required
+def profile(request):
+    return render(request, "profile.html")
 
 """
 #   Web API部分
@@ -311,7 +316,7 @@ def loanProperty(request):
     noti.save()
 
     # 通知前端
-    sendToGroup({"action": "newNotify"}, "admin")
+    sendToAllGroup({"action": "newNotify"})
 
     return JsonResponse({'result': 'success'})
 
@@ -387,7 +392,7 @@ def returnProperty(request):
     noti.save()
 
     # 通知前端
-    sendToGroup({"action": "newNotify"}, "admin")
+    sendToAllGroup({"action": "newNotify"})
 
     return JsonResponse({'result': 'success'})
 
@@ -439,9 +444,9 @@ def agreeReturnProperty(request):
 """
 # 儲存檔案、刪除、取得全部、取得單一檔案
 """
-
 # 儲存檔案
 # (需要新增財產權限 index.add_property)
+# 會留下提醒
 @API_CheckLogin
 def saveData(request):
     """
@@ -493,10 +498,26 @@ def saveData(request):
             raise Exception
 
         """
+        # 若為不為V或X
+        """
+        if is_check != 'v' and is_check != 'x' and is_check != 'V' and is_check != 'X':
+            is_check = 'x'
+        
+
+        """
         # 產品重複
         # 更新資訊
         """
-        if Property.objects.filter(serial_number=number, property_number=product_number).first() != None:
+        duplicate = Property.objects.filter(serial_number=number, property_number=product_number).first()
+        if duplicate != None:
+            # 檢查重複產品是否有盤點資料(沒有則創建)
+            checkProp = CurrentCheckProperty.objects.filter(prop=duplicate)
+            if not checkProp.exists():
+                preCheckProp = CurrentCheckProperty()
+                preCheckProp.status = 'x'
+                preCheckProp.prop = duplicate
+                preCheckProp.save()
+            # 印出重複產品
             print(f"{ saveData.__name__ }() duplicated property { number } - { product_number } { product_name } found, update info...")
             # 更新的財產資訊添加至更新清單
             duplicatePropertyList.append({'number': number, 'product_number': product_number, 'product_name': product_name})
@@ -568,6 +589,15 @@ def saveData(request):
         preSaveData.brand           = Brand.objects.filter(name=brand).first()
         preSaveData.quantity_unit   = Unit.objects.filter(name=unit).first()
         totalSaveData.append(preSaveData)
+
+        """
+        # 建立盤點部分關聯資料
+        """
+        preCheckProp = CurrentCheckProperty()
+        preCheckProp.status = is_check
+        preCheckProp.prop = preSaveData
+        preCheckProp.save()
+
     Property.objects.bulk_create(totalSaveData)
     # except Exception as e:
     #     exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -575,13 +605,24 @@ def saveData(request):
     #     print(exc_type, fname, exc_tb.tb_lineno)
     #     return JsonResponse({'result': 'failed'})
 
+    """
+        將提醒事件添加至資料表內
+    """
+    noti = Notification()
+    noti.action = 'a'
+    noti.action_user = user
+    noti.action_date = datetime.datetime.now()
+    noti.notify_group = Group.objects.filter(name="admin").first()
+    noti.save()
 
+    sendToAllGroup({"action": "newNotify"})
 
     print(f"{saveData.__name__ }() Done!\n")
     return JsonResponse({'result': 'success', 'duplicatelist': duplicatePropertyList})
 
 # 儲存單一檔案帶圖片
 # (需要新增財產權限 index.add_property)
+# 會留下提醒
 @API_CheckLogin
 def saveSingleData(request):
     user = request.user
@@ -736,10 +777,31 @@ def saveSingleData(request):
     """""""""""""""""""""""""""""""""""""""""""""
     prop.save()
 
+    """""""""""""""""""""""""""""""""""""""""""""
+    # 建立盤點部分關聯資料
+    """""""""""""""""""""""""""""""""""""""""""""
+    preCheckProp = CurrentCheckProperty()
+    preCheckProp.status = 'x'
+    preCheckProp.prop = prop
+    preCheckProp.save()
+
+    """
+        將提醒事件添加至資料表內
+    """
+    noti = Notification()
+    noti.action = 'a'
+    noti.action_user = user
+    noti.action_date = datetime.datetime.now()
+    noti.notify_group = Group.objects.filter(name="admin").first()
+    noti.save()
+
+    sendToAllGroup({"action": "newNotify"})
+
     return JsonResponse({'result': 'success'})
 
 # 刪除財產
 # (需要租刪除財產權限 index.delete_property)
+# 會留下提醒
 @API_CheckLogin
 def deleteData(request):
     """
@@ -767,6 +829,18 @@ def deleteData(request):
         return JsonResponse({'result': 'Property not return yet!'})
 
     result.delete()
+
+    """
+        將提醒事件添加至資料表內
+    """
+    noti = Notification()
+    noti.action = 'd'
+    noti.action_user = user
+    noti.action_date = datetime.datetime.now()
+    noti.notify_group = Group.objects.filter(name="admin").first()
+    noti.save()
+
+    sendToAllGroup({"action": "newNotify"})
 
     return JsonResponse({'result': 'success'})
 
@@ -879,3 +953,65 @@ def getSingleData(request):
         data.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
 
     return JsonResponse({'result': 'success', 'data': data})
+
+"""
+# 盤點API
+"""
+@API_CheckLogin
+def getCheckProperty(request):
+    # Change Property to python dictionary
+    newsdata = CurrentCheckProperty.objects.all()
+    data = []
+    for singleCheck in newsdata:
+        singleProperty = singleCheck.prop
+        singleDict = {}
+        # Wrapper the data
+        singleDict.setdefault('id', singleCheck.id.__str__())
+        singleDict.setdefault('is_check', singleCheck.status.__str__())
+        singleDict.setdefault('action_user', singleCheck.action_user.__str__())
+        singleDict.setdefault('product_name', singleProperty.name.__str__())
+        singleDict.setdefault('number', singleProperty.serial_number.__str__())
+        singleDict.setdefault('product_number', singleProperty.property_number.__str__())
+        singleDict.setdefault('tip', singleProperty.tips.__str__())
+        singleDict.setdefault('get_date', singleProperty.get_date.__str__())
+        singleDict.setdefault('age_limit', singleProperty.expiry_date.__str__())
+        singleDict.setdefault('quantity', singleProperty.quantity.__str__())
+        singleDict.setdefault('single_value', singleProperty.price.__str__())
+
+        # With foreign key filter
+        singleDict.setdefault('position', singleProperty.position.__str__())
+        singleDict.setdefault('brand', singleProperty.brand.__str__())
+        singleDict.setdefault('label_position', singleProperty.label_position.__str__())
+        singleDict.setdefault('unit', singleProperty.quantity_unit.__str__())
+        singleDict.setdefault('status', singleProperty.status.__str__())
+
+        if singleProperty.image != None:
+            singleDict.setdefault('image', singleProperty.image.image.__str__())
+        else:
+            singleDict.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
+
+        data.append(singleDict)
+    result = {'result': 'success', 'data': data}
+
+    return JsonResponse(result)
+
+# 更改盤點狀態
+# (需要登入)
+# need Login
+@API_CheckLogin
+def changePropStatus(request):
+    user = request.user
+    data = json.loads(request.body.decode('utf-8'))
+    checkProp = data['data']
+
+    for check in checkProp:
+        preSave = CurrentCheckProperty.objects.filter(id=check.get('id', 0))
+        if not preSave.exists():
+            continue
+
+        preSave = preSave.first()
+        preSave.action_user = user
+        preSave.status = check.get('is_check', 'x')
+        preSave.save()
+
+    return JsonResponse({'result': 'success'})

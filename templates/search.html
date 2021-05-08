@@ -19,8 +19,8 @@
     <div v-cloak class="container mx-auto px-2" @scroll="hideContextMenu( $event )">
         <!-- 搜尋欄位 -->
         <div class="py-2">
-            <div class="lg:w-2/3 md:w-1/2 w-1/2 p-3 inline-block">
-                <svg class="inline-block mr-3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30px" height="30px" x="0px" y="0px" viewBox="0 0 301.219 301.219" style="enable-background:new 0 0 301.219 301.219;" xml:space="preserve">
+            <div class="lg:w-2/3 md:w-1/2 w-1/2 p-3 inline-block flex-wrap">
+                <svg class="inline-block mr-3 w-6" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 301.219 301.219" style="enable-background:new 0 0 301.219 301.219;" xml:space="preserve">
                     <path d="M159.365,23.736v-10c0-5.523-4.477-10-10-10H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h139.365   C154.888,33.736,159.365,29.259,159.365,23.736z"/>
                     <path d="M130.586,66.736H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h120.586c5.523,0,10-4.477,10-10v-10   C140.586,71.213,136.109,66.736,130.586,66.736z"/>
                     <path d="M111.805,129.736H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h101.805c5.523,0,10-4.477,10-10v-10   C121.805,134.213,117.328,129.736,111.805,129.736z"/>
@@ -28,7 +28,7 @@
                     <path d="M74.244,262.736H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h64.244c5.522,0,10-4.477,10-10v-10   C84.244,267.213,79.767,262.736,74.244,262.736z"/>
                     <path d="M298.29,216.877l-7.071-7.071c-1.875-1.875-4.419-2.929-7.071-2.929c-2.652,0-5.196,1.054-7.072,2.929l-34.393,34.393   V18.736c0-5.523-4.477-10-10-10h-10c-5.523,0-10,4.477-10,10v225.462l-34.393-34.393c-1.876-1.875-4.419-2.929-7.071-2.929   c-2.652,0-5.196,1.054-7.071,2.929l-7.072,7.071c-3.904,3.905-3.904,10.237,0,14.142l63.536,63.536   c1.953,1.953,4.512,2.929,7.071,2.929c2.559,0,5.119-0.976,7.071-2.929l63.536-63.536   C302.195,227.113,302.195,220.781,298.29,216.877z"/>
                 </svg>
-                <select class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 
+                <select class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 flex-grow
                              focus:border-indigo-500 text-base pl-3 pr-10">
                     <option>名稱</option>
                     <option>編號</option>
@@ -45,20 +45,29 @@
                     focus:ring-2 focus:ring-blue-600" placeholder="Search">
             </div>
         </div>
-        <!-- 讀取畫面 -->
-        <div class="w-1/2 mx-auto">
-            <svg :class="[ spinCircleCss, spinCircleStatus]" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                </path>
-            </svg>
-        </div>
         <!-- 卡片樣本迴圈生成 -->
         <section class="text-gray-600 body-font px-2">
             <div class="container py-5 mx-auto">
                 <div class="flex flex-wrap -m-4">
+                    <!-- 載入骨架 -->
+                    <div class="xl:w-1/4 md:w-1/3 w-1/2 p-6" v-for="n in 12" :class="spinCircleStatus">
+                        <div class="h-full border-2 border-gray-200 rounded-lg overflow-hidden bg-white">
+                        <div class="lg:h-40 bg-gray-400 md:h-36 w-full object-cover object-center"></div>
+                        <div class="p-6">
+                            <h2 class="bg-gray-400 animate-pulse h-4 w-1/4 mb-2"></h2>
+                            <h1 class="w-1/2 mb-4 h-6 animate-pulse bg-gray-500"></h1>
+                            <p class="leading-relaxed mb-3 w-full h-3 animate-pulse bg-gray-400"></p>
+                            <p class="leading-relaxed mb-3 w-2/3 h-3 animate-pulse bg-gray-400"></p>
+                            <p class="leading-relaxed mb-3 w-1/2 h-3 animate-pulse bg-gray-400"></p>
+                            <div class="flex items-center flex-wrap ">
+                            <a class="bg-indigo-300 h-4 animate-pulse mt-2 w-32 inline-flex items-center md:mb-2 lg:mb-0"></a>
+                            <span class="bg-indigo-300 w-16 mt-2 h-4 animate-pulse mr-3 px-2 inline-flex items-center ml-auto leading-none text-sm pr-5 py-1">
+                            </span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <!-- 真正的資料卡片 -->
                     <div v-for="singleData in pagePropertyData" class="xl:w-1/4 md:w-1/3 w-1/2 p-4">
                         <div :class="'rightMenu rounded-xl hover:bg-gray-200 hover:opacity-75 cursor-pointer ' + ((singleData.status == 'a') ? 'bg-gray-100' : 'bg-red-100')"
                             ondragstart='return false' @click="href( singleData )"
@@ -197,6 +206,11 @@
                     </div>
                     <div class="border-t border-gray-200 overflow-y-auto">
                         <dl>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <div></div>
+                                <img :src="currentData.image">
+                                <div></div>
+                            </div>
                             <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">
                                     Full name
@@ -361,7 +375,6 @@
                 pagePropertyData: [],
                 dialogBackgroundCss: "fixed z-10 inset-0 overflow-y-auto transition duration-300",
                 dialogBackgroundStatus: "hidden",
-                spinCircleCss: "animate-spin text-white mt-10 h-full w-full",
                 spinCircleStatus: "hidden",
                 searchInput: "",
                 currentData: "",
@@ -654,7 +667,13 @@
             // 手機板更改畫面
             phoneChangePage(e){
                 this.changePage(e.target.options.selectedIndex+1)
-            }
+            },
+            // 排序產品
+            sortProperty(){
+                function compare(){
+
+                }
+            },
         },
         mounted() {
             window.addEventListener('click', this.hideContextMenu);

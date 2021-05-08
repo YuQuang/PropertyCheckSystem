@@ -493,4 +493,42 @@ class Notification(models.Model):
             verbose_name='群體訊息狀態',
             default='n',
         )
-    pass
+
+"""
+# The CurrentCheckProperty
+# 當前盤點儲存表單
+"""
+class CurrentCheckProperty(models.Model):
+    id = models.AutoField(
+            primary_key=True,
+        )
+    # 哪項產品
+    prop = models.ForeignKey(
+            'Property',
+            verbose_name='產品',
+            on_delete=models.CASCADE,
+            default=1,
+        )
+    # 狀態代碼
+    STATUS_CODE = (
+            ('v', 'Checked'),
+            ('x', 'NotChecked'),
+            ('m', 'Missing'),
+            ('b', 'Broken'),
+            ('o', 'Obsolete'),
+        )
+    status = models.CharField(
+            max_length=1,
+            choices=STATUS_CODE,
+            verbose_name='當前盤點物品狀態',
+            default='x',
+        )
+    # 最後做動作的使用者
+    action_user = models.ForeignKey(
+            User,
+            verbose_name='用戶',
+            on_delete=models.SET_NULL,
+            null=True,
+            blank=True,
+        )
+    

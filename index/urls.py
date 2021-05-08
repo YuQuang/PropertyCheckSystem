@@ -19,6 +19,7 @@ urlpatterns = [
     path('aboutUs/', views.aboutUs, name='aboutUs'),
     path('leaseProperty/', views.leaseProperty, name='leaseProperty'),
     path('stockTaking/', views.stockTaking, name='stockTaking'),
+    path('profile/', views.profile, name='profile'),
 
 
     # 新版介面
@@ -51,4 +52,7 @@ urlpatterns = [
     # 同意歸還與同意租借
     path('agreeLoanProperty/', views.agreeLoanProperty, name='agreeLoanProperty'),
     path('agreeReturnProperty/', views.agreeReturnProperty, name='agreeReturnProperty'),
+    # 盤點相關
+    path('getCheckProperty/', views.getCheckProperty, name='getCheckProperty'),
+    path('changePropStatus/', views.changePropStatus, name='changePropStatus'),
 ]

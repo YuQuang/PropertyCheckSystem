@@ -15,6 +15,405 @@
 
 {% block content %}
 <div id="stockTaking">
+    <div :class="{'fixed flex justify-center z-20 w-full top-2 transition-opacity duration-500':true, 'opacity-0': !isAlertShow, 'opacity-100': isAlertShow, 'hidden': isAlertHide}">
+        <div :class="'text-white px-6 py-4 border-0 rounded relative md:max-w-xl ' + alertColor">
+            {% verbatim %}
+            <span class="text-xl inline-block mr-3 align-middle w-6 animate-bounce">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                 viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve">
+                    <path style="fill:#F2B844;" d="M403.065,81.145c-5.657,0-11.398-1.187-16.866-3.699c-9.846-4.523-17.342-12.608-21.107-22.767
+                        c-3.764-10.159-3.346-21.177,1.175-31.023c4.52-9.845,12.606-17.342,22.766-21.107c10.159-3.765,21.176-3.348,31.023,1.174
+                        c20.325,9.334,29.268,33.464,19.933,53.79l0,0C433.165,72.37,418.435,81.145,403.065,81.145z M403.138,18.106
+                        c-2.635,0-5.274,0.469-7.819,1.411c-5.627,2.086-10.105,6.237-12.609,11.69c-2.504,5.454-2.736,11.557-0.65,17.184
+                        S388.297,58.495,393.75,61c11.256,5.171,24.624,0.217,29.794-11.041l0,0c5.169-11.259,0.217-24.624-11.041-29.793
+                        C409.515,18.796,406.331,18.106,403.138,18.106z M431.767,53.737h0.012H431.767z"/>
+                    <path style="fill:#FCC447;" d="M284.133,456.309c-3.517,7.657-8.342,14.319-14.08,19.817c-18.71,17.91-47.17,23.604-72.143,12.135
+                        c-24.973-11.469-39.202-36.766-37.808-62.628c0.432-7.936,2.339-15.936,5.856-23.595L284.133,456.309z"/>
+                    <path style="fill:#F2B844;" d="M284.133,456.309c-3.517,7.657-8.342,14.319-14.08,19.817l-109.951-50.494
+                        c0.432-7.936,2.339-15.936,5.856-23.595L284.133,456.309z"/>
+                    <path style="fill:#F2B844;" d="M198.517,416.99l-32.558-14.952c-14.986,32.63-0.679,71.237,31.952,86.223
+                        c5.648,2.594,11.478,4.291,17.331,5.186C193.777,475.027,186.126,443.972,198.517,416.99z"/>
+                    <path style="fill:#FCC447;" d="M389.974,69.224c-78.145-35.888-169.326-4.377-218.533,102.771l-20.455,44.542
+                        c-15.164,33.021-57.887,58.939-96.618,76.548c-25.741,11.703-25.906,48.172-0.21,59.973l169.682,77.925l169.682,77.924
+                        c25.696,11.801,53.25-12.092,45.353-39.241c-11.883-40.852-20.065-90.148-4.899-123.17l20.455-44.542
+                        C503.637,194.807,468.119,105.111,389.974,69.224z"/>
+                    <path style="fill:#F2B844;" d="M108.632,318.006c38.731-17.608,81.454-43.528,96.618-76.548l20.455-44.542
+                        c43.362-94.423,119.32-130.095,190.229-112.68c-8.008-5.719-16.679-10.749-25.96-15.011
+                        c-78.145-35.889-169.326-4.378-218.532,102.77l-20.455,44.542c-15.164,33.02-57.887,58.939-96.618,76.548
+                        c-25.741,11.703-25.906,48.172-0.21,59.973c0,0,24.171,11.1,54.264,24.92C82.726,366.178,82.892,329.708,108.632,318.006z"/>
+                </svg>
+            </span>
+            <span class="inline-block align-middle mr-8">
+            <b class="capitalize">{{ alertMsg }}</b>
+            </span>
+            <button @click="closeAlert()" class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none">
+            <span>×</span>
+            </button>
+            {% endverbatim %}
+        </div>
+    </div>
+    <!-- 顯示資料的表單 -->
+    <div class='overflow-auto w-full py-10'>
+        <!-- 顯示盤點資料 -->
+        <table v-cloak class='mx-auto md:max-w-4xl w-full whitespace-nowrap rounded-lg bg-white divide-y divide-gray-300 overflow-hidden'>
+            <thead class="bg-gray-50">
+                <tr class="text-gray-600 text-left">
+                    <th class="font-semibold text-sm uppercase px-4 py-4">
+                        Name/Serial
+                    </th>
+                    <th class="font-semibold text-sm uppercase px-2 py-4">
+                        real/label
+                    </th>
+                    <th class="font-semibold text-sm uppercase px-4 py-4 text-center">
+                        status
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+
+                <!-- 載入中的骨架顯示 -->
+                <tr :class="{'hidden': isloading}" v-for="n in 10">
+                    <td class="px-4 py-2">
+                        <div class="items-center relative sm:w-auto w-20">
+                            <div class="p-1"><div class="bg-blue-400 rounded-full animate-pulse leading-relaxed w-full inline-block h-5">&nbsp;</div></div>
+                            <div class="p-1"><div class="bg-gray-500 rounded-full animate-pulse leading-relaxed w-2/3 inline-block h-5">&nbsp;</div></div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2">
+                        <div class="items-center relative sm:w-auto w-20">
+                            <div class="p-1"><div class="bg-gray-400 rounded-full animate-pulse leading-relaxed w-1/3 inline-block h-5">&nbsp;</div></div>
+                            <div class="p-1"><div class="bg-gray-300 rounded-full w-full animate-pulse leading-relaxed inline-block h-5">&nbsp;</div></div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        <div class="p-1"><div class="bg-green-500 rounded-full animate-pulse leading-relaxed w-full inline-block h-5">&nbsp;</div></div>
+                    </td>
+                </tr>
+                
+                {% verbatim %}
+                <!-- 資料顯示 -->
+                <tr v-for="prop in propertyList">
+                    <td class="px-4 py-2">
+                        <div class="items-center relative sm:w-auto w-24" @click="showDetail(prop)">
+                            <div class="font-bold text-lg max-w-full overflow-ellipsis cursor-pointer" style="overflow:hidden;white-space: nowrap;">
+                                {{ prop.product_name }}
+                            </div>
+                            <div class="text-gray-500 text-sm font-semibold cursor-pointer">
+                                {{ prop.product_number }}
+                            </div>
+                            <div class="text-gray-500 text-sm font-semibold cursor-pointer">
+                                {{ prop.number }}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2">
+                        <div class="items-center relative sm:w-auto w-20">
+                            <div class="text-lg font-semibold max-w-full overflow-ellipsis" style="overflow:hidden;white-space: nowrap;">
+                                {{ prop.position }}
+                            </div>
+                            <div class="text-gray-600 text-base font-semibold max-w-full overflow-ellipsis" style="overflow:hidden;white-space: nowrap;">
+                                {{ prop.label_position }}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                        <div class="text-gray-600 font-semibold text-xs px-2 text-center">
+                            {{ prop.action_user }}
+                        </div>
+                        <span v-if="prop.is_check == 'v'" @click="checkProp(prop)" @contextmenu="onLongTouch(prop)" oncontextmenu="return false;"
+                              @touchstart="touchStart($event, prop)" @touchend="touchEnd()" class="text-green-800 bg-green-200 font-semibold px-2 rounded-full select-none cursor-pointer">
+                            Check
+                        </span>
+                        <span v-if="prop.is_check == 'x'" @click="checkProp(prop)" @contextmenu="onLongTouch(prop)" oncontextmenu="return false;"
+                              @touchstart="touchStart($event, prop)" @touchend="touchEnd()" class="text-red-800 bg-red-200 font-semibold px-2 rounded-full select-none cursor-pointer">
+                            NotCheck
+                        </span>
+                        <span v-if="prop.is_check == 'b'" @click="checkProp(prop)" @contextmenu="onLongTouch(prop)" oncontextmenu="return false;"
+                              @touchstart="touchStart($event, prop)" @touchend="touchEnd()" class="text-yellow-800 bg-yellow-200 font-semibold px-2 rounded-full select-none cursor-pointer">
+                              Broken
+                        </span>
+                        <span v-if="prop.is_check == 'm'" @click="checkProp(prop)" @contextmenu="onLongTouch(prop)" oncontextmenu="return false;"
+                              @touchstart="touchStart($event, prop)" @touchend="touchEnd()" class="text-blue-800 bg-blue-200 font-semibold px-2 rounded-full select-none cursor-pointer">
+                              Missing
+                        </span>
+                        <span v-if="prop.is_check == 'o'" @click="checkProp(prop)" @contextmenu="onLongTouch(prop)" oncontextmenu="return false;"
+                              @touchstart="touchStart($event, prop)" @touchend="touchEnd()" class="text-purple-800 bg-indigo-200 font-semibold px-2 rounded-full select-none cursor-pointer">
+                              Obsolete
+                        </span>
+                    </td>
+                </tr>
+                {% endverbatim %}
+
+            </tbody>
+        </table>
+    </div>
+    <!-- 右下角按鈕 -->
+    <div v-cloak class="fixed lg:right-10 lg:bottom-10 right-5 bottom-5 justify-items-end">
+        <!-- 功能清單 -->
+        <div class="flex w-full justify-end gap-3">
+            <!-- 送出按鈕 -->
+            <div @click="sendPropertyCheck()" :class="{'w-14 h-14 p-4 bg-gray-100 shadow-xl rounded-full cursor-pointer':true, 'hidden':!isFunctionList}">
+                <svg enable-background="new 0 0 465.882 465.882" viewBox="0 0 465.882 465.882" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m465.882 0-465.882 262.059 148.887 55.143 229.643-215.29-174.674 235.65.142.053-.174-.053v128.321l83.495-97.41 105.77 39.175z"/>
+                </svg>
+            </div>
+            <!-- 設定按鈕 -->
+            <div @click="showSetting(false)" :class="{'w-14 h-14 p-4 bg-gray-100 shadow-xl rounded-full cursor-pointer':true, 'hidden':!isFunctionList}">
+                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                 viewBox="0 0 426.667 426.667" style="enable-background:new 0 0 426.667 426.667;" xml:space="preserve">
+                    <path d="M416.8,269.44l-45.013-35.307c0.853-6.827,1.493-13.76,1.493-20.8s-0.64-13.973-1.493-20.8l45.12-35.307
+                    c4.053-3.2,5.227-8.96,2.56-13.653L376.8,69.653c-2.667-4.587-8.213-6.507-13.013-4.587l-53.12,21.44
+                    c-10.987-8.427-23.04-15.573-36.053-21.013l-8-56.533C265.653,3.947,261.28,0,255.947,0h-85.333c-5.333,0-9.707,3.947-10.56,8.96
+                    l-8,56.533c-13.013,5.44-25.067,12.48-36.053,21.013l-53.12-21.44c-4.8-1.813-10.347,0-13.013,4.587L7.2,143.573
+                    c-2.667,4.587-1.493,10.347,2.56,13.653l45.013,35.307c-0.853,6.827-1.493,13.76-1.493,20.8s0.64,13.973,1.493,20.8L9.76,269.44
+                    c-4.053,3.2-5.227,8.96-2.56,13.653l42.667,73.92c2.667,4.587,8.213,6.507,13.013,4.587L116,340.16
+                    c10.987,8.427,23.04,15.573,36.053,21.013l8,56.533c0.853,5.013,5.227,8.96,10.56,8.96h85.333c5.333,0,9.707-3.947,10.56-8.96
+                    l8-56.533c13.013-5.44,25.067-12.48,36.053-21.013l53.12,21.44c4.8,1.813,10.347,0,13.013-4.587l42.667-73.92
+                    C422.027,278.507,420.853,272.747,416.8,269.44z M213.28,288c-41.28,0-74.667-33.387-74.667-74.667S172,138.667,213.28,138.667
+                    s74.667,33.387,74.667,74.667S254.56,288,213.28,288z"/>
+                </svg>
+            </div>
+            <!-- 拍照按紐 -->
+            <div :class="{'w-14 h-14 p-4 bg-gray-100 shadow-xl rounded-full cursor-pointer':true, 'hidden':!isFunctionList}">
+                <svg enable-background="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m414.996 55.632-133.445 96.954 223.595 162.453c4.474-18.923 6.854-38.646 6.854-58.916 0-81.129-37.942-153.555-97.004-200.491z"/>
+                    <path d="m388.984 37.449c-38.782-23.673-84.318-37.327-132.984-37.327-52.302 0-100.982 15.778-141.555 42.807l50.996 156.936z"/>
+                    <path d="m89.141 62.132c-54.546 46.983-89.141 116.52-89.141 193.99 0 23.805 3.278 46.856 9.385 68.739h165.129z"/>
+                    <path d="m19.817 354.862c37.401 89.128 123.835 152.773 225.365 157.016l51.017-157.016z"/>
+                    <path d="m276.925 511.262c100.648-8.181 185.011-74.829 218.996-165.845l-133.577-97.05z"/>
+                </svg>
+            </div>
+            <!-- 功能展開按鈕 -->
+            <div @click="openFunction()" :class="{'w-14 h-14 p-4 bg-gray-100 shadow-xl rounded-full cursor-pointer':true}">
+                <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                    <path d="M156,256c0,11.046,8.954,20,20,20h60v60c0,11.046,8.954,20,20,20s20-8.954,20-20v-60h60c11.046,0,20-8.954,20-20
+                        c0-11.046-8.954-20-20-20h-60v-60c0-11.046-8.954-20-20-20s-20,8.954-20,20v60h-60C164.954,236,156,244.954,156,256z"/>
+                    <path d="M160.406,61.8l25.869-10.716c10.204-4.228,15.051-15.927,10.823-26.132c-4.228-10.205-15.926-15.054-26.132-10.823
+                        l-25.869,10.716c-10.204,4.228-15.051,15.927-10.823,26.132C138.488,61.148,150.168,66.038,160.406,61.8z"/>
+                    <path d="M256,0c-11.046,0-20,8.954-20,20s8.954,20,20,20c119.378,0,216,96.608,216,216c0,119.378-96.608,216-216,216
+                        c-119.378,0-216-96.608-216-216c0-11.046-8.954-20-20-20s-20,8.954-20,20c0,141.483,114.497,256,256,256
+                        c141.483,0,256-114.497,256-256C512,114.517,397.503,0,256,0z"/>
+                    <path d="M93.366,113.165l19.799-19.799c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L65.081,84.88
+                        c-7.811,7.811-7.811,20.475,0,28.285C72.89,120.974,85.555,120.976,93.366,113.165z"/>
+                    <path d="M24.952,197.099c10.227,4.236,21.914-0.642,26.132-10.823l10.716-25.87c4.228-10.205-0.619-21.904-10.823-26.132
+                        c-10.207-4.227-21.904,0.619-26.132,10.823l-10.716,25.869C9.901,181.172,14.748,192.871,24.952,197.099z"/>
+                </svg>
+            </div>
+        </div>
+        <!-- 搜尋按鈕 -->
+        <div class="mt-4 flex w-full justify-end">
+            <div :class="{'bg-gray-100 shadow-xl rounded-full h-14 flex flex-row gap-3 p-4 cursor-pointer transition-all duration-700':true, 'w-64 p-4':searchIconCss, 'w-14':!searchIconCss}">
+                <svg :class="{'w-6':true, 'hidden': searchIconCss}" @click="openSearch()" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                        <path d="M141.367,116.518c-7.384-7.39-19.364-7.39-26.748,0c-27.416,27.416-40.891,65.608-36.975,104.79
+                            c0.977,9.761,9.2,17.037,18.803,17.037c0.631,0,1.267-0.032,1.898-0.095c10.398-1.04,17.983-10.316,16.943-20.707
+                            c-2.787-27.845,6.722-54.92,26.079-74.278C148.757,135.882,148.757,123.901,141.367,116.518z"/>
+                        <path d="M216.276,0C97.021,0,0,97.021,0,216.276s97.021,216.276,216.276,216.276s216.276-97.021,216.276-216.276
+                            S335.53,0,216.276,0z M216.276,394.719c-98.396,0-178.443-80.047-178.443-178.443S117.88,37.833,216.276,37.833
+                            c98.39,0,178.443,80.047,178.443,178.443S314.672,394.719,216.276,394.719z"/>
+                        <path d="M506.458,479.71L368.999,342.252c-7.39-7.39-19.358-7.39-26.748,0c-7.39,7.384-7.39,19.364,0,26.748L479.71,506.458
+                            c3.695,3.695,8.531,5.542,13.374,5.542c4.843,0,9.679-1.847,13.374-5.542C513.847,499.074,513.847,487.094,506.458,479.71z"/>
+                </svg>
+                <svg :class="{'w-6':true, 'hidden': !searchIconCss}" @click="openSearch()" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                        viewBox="0 0 512.001 512.001" style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve">
+                            <path d="M284.286,256.002L506.143,34.144c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L256,227.717
+                                L34.143,5.859c-7.811-7.811-20.475-7.811-28.285,0c-7.81,7.811-7.811,20.475,0,28.285l221.857,221.857L5.858,477.859
+                                c-7.811,7.811-7.811,20.475,0,28.285c3.905,3.905,9.024,5.857,14.143,5.857c5.119,0,10.237-1.952,14.143-5.857L256,284.287
+                                l221.857,221.857c3.905,3.905,9.024,5.857,14.143,5.857s10.237-1.952,14.143-5.857c7.811-7.811,7.811-20.475,0-28.285
+                                L284.286,256.002z"/>
+                </svg>
+                <div :class="{'flex-grow items-center pr-5':true, 'hidden':!searchIconCss}">
+                    <input v-model="keyword" @keyup="filterProperty()" class="w-full border-black border-b-2 bg-opacity-0 bg-white outline-none">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 彈跳視窗 對話框 -->
+    <div v-cloak :class="{'fixed z-10 inset-0 overflow-y-auto':true, 'hidden': isModel }" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex flex-wrap justify-center content-center text-center sm:p-0 h-full p-3">
+            <!-- 背景黑色 -->
+            <div @click="hideDetail()" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"></div>
+
+            <!-- 對話框實體 sm:align-middle sm:max-w-lg  -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left shadow-xl transform transition-all
+                        duration-75 sm:max-w-2xl sm:w-10/12 w-full max-h-full">
+                <!-- 關閉叉叉按鈕 -->
+                <div @click="hideDetail()"
+                    class="absolute right-0 w-8 h-8 flex flex-wrap justify-center content-center m-2 rounded-lg hover:bg-red-200 active:bg-blue-400 active:text-white transition-all duration-500">
+                    <svg class="w-3 h-3" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.001 512.001"
+                        style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve">
+                        <g>
+                            <path d="M284.286,256.002L506.143,34.144c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L256,227.717
+                                L34.143,5.859c-7.811-7.811-20.475-7.811-28.285,0c-7.81,7.811-7.811,20.475,0,28.285l221.857,221.857L5.858,477.859
+                                c-7.811,7.811-7.811,20.475,0,28.285c3.905,3.905,9.024,5.857,14.143,5.857c5.119,0,10.237-1.952,14.143-5.857L256,284.287
+                                l221.857,221.857c3.905,3.905,9.024,5.857,14.143,5.857s10.237-1.952,14.143-5.857c7.811-7.811,7.811-20.475,0-28.285
+                                L284.286,256.002z" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="bg-white pt-5 pb-4 sm:pb-4 flex flex-col h-full overflow-hidden rounded-lg">
+                    <div class="px-4 sm:px-6 pb-5">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Property Information
+                        </h3>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 overflow-y-auto">
+                        {% verbatim %}
+                        <dl>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <div></div>
+                                <img :src="currentData.image">
+                                <div></div>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Full name
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.product_name }}
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Brand
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.brand }}
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Number
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.product_number }}-{{ currentData.number }}
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Position
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.position }}
+                                </dd>
+                                <dt class="text-sm font-medium text-gray-500">
+                                    LabelPosition
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.label_position }}
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    GetDate
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.get_date }}
+                                </dd>
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Expiry
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.age_limit }}
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Price
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    ${{ currentData.single_value }}
+                                </dd>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.quantity }}/{{ currentData.unit }}
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Tips
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    {{ currentData.tip }}
+                                </dd>
+                            </div>
+                        </dl>
+                        {% endverbatim %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 長按事件呼叫 彈跳視窗 選取框 -->
+    <div v-cloak :class="{'fixed z-10 inset-0 overflow-y-auto select-none':true, 'hidden': isStatusModel}" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex flex-wrap justify-center content-center text-center sm:p-0 h-full p-3">
+            <!-- 背景黑色 -->
+            <div @click="hideStatusModel()" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"></div>
+
+            <!-- 對話框實體 sm:align-middle sm:max-w-lg  -->
+            <div class="inline-block align-bottom bg-white rounded-lg shadow-xl transform transition-all
+                        duration-75 sm:max-w-2xl sm:w-10/12 w-full max-h-full p-4 md:text-3xl text-xl text-center font-semibold">
+                更改物品狀態，請選取
+                <ul class="md:text-xl text-md text-center font-semibold list-none p-3">
+                    <li class="border-black border-2 rounded-lg m-2 p-4 hover:bg-black transition duration-300 hover:text-white cursor-pointer shadow-lg" @click="changeStatus(1)">取消</li>
+                    <li class="border-black border-2 rounded-lg m-2 p-4 hover:bg-black transition duration-300 hover:text-white cursor-pointer shadow-lg" @click="changeStatus(2)">損毀</li>
+                    <li class="border-black border-2 rounded-lg m-2 p-4 hover:bg-black transition duration-300 hover:text-white cursor-pointer shadow-lg" @click="changeStatus(3)">遺失</li>
+                    <li class="border-black border-2 rounded-lg m-2 p-4 hover:bg-black transition duration-300 hover:text-white cursor-pointer shadow-lg" @click="changeStatus(4)">報廢</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- 設定 彈跳視窗 -->
+    <div v-cloak :class="{'fixed z-10 inset-0 overflow-y-auto select-none':true, 'hidden': isSettingModel}" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex flex-wrap justify-center content-center text-center sm:p-0 h-full p-3">
+            <!-- 背景黑色 -->
+            <div @click="showSetting(true)" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"></div>
+
+            <!-- 對話框實體 sm:align-middle sm:max-w-lg  -->
+            <div class="align-bottom bg-white rounded-lg shadow-xl transform transition-all gap-2 flex flex-col
+                        duration-75 sm:max-w-lg sm:w-10/12 w-full max-h-full p-4 md:text-3xl text-xl text-center font-semibold">
+                <div class="cursor-pointer p-4">
+                    排序
+                </div>
+                <div class="cursor-pointer">
+                    封存本次盤點
+                </div>
+                <div class="cursor-pointer">
+                    重置本次盤點
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 警告的模態視窗 -->
+    <div v-cloak :class="{'fixed flex justify-center align-middle top-0 w-full p-5':true, 'hidden': !isConfirmModel}">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"></div>
+        <div class="md:w-1/3 w-11/12 rounded-lg shadow-lg bg-gray-100 my-20 z-10">
+            <div class="flex justify-between border-b border-gray-300 px-5 py-4">
+                <div>
+                <i class="fa fa-exclamation-triangle text-orange-500"></i>
+                <span class="font-bold text-black text-lg">提醒</span>
+                </div>
+            </div>
+        
+            <div class="px-10 py-5 text-black">
+                確定是否做這件事?
+            </div>
+        
+            <div class="px-5 py-4 flex justify-end">
+                <button @click="confirmModel(false)" class="bg-orange-500 mr-1 rounded text-sm py-2 px-3 text-gray-500 hover:text-black transition duration-150">Cancel</button>
+                <button @click="confirmModel(true)" class="text-sm py-2 px-3 text-gray-500 hover:text-black transition duration-150">OK</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -27,12 +426,249 @@
     const app = Vue.createApp({
         data() {
             return {
+                getPropertyUrl:"{% url 'getCheckProperty' %}",
+                changePropStatusUrl: "{% url 'changePropStatus' %}",
+                getUserInfoUrl: "{% url 'getUserInfo' %}", 
 
+                nowCheckedList: [],
+                propertyList: [],
+                allPropertyList: [],
+                openSearchCss: true,
+                searchInputCss: "hidden",
+                searchIconCss: false,
+                isloading: false,
+                isModel: true,
+                isStatusModel: true,
+                isFunctionList: false,
+                isSettingModel: true,
+                keyword: "",
+
+                // 通知CSS管理
+                isAlertShow: false,
+                isAlertHide: true,
+                alertMsg: "",
+                closeAlertTimer: "",
+                alertColor: "bg-green-500",
+
+                // 確認視窗
+                isConfirmModel: false,
+
+                currentData: "",
+                userInfo: "",
+                
+                // 長按事件
+                timer: "",
+                touchduration: 400, //length of time we want the user to touch before we do something
             }
         },
         methods: {
+            // 取得所有財產資訊
+            getProperty(){
+                let self = this;
+                axios({
+                    url: this.getPropertyUrl,
+                    method: "get",
+                })
+                .then((res)=>{
+                    self.allPropertyList = res.data.data;
+                    self.propertyList = self.allPropertyList;
+                    self.sortProperty(false);
+                    self.isloading = true;
+                })
+            },
+            // 取得用戶資料
+            getUserInfo(){
+                let self = this;
+                axios.get(this.getUserInfoUrl)
+                .then((res)=>{self.userInfo = res.data});
+            },
+            // 按照有無盤點排序
+            // True盤點優先
+            // False沒盤點優先
+            sortProperty(isReverse){
+                // 按照 盤點 排序
+                function compare( a, b ) {
+                    if ( a.is_check == 'v'){
+                        return -1;
+                    }
+                    if (b.is_check == 'v'){
+                        return 1;
+                    }
+                    return 0;
+                }
+                this.propertyList.sort(compare);
+                if(!isReverse)
+                    this.propertyList.reverse();
+            },
+            // 搜尋功能
+            filterProperty(){
+                if(this.keyword.length == 0){
+                    this.propertyList = this.allPropertyList;
+                    return;
+                }
+
+                let self = this;
+                function propfilter(prop){
+                    if(prop.action_user.includes(self.keyword))
+                        return true;
+                    if(prop.product_number.includes(self.keyword))
+                        return true;
+                    if(prop.number.includes(self.keyword))
+                        return true;
+                    if(prop.product_name.includes(self.keyword))
+                        return true;
+                    if(prop.position.includes(self.keyword))
+                        return true;
+                    if(prop.label_position.includes(self.keyword))
+                        return true;
+                    return false;
+                }
+
+                this.propertyList = this.allPropertyList.filter(propfilter);
+            },
+            // 切換搜尋欄位
+            openSearch(){
+                if(this.openSearchCss == true){
+                    this.openSearchCss = false;
+                    this.searchIconCss = true;
+                }else{
+                    this.openSearchCss = true;
+                    this.searchIconCss = false;
+                }
+            },
+            // 切換功能欄位
+            openFunction(){
+                if(this.isFunctionList == true){
+                    this.isFunctionList = false;
+                }else{
+                    this.isFunctionList = true;
+                }
+            },
+            // 盤點按鈕
+            checkProp(prop){
+                if(prop.is_check == 'v')
+                    return;
+                this.nowCheckedList.push(prop);
+                prop.is_check = 'v';
+                prop.action_user = this.userInfo.userName;
+                this.currentData = prop;
+                console.log(this.nowCheckedList);
+            },
+            // 顯示詳細資訊
+            showDetail(prop){
+                this.isModel = false;
+                this.currentData = prop;
+            },
+            // 隱藏彈跳視窗
+            hideDetail(){
+                this.isModel = true;
+            },
+            // 顯示設定視窗
+            showSetting(status){
+                this.isSettingModel = status;
+            },
+            // 偵測觸控長按事件
+            touchStart(e, prop){
+                this.timer = setTimeout(()=>{this.onLongTouch(prop)},this.touchduration);
+            },
+            touchEnd(){
+                if(this.timer)
+                    clearTimeout(this.timer); // clearTimeout, not cleartimeout..
+            },
+            onLongTouch(prop){
+                this.currentData = prop;
+                this.isStatusModel = false;
+            },
+            // 隱藏選取模態勢窗
+            hideStatusModel(){
+                this.isStatusModel = true;
+            },
+            // 更改物品狀態
+            changeStatus(status){
+                if(!this.nowCheckedList.includes(this.currentData) && this.currentData != "")
+                    this.nowCheckedList.push(this.currentData);
+                switch(status){
+                    case 1:
+                        this.currentData.is_check = 'x';
+                        this.currentData.action_user = this.userInfo.userName;
+                        break;
+                    case 2:
+                        this.currentData.is_check = 'b';
+                        this.currentData.action_user = this.userInfo.userName;
+                        break;
+                    case 3:
+                        this.currentData.is_check = 'm';
+                        this.currentData.action_user = this.userInfo.userName;
+                        break;
+                    case 4:
+                        this.currentData.is_check = 'o';
+                        this.currentData.action_user = this.userInfo.userName;
+                        break;
+                }
+                this.hideStatusModel();
+            },
+            // 讀取Cookie
+            readCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+            // 送出盤點資料
+            sendPropertyCheck(){
+                this.showConfirmModel(()=>{
+                    console.log("Hello");
+                });
+                let self = this;
+                axios.post(this.changePropStatusUrl, {
+                    data: this.nowCheckedList,
+                },{
+                    headers: { 'X-CSRFToken': this.readCookie('csrftoken'), }
+                })
+                .then((res)=>{
+                    self.showAlert("成功");
+                })
+                .catch((err)=>{
+                    self.showAlert("錯誤", "bg-red-500");
+                    console.log(err);
+                })
+            },
+            // 顯示通知
+            showAlert(msg, bgColor = "bg-green-500", duration = 3000){
+                this.alertColor = bgColor;
+                this.alertMsg = msg;
+                this.isAlertShow = true;
+                this.isAlertHide = false;
+                let self = this;
+                clearTimeout(this.closeAlertTimer);
+                this.closeAlertTimer = setTimeout(()=>{self.closeAlert()}, duration);
+            },
+            // 關閉提醒
+            closeAlert(){
+                this.isAlertShow = false;
+                let self = this;
+                setTimeout(()=>{
+                    self.isAlertHide = true;
+                }, 500);
+            },
+            // 顯示確認視窗
+            showConfirmModel(callback){
+                this.isConfirmModel = true;
+                if(callback)
+                    callback();
+            },
+            // 確認視窗
+            confirmModel(result){
+                this.isConfirmModel = false;
+            }
         },
         mounted() {
+            this.getProperty();
+            this.getUserInfo();
         },
         created() {
         },

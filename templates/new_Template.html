@@ -65,10 +65,10 @@
                                     hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                                     aria-controls="mobile-menu" aria-expanded="false" @click="dropMenu()">
                                 <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                                 <svg  class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
@@ -106,7 +106,7 @@
                                     </button>
                                 </div>
                                 <!-- 提醒欄位 -->
-                                <div :class="'no-scrollbar max-h-96 overflow-y-auto origin-top-right z-10 absolute right-0 divide-y mt-2 w-52 sm:w-96 '
+                                <div v-cloak :class="'no-scrollbar max-h-96 overflow-y-auto origin-top-right z-10 absolute right-0 divide-y mt-2 w-52 sm:w-96 '
                                              +'rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none '
                                              + notifyMenuCssStatus" role="menu" aria-orientation="vertical">
                                     <!-- 通知迴圈生成 -->
@@ -115,7 +115,8 @@
                                         <div>
                                             <img v-if="item.action == 'ReturnProperty'" src="{% static 'images/exchange.svg' %}" class="md:h-16 h-12">
                                             <img v-if="item.action == 'loanProperty'" src="{% static 'images/loan.svg' %}" class="md:h-16 h-12">
-                                            <img v-if="item.action == 'deleteData'" src="{% static 'images/exchange.svg' %}" class="md:h-16 h-12">
+                                            <img v-if="item.action == 'deleteData'" src="{% static 'images/delete.svg' %}" class="md:h-16 h-12">
+                                            <img v-if="item.action == 'addData'" src="{% static 'images/add.svg' %}" class="md:h-16 h-12">
                                         </div>
                                         <!-- 資訊欄 -->
                                         {% verbatim %}
@@ -149,7 +150,7 @@
                                         <img class="h-8 w-8 rounded-full" src="{% static './images/user.svg' %}" alt="">
                                     </button>
                                 </div>
-                                <div id="profileMenu" :class="[profileMenuCss, profileMenuStatus ]" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+                                <div v-cloak id="profileMenu" :class="[profileMenuCss, profileMenuStatus ]" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
                                     {% if user.is_authenticated %}
                                         {% if user.is_staff %}
                                             <a href="/admin" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Go to admin</a>
@@ -165,7 +166,7 @@
                     </div>
                 </div>
                 <!-- 手機畫面的下拉介面 -->
-                <div :class="[navbarMenuStatus, navbarMenuhidden]" id="mobile-menu">
+                <div v-cloak :class="[navbarMenuStatus, navbarMenuhidden]" id="mobile-menu">
                     <div class="px-2 pt-2 pb-3 space-y-1">
                         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                         <a :href="home" class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" aria-current="page">Home</a>
@@ -282,6 +283,8 @@
             };
         }
         initWebSocket();
+
+
 
         const navbar =  Vue.createApp({
             data() {
