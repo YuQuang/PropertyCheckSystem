@@ -531,4 +531,8 @@ class CurrentCheckProperty(models.Model):
             null=True,
             blank=True,
         )
-    
+
+"""
+# The CheckPropertyHistory
+# 歷史盤點表單
+"""

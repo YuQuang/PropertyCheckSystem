@@ -55,4 +55,5 @@ urlpatterns = [
     # 盤點相關
     path('getCheckProperty/', views.getCheckProperty, name='getCheckProperty'),
     path('changePropStatus/', views.changePropStatus, name='changePropStatus'),
+    path('resetCheckProp/', views.resetCheckProp, name='resetCheckProp'),
 ]

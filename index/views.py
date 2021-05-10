@@ -120,6 +120,10 @@ def API_CheckLogin(func):
     
     return wrapper
 
+# 用戶是否於群組
+def UserInGroup(user, groupName: str):
+    return user.groups.filter(name = groupName).exists()
+
 """
 # 取得用戶資訊
 """
@@ -1013,5 +1017,19 @@ def changePropStatus(request):
         preSave.action_user = user
         preSave.status = check.get('is_check', 'x')
         preSave.save()
+
+    return JsonResponse({'result': 'success'})
+
+@API_CheckLogin
+def resetCheckProp(request):
+    user = request.user
+    if not UserInGroup(user, "admin"):
+        return HttpResponse(status=403)
+
+    allCheckProp = CurrentCheckProperty.objects.all()
+    for checkProp in allCheckProp:
+        checkProp.status = 'x'
+        checkProp.action_user = None
+        checkProp.save()
 
     return JsonResponse({'result': 'success'})

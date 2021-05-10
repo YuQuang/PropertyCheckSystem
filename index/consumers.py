@@ -73,6 +73,7 @@ class NotifyConsumer(AsyncWebsocketConsumer):
         """
         try:
             data = json.loads(text_data)
+            print(data)
             action = data["action"]
             if action == None or action == '':
                 return
@@ -88,7 +89,6 @@ class NotifyConsumer(AsyncWebsocketConsumer):
                 })
             elif action == userAction['userReadNotify']:
                 await userReadNotify(self.now_user_id, self.now_group)
-
         except Exception as e:
             print("Websocket接收錯誤")
             print(e)
