@@ -536,3 +536,37 @@ class CurrentCheckProperty(models.Model):
 # The CheckPropertyHistory
 # 歷史盤點表單
 """
+class CheckPropertyHistory(models.Model):
+    id = models.AutoField(
+            primary_key=True,
+        )
+    # 哪項產品
+    prop = models.ForeignKey(
+            'Property',
+            verbose_name='產品',
+            on_delete=models.CASCADE,
+            default=1,
+        )
+    # 狀態代碼
+    STATUS_CODE = (
+            ('v', 'Checked'),
+            ('x', 'NotChecked'),
+            ('m', 'Missing'),
+            ('b', 'Broken'),
+            ('o', 'Obsolete'),
+        )
+    status = models.CharField(
+            max_length=1,
+            choices=STATUS_CODE,
+            verbose_name='當前盤點物品狀態',
+            default='x',
+        )
+    # 最後做動作的使用者
+    action_user = models.ForeignKey(
+        User,
+            verbose_name='用戶',
+            on_delete=models.SET_NULL,
+            null=True,
+            blank=True,
+        )
+    

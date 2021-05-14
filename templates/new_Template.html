@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
     <!-- MetaTag Part -->
@@ -7,12 +6,13 @@
     <meta http-equiv="Content-Language" content="zh-TW">
     <meta name="author" content="Xu-YuQuang">
     <meta name="keywords" content="Property check">
+    
+    {% load static %}
+    <link rel="icon" href="{% static 'images/lab.svg' %}">
 
     {% block title %}<title>{{ title }}</title>{% endblock %}
     
 
-    {% load static %}
-    <link rel="icon" href="{% static 'images/lab.svg' %}">
     <style>
         @import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
 
@@ -55,183 +55,181 @@
     {% block style %}
     {% endblock %}
 </head>
-<body>
-    <div class="flex flex-col h-screen">
-        <!-- 上方導覽列 -->
-        <div id="navbar">
-            <nav class="bg-gray-800">
-                <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-                    <div class="relative flex items-center justify-between h-16">
-                        <!-- 手機顯示部分 -->
-                        <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                            <!-- 手機欄位的開啟關閉按鈕 -->
-                            <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400
-                                    hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                                    aria-controls="mobile-menu" aria-expanded="false" @click="dropMenu()">
-                                <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                                <svg  class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
+<body class="flex flex-col min-h-screen">
+    <!-- 上方導覽列 -->
+    <div id="navbar">
+        <nav class="bg-gray-800">
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+                <div class="relative flex items-center justify-between h-16">
+                    <!-- 手機顯示部分 -->
+                    <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                        <!-- 手機欄位的開啟關閉按鈕 -->
+                        <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400
+                                hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                                aria-controls="mobile-menu" aria-expanded="false" @click="dropMenu()">
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                            <svg  class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- 左側LOGO以及上方導覽列 -->
+                    <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+                        <div class="flex-shrink-0 flex items-center">
+                            <a href="{% url 'index' %}">
+                                <img class="block lg:hidden h-8 w-auto" src="{% static './images/lab.svg' %}" alt="Workflow">
+                                <img class="hidden lg:block h-8 w-auto" src="{% static './images/lab.svg' %}" alt="Workflow">
+                            </a>
                         </div>
-                        <!-- 左側LOGO以及上方導覽列 -->
-                        <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                            <div class="flex-shrink-0 flex items-center">
-                                <a href="{% url 'index' %}">
-                                    <img class="block lg:hidden h-8 w-auto" src="{% static './images/lab.svg' %}" alt="Workflow">
-                                    <img class="hidden lg:block h-8 w-auto" src="{% static './images/lab.svg' %}" alt="Workflow">
+                        <!-- 上方導覽欄位 -->
+                        <div class="hidden sm:block sm:ml-6">
+                            <div class="flex space-x-4">
+                                <a :href="home" :class="navbarMenuHomeCss">Home</a>
+                                <a :href="importExcel" :class="navbarMenuImportCss">Import</a>
+                                <a :href="search" :class="navbarMenuSearchCss">Search</a>
+                                <a :href="addData" :class="navbarMenuAddCss">Add</a>
+                                <a :href="leaseProperty" :class="navbarMenuLeasePropertyCss">leaseProperty</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 右側個人資訊及提醒元件 -->
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                        <!-- 鈴鐺部分 -->
+                        <div class="ml-3 relative">
+                            <!-- 提醒按鈕 -->
+                            <div>
+                                <button @click="showNotify(false);switchNotifyMenu();switchProfileMenu(false);" class="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                                    <span class="sr-only">View notifications</span>
+                                    <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                        <circle :class="'text-red-700 ' + notifyBtnCss" cx="18" cy="6" r="5" fill="currentColor" stroke="currentColor"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- 提醒欄位 -->
+                            <div v-cloak :class="'no-scrollbar max-h-96 overflow-y-auto origin-top-right z-10 absolute right-0 divide-y mt-2 w-52 sm:w-96 '
+                                            +'rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none '
+                                            + notifyMenuCssStatus" role="menu" aria-orientation="vertical">
+                                <!-- 通知迴圈生成 -->
+                                <div :class="notifyMenuItemCss + ' flex flex-row gap-2 p-2'" role="menuitem" v-for="item in notifyInfo">
+                                    <!-- 圖片部分 -->
+                                    <div>
+                                        <img v-if="item.action == 'ReturnProperty'" src="{% static 'images/exchange.svg' %}" class="md:h-16 h-12">
+                                        <img v-if="item.action == 'loanProperty'" src="{% static 'images/loan.svg' %}" class="md:h-16 h-12">
+                                        <img v-if="item.action == 'deleteData'" src="{% static 'images/delete.svg' %}" class="md:h-16 h-12">
+                                        <img v-if="item.action == 'addData'" src="{% static 'images/add.svg' %}" class="md:h-16 h-12">
+                                    </div>
+                                    <!-- 資訊欄 -->
+                                    {% verbatim %}
+                                    <div class="flex-col flex-grow text-center">
+                                        <div class="text-base text-blue-600">{{ item.action }}</div>
+                                        <div class="text-lg">{{ item.user }}</div>
+                                        <div class="text-xs text-red-400">{{ item.time }}</div>
+                                    </div>
+                                    <!-- 提醒訊息為新通知 -->
+                                    <div class="flex-col text-center">
+                                        <div v-if="item.status == 'notRead' && userInfo.userName == item.user">
+                                            New
+                                        </div>
+                                        <div v-if="item.group_status == 'notRead' && (userInfo.userGroup.indexOf(item.group_name) != -1)">
+                                            Group New
+                                        </div>
+                                    </div>
+                                    {% endverbatim %}
+                                </div>
+                                <!-- 若無則顯示沒有 -->
+                                <a v-if="notifyInfo.length === 0" href="#" :class="notifyMenuItemCss" role="menuitem">
+                                    目前沒有通知
                                 </a>
                             </div>
-                            <!-- 上方導覽欄位 -->
-                            <div class="hidden sm:block sm:ml-6">
-                                <div class="flex space-x-4">
-                                    <a :href="home" :class="navbarMenuHomeCss">Home</a>
-                                    <a :href="importExcel" :class="navbarMenuImportCss">Import</a>
-                                    <a :href="search" :class="navbarMenuSearchCss">Search</a>
-                                    <a :href="addData" :class="navbarMenuAddCss">Add</a>
-                                    <a :href="leaseProperty" :class="navbarMenuLeasePropertyCss">leaseProperty</a>
-                                </div>
-                            </div>
                         </div>
-                        <!-- 右側個人資訊及提醒元件 -->
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                            <!-- 鈴鐺部分 -->
-                            <div class="ml-3 relative">
-                                <!-- 提醒按鈕 -->
-                                <div>
-                                    <button @click="showNotify(false);switchNotifyMenu();switchProfileMenu(false);" class="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                        <span class="sr-only">View notifications</span>
-                                        <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                            <circle :class="'text-red-700 ' + notifyBtnCss" cx="18" cy="6" r="5" fill="currentColor" stroke="currentColor"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <!-- 提醒欄位 -->
-                                <div v-cloak :class="'no-scrollbar max-h-96 overflow-y-auto origin-top-right z-10 absolute right-0 divide-y mt-2 w-52 sm:w-96 '
-                                             +'rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none '
-                                             + notifyMenuCssStatus" role="menu" aria-orientation="vertical">
-                                    <!-- 通知迴圈生成 -->
-                                    <div :class="notifyMenuItemCss + ' flex flex-row gap-2 p-2'" role="menuitem" v-for="item in notifyInfo">
-                                        <!-- 圖片部分 -->
-                                        <div>
-                                            <img v-if="item.action == 'ReturnProperty'" src="{% static 'images/exchange.svg' %}" class="md:h-16 h-12">
-                                            <img v-if="item.action == 'loanProperty'" src="{% static 'images/loan.svg' %}" class="md:h-16 h-12">
-                                            <img v-if="item.action == 'deleteData'" src="{% static 'images/delete.svg' %}" class="md:h-16 h-12">
-                                            <img v-if="item.action == 'addData'" src="{% static 'images/add.svg' %}" class="md:h-16 h-12">
-                                        </div>
-                                        <!-- 資訊欄 -->
-                                        {% verbatim %}
-                                        <div class="flex-col flex-grow text-center">
-                                            <div class="text-base text-blue-600">{{ item.action }}</div>
-                                            <div class="text-lg">{{ item.user }}</div>
-                                            <div class="text-xs text-red-400">{{ item.time }}</div>
-                                        </div>
-                                        <!-- 提醒訊息為新通知 -->
-                                        <div class="flex-col text-center">
-                                            <div v-if="item.status == 'notRead' && userInfo.userName == item.user">
-                                                New
-                                            </div>
-                                            <div v-if="item.group_status == 'notRead' && (userInfo.userGroup.indexOf(item.group_name) != -1)">
-                                                Group New
-                                            </div>
-                                        </div>
-                                        {% endverbatim %}
-                                    </div>
-                                    <!-- 若無則顯示沒有 -->
-                                    <a v-if="notifyInfo.length === 0" href="#" :class="notifyMenuItemCss" role="menuitem">
-                                        目前沒有通知
-                                    </a>
-                                </div>
+                        <!-- 用戶icon部分 -->
+                        <div class="ml-3 relative">
+                            <div>
+                                <button type="button" :class="profileButtonCss" id="user-menu" aria-expanded="false" aria-haspopup="true"
+                                        @click="switchProfileMenu();switchNotifyMenu(false)">
+                                    <img class="h-8 w-8 rounded-full" src="{% static './images/user.svg' %}" alt="">
+                                </button>
                             </div>
-                            <!-- 用戶icon部分 -->
-                            <div class="ml-3 relative">
-                                <div>
-                                    <button type="button" :class="profileButtonCss" id="user-menu" aria-expanded="false" aria-haspopup="true"
-                                            @click="switchProfileMenu();switchNotifyMenu(false)">
-                                        <img class="h-8 w-8 rounded-full" src="{% static './images/user.svg' %}" alt="">
-                                    </button>
-                                </div>
-                                <div v-cloak id="profileMenu" :class="[profileMenuCss, profileMenuStatus ]" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
-                                    {% if user.is_authenticated %}
-                                        {% if user.is_staff %}
-                                            <a href="/admin" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Go to admin</a>
-                                        {% endif %}
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
-                                        <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
-                                    {% else %}
-                                    <a href="{% url 'login' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign in</a>
+                            <div v-cloak id="profileMenu" :class="[profileMenuCss, profileMenuStatus ]" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+                                {% if user.is_authenticated %}
+                                    {% if user.is_staff %}
+                                        <a href="/admin" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Go to admin</a>
                                     {% endif %}
-                                </div>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
+                                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
+                                {% else %}
+                                <a href="{% url 'login' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign in</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- 手機畫面的下拉介面 -->
-                <div v-cloak :class="[navbarMenuStatus, navbarMenuhidden]" id="mobile-menu">
-                    <div class="px-2 pt-2 pb-3 space-y-1">
-                        <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                        <a :href="home" class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" aria-current="page">Home</a>
-                        <a :href="importExcel" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Import</a>
-                        <a :href="search" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Search</a>
-                        <a :href="addData" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Add</a>
-                    </div>
-                </div>
-            </nav>
-        </div>
-
-        <!-- 內容部分 -->
-        <div id="main" class="flex-grow w-full" onclick="navbar.switchProfileMenu(false); navbar.switchNotifyMenu(false)">
-            {% block content %}
-            {% endblock %}
-        </div>
-        
-        <!-- 下方Footer -->
-        {% block footer %}
-        <footer class="bg-white text-gray-600 body-font w-full mt-10">
-            <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
-            <a class="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
-                <img src="{% static '/images/lab.svg' %}" class="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full"/>
-                <span class="ml-3 text-xl">AIMMA</span>
-            </a>
-            <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">© 2021 AIMMA —
-                <a href="https://twitter.com/knyttneve" class="text-gray-600 ml-1" rel="noopener noreferrer" target="_blank">@Michelle</a>
-            </p>
-            <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
-                <a class="text-gray-500">
-                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
-                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
-                </svg>
-                </a>
-                <a class="ml-3 text-gray-500">
-                <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
-                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
-                </svg>
-                </a>
-                <a class="ml-3 text-gray-500">
-                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
-                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
-                </svg>
-                </a>
-                <a class="ml-3 text-gray-500">
-                <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
-                    <path stroke="none" d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
-                    <circle cx="4" cy="4" r="2" stroke="none"></circle>
-                </svg>
-                </a>
-            </span>
             </div>
-        </footer>
+            <!-- 手機畫面的下拉介面 -->
+            <div v-cloak :class="[navbarMenuStatus, navbarMenuhidden]" id="mobile-menu">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                    <a :href="home" class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" aria-current="page">Home</a>
+                    <a :href="importExcel" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Import</a>
+                    <a :href="search" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Search</a>
+                    <a :href="addData" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Add</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 內容部分 -->
+    <div id="main" class="flex-grow w-full" onclick="navbar.switchProfileMenu(false); navbar.switchNotifyMenu(false)">
+        {% block content %}
         {% endblock %}
     </div>
+    
+    <!-- 下方Footer -->
+    {% block footer %}
+    <footer class="bg-white text-gray-600 body-font w-full mt-10">
+        <div class="container px-5 py-8 mx-auto flex items-center sm:flex-row flex-col">
+        <a class="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
+            <img src="{% static '/images/lab.svg' %}" class="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full"/>
+            <span class="ml-3 text-xl">AIMMA</span>
+        </a>
+        <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">© 2021 AIMMA —
+            <a href="https://twitter.com/knyttneve" class="text-gray-600 ml-1" rel="noopener noreferrer" target="_blank">@Michelle</a>
+        </p>
+        <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
+            <a class="text-gray-500">
+            <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+            </svg>
+            </a>
+            <a class="ml-3 text-gray-500">
+            <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+            </svg>
+            </a>
+            <a class="ml-3 text-gray-500">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+            </svg>
+            </a>
+            <a class="ml-3 text-gray-500">
+            <svg fill="currentColor" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="0" class="w-5 h-5" viewBox="0 0 24 24">
+                <path stroke="none" d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"></path>
+                <circle cx="4" cy="4" r="2" stroke="none"></circle>
+            </svg>
+            </a>
+        </span>
+        </div>
+    </footer>
+    {% endblock %}
     
     <script>
         var mySocket = null;
         function initWebSocket(){
-            mySocket = new WebSocket("ws://" + window.location.hostname + "/ws/notify");
+            mySocket = new WebSocket("wss://" + window.location.hostname + "/ws/notify");
             // 連結成功
             mySocket.onopen = ()=>{
                 // 向後台要求最近的通知
@@ -286,7 +284,7 @@
                 console.log(err);
             };
         }
-        initWebSocket();
+        // initWebSocket();
 
         const navbar =  Vue.createApp({
             data() {

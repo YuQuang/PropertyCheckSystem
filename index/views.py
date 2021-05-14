@@ -1,16 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
-from django.core import serializers
-from django.urls import reverse
-from django.contrib.auth.models import User, Permission, Group
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 #
 import json
-import sys, os, datetime, asyncio, re, os.path
+import os, datetime, re, os.path
 #
 from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage, CurrentCheckProperty
 #
-from .consumers import NotifyConsumer
 from .consumers import sendToAllGroup, sendToGroup
 
 """

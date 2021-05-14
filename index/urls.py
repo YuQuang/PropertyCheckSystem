@@ -1,6 +1,8 @@
 from django.urls import path
 from django.conf.urls import include
 from . import views
+from django.urls import re_path
+from . import consumers, CheckConsumers
 
 
 urlpatterns = [
@@ -27,6 +29,7 @@ urlpatterns = [
 
     # 舊版搜尋介面
     path('oldsearch', view=views.oldSearch, name='oldsearch'),
+
 
     ###########
     # API部分 #
