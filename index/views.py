@@ -9,6 +9,7 @@ import os, datetime, re, os.path
 from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage, CurrentCheckProperty
 #
 from .consumers import sendToAllGroup, sendToGroup
+from .form import PropertyImageForm, PropertyImportantForm
 
 """
 # HomePage

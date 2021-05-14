@@ -35,7 +35,7 @@
                 </div>
                 <!-- 待審核表格 -->
                 <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
-                    <div class="min-w-full rounded-lg flex flex-col h-full divide-y divide-gray-200">
+                    <div class="min-w-full rounded-lg flex flex-col divide-y divide-gray-200">
                         <!-- 表格 HEAD -->
                         <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
                             <div>財產</div>
@@ -46,7 +46,7 @@
                             {% endif %}
                         </div>
                         <!-- 表格 BODY -->
-                        <div class="bg-white divide-y divide-gray-200 h-full overflow-auto text-left text-lg font-bold resize-y">
+                        <div class="bg-white divide-y divide-gray-200 overflow-auto text-left text-lg font-bold resize-y">
                             <div v-cloak v-for="waiting in waiting_data" class="p-3 font-medium uppercase text-center">
                                 {% if user.is_superuser %}
                                     <div class="w-1/4 inline-block">
@@ -87,7 +87,7 @@
                 </div>
                 <!-- 借出表格 -->
                 <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
-                    <div class="min-w-full rounded-lg flex flex-col h-full divide-y divide-gray-200">
+                    <div class="min-w-full rounded-lg flex flex-col divide-y divide-gray-200">
                         <!-- 表格 HEAD -->
                         <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
                             <div>財產</div>
@@ -98,7 +98,7 @@
                             <div>歸還</div>
                         </div>
                         <!-- 表格 BODY -->
-                        <div class="bg-white divide-y divide-gray-200 h-full overflow-auto text-left text-lg font-bold resize-y">
+                        <div class="bg-white divide-y divide-gray-200 overflow-auto text-left text-lg font-bold resize-y">
                             <div v-cloak v-for="loaning in loaning_data" class="p-3 font-medium uppercase text-center flex justify-around">
                                 {% verbatim %}
                                     <div>{{ loaning.leaseProperty }}</div>
@@ -128,7 +128,7 @@
                     等待核准歸還
                 </div>
                 <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
-                    <div class="min-w-full rounded-lg flex flex-col h-full divide-y divide-gray-200">
+                    <div class="min-w-full rounded-lg flex flex-col divide-y divide-gray-200">
                         <!-- 表格 HEAD -->
                         <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
                             <div>財產</div>
@@ -140,7 +140,7 @@
                             {% endif %}
                         </div>
                         <!-- 表格 BODY -->
-                        <div v-cloak class="bg-white divide-y divide-gray-200 h-full overflow-auto text-left text-lg font-bold resize-y">
+                        <div v-cloak class="bg-white divide-y divide-gray-200 overflow-auto text-left text-lg font-bold resize-y">
                             <div v-for="waiting_return in waiting_return_data" class="p-3 font-medium flex justify-around">
                                 {% verbatim %}
                                     <div>{{ waiting_return.leaseProperty }}</div>
