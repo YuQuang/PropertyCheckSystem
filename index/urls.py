@@ -60,6 +60,7 @@ urlpatterns = [
     path('agreeReturnProperty/', views.agreeReturnProperty, name='agreeReturnProperty'),
     # 盤點相關
     path('getCheckProperty/', views.getCheckProperty, name='getCheckProperty'),
+    path('getCheckSingleProperty/', views.getCheckSingleProperty, name='getCheckSingleProperty'),
     path('changePropStatus/', views.changePropStatus, name='changePropStatus'),
     path('resetCheckProp/', views.resetCheckProp, name='resetCheckProp'),
 ]

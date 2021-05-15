@@ -1048,7 +1048,7 @@
 
     var CheckSocket = null;
     function initCheckWebSocket(){
-        CheckSocket = new WebSocket("wss://" + window.location.hostname + "/ws/check");
+        CheckSocket = new WebSocket("ws://" + window.location.hostname + "/ws/check");
         // 連結成功
         CheckSocket.onopen = ()=>{
             // 向後台要求最近的通知
@@ -1065,14 +1065,28 @@
         };
         // 接收到訊息
         CheckSocket.onmessage = (msg)=>{
-            console.log(msg);
+            try{
+                data = JSON.parse(msg.data)
+                message = data['message'];
+
+                // 解決後臺若傳送空值問題
+                if(message["action"] == '' || message["action"] == undefined)
+                    return
+
+                // 後台通知有新訊息
+                if(message['action'] == 'updateData'){
+                    app.updateSingleProperty(message['checkId']);
+                }
+            }catch{
+                console.log("CheckSocket onMessage Error")
+            }
         };
         // 錯誤狀況
         CheckSocket.onerror = (err)=>{
             console.log(err);
         };
     }
-    // initCheckWebSocket();
+    initCheckWebSocket();
 
     const app = Vue.createApp({
         data() {
@@ -1080,15 +1094,18 @@
                 getPropertyUrl:"{% url 'getCheckProperty' %}",
                 changePropStatusUrl: "{% url 'changePropStatus' %}",
                 updateSingleDataUrl: "{% url 'updateSingleData' %}",
+                getCheckSinglePropertyUrl: "{% url 'getCheckSingleProperty' %}",
                 getUserInfoUrl: "{% url 'getUserInfo' %}",
                 resetCheckPropUrl: "{% url 'resetCheckProp' %}",
                 getPositionUrl: "{% url 'getPosition' %}",
                 getBrandUrl: "{% url 'getBrand' %}",
                 getUnitUrl: "{% url 'getUnit' %}",
 
+
                 nowCheckedList: [],
                 propertyList: [],
                 allPropertyList: [],
+
 
                 // 品牌、單位、位置清單
                 brandList: [],
@@ -1106,6 +1123,7 @@
                 isSettingModel: true,
                 keyword: "",
 
+
                 // 通知CSS管理
                 isAlertShow: false,
                 isAlertHide: true,
@@ -1113,13 +1131,16 @@
                 closeAlertTimer: "",
                 alertColor: "bg-green-500",
 
+
                 // 確認視窗
                 confirmCallback: "",
                 cancelCallBack: "",
                 isConfirmModel: false,
                 
+
                 // 統計視窗
                 isStaticModel: false,
+
 
                 // 統計數字
                 brokenProp: 0,
@@ -1128,16 +1149,20 @@
                 notCheckedProp: 0,
                 checkedProp: 0,
 
+
                 // 排列視窗
                 isSortModel: false,
 
+
                 // 相機視窗
                 isCameraModel: false,
+
 
                 // 修改視窗
                 isReviseModel: false,
                 // 修改資料
                 sampleImage: "https://i.pinimg.com/originals/fb/f7/64/fbf76458d74b5236cb7ee9208563bebc.gif",
+                checkId: 0,
                 age_limit: 0,
                 brand: "",
                 get_date: "",
@@ -1159,9 +1184,11 @@
                 currentQRcode: "",
                 userInfo: "",
                 
+
                 // 長按事件
                 timer: "",
                 touchduration: 400, //length of time we want the user to touch before we do something
+
 
                 // 攝像頭以及掃描到的內容
                 // sample 3140101-02-0000373
@@ -1171,6 +1198,38 @@
             }
         },
         methods: {
+            // 更新單一財產資訊
+            updateSingleProperty(checkId){
+                let self = this;
+                axios.get(this.getCheckSinglePropertyUrl,{
+                    params: { "checkId": checkId }
+                })
+                .then((res)=>{
+                    data = res.data.data;
+                    self.propertyList.forEach((e)=>{
+                        if(checkId == e.id) {
+                            e.action_user    = data.action_user;
+                            e.age_limit      = data.age_limit;
+                            e.brand          = data.brand;
+                            e.id             = data.id;
+                            e.image          = data.image + "?s="+ (new Date()).getTime();;
+                            e.is_check       = data.is_check;
+                            e.label_position = data.label_position;
+                            e.number         = data.number;
+                            e.position       = data.position;
+                            e.product_name   = data.product_name;
+                            e.product_number = data.product_number;
+                            e.propId         = data.propId;
+                            e.get_date       = data.get_date;
+                            e.quantity       = data.quantity;
+                            e.single_value   = data.single_value;
+                            e.status         = data.status;
+                            e.tip            = data.tip;
+                            e.unit           = data.unit;
+                        }
+                    });
+                })
+            },
             // 取得所有財產資訊
             getProperty(){
                 let self = this;
@@ -1365,19 +1424,22 @@
             // 顯示修改視窗
             showRevise(status){
                 this.isReviseModel = status;
-                this.image = this.sampleImage;
-                this.product_name = this.currentData.product_name;
-                this.brand = this.currentData.brand;
-                this.product_number = this.currentData.product_number;
-                this.get_date = this.currentData.get_date;
-                this.propId = this.currentData.propId;
-                this.label_position = this.currentData.label_position;
-                this.number = this.currentData.number;
-                this.position = this.currentData.position;
-                this.unit = this.currentData.unit;
-                this.quantity = this.currentData.quantity;
-                this.single_value = this.currentData.single_value;
-                this.tip = this.currentData.tip;
+                if(status == true){
+                    this.image = this.sampleImage;
+                    this.product_name = this.currentData.product_name;
+                    this.brand = this.currentData.brand;
+                    this.product_number = this.currentData.product_number;
+                    this.get_date = this.currentData.get_date;
+                    this.propId = this.currentData.propId;
+                    this.checkId = this.currentData.id;
+                    this.label_position = this.currentData.label_position;
+                    this.number = this.currentData.number;
+                    this.position = this.currentData.position;
+                    this.unit = this.currentData.unit;
+                    this.quantity = this.currentData.quantity;
+                    this.single_value = this.currentData.single_value;
+                    this.tip = this.currentData.tip;
+                }
             },
             // 顯示詳細資訊
             showStatic(status){
@@ -1623,6 +1685,7 @@
                 let myformData = new FormData();
                 myformData.append('file', this.currentImage);
                 myformData.append('name', this.product_name);
+                myformData.append('checkId', this.checkId);
                 myformData.append('propId', this.propId);
                 myformData.append('brand', this.brand);
                 myformData.append('number', this.product_number);
@@ -1650,21 +1713,20 @@
                     result = res.data.result;
                     // 成功則顯示成功，然後退出
                     if(result != "failed"){
-                        alert(result);
-                        return
-                    }
-                    // 失敗看原因
-                    reason = res.data.reason;
-                    if(reason == "InfoEmpty"){
-                        alert("Name, Serial, Number其中一欄為空");
-                    }else if(reason == "Duplicated"){
-                        alert("已經有這筆資料位於資料庫內");
+                        this.showAlert(result);
+                        this.showRevise(false);
+                    }else{
+                        // 失敗看原因
+                        reason = res.data.reason;
+                        if(reason == "Duplicated"){
+                            this.showAlert("序號重複", "bg-red-500");
+                        }
                     }
                 })
                 .catch((err)=>{
                     status = err.response.status;
                     if(status == 403) alert("你!沒有!權限!");
-                    else if(status != 413) alert("檔案大小過大");
+                    else if(status == 413) alert("檔案大小過大");
                     else alert(status);
                 });
             }
@@ -1697,7 +1759,8 @@
             // 獲取相機資源
             Instascan.Camera.getCameras().then(function (cameras) {
                 self.cameras = cameras;
-            }).catch(function (e) {
+            })
+            .catch(function (e) {
                 console.error(e);
             });
 
@@ -1723,9 +1786,6 @@
                 // 使用者同意授權
                 var notification = new Notification('Hi there!', notifyConfig); // 建立通知
             }
-
-            // 如果使用者還是不同意授權執行 Notification
-            // 最好還是進行適當的處理以避免繼續打擾使用者
         },
         created() {
             

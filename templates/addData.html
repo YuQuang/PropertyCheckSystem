@@ -305,7 +305,7 @@
                     .catch((err)=>{
                         status = err.response.status;
                         if(status == 403) alert("你!沒有!權限!");
-                        else if(status != 413) alert("檔案大小過大");
+                        else if(status == 413) alert("檔案大小過大");
                         else alert(status);
                     });
                 },

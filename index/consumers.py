@@ -1,6 +1,5 @@
 # index/consumers.py
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import Property
 from django.contrib.auth.models import User, AnonymousUser, Group
 from .consumer_async_db import get_user, is_member, get_recentNotify, userReadNotify
 from channels.layers import get_channel_layer
@@ -73,7 +72,6 @@ class NotifyConsumer(AsyncWebsocketConsumer):
         """
         try:
             data = json.loads(text_data)
-            print(data)
             action = data["action"]
             if action == None or action == '':
                 return

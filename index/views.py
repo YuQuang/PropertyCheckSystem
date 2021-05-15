@@ -9,6 +9,7 @@ import os, datetime, re, os.path
 from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage, CurrentCheckProperty
 #
 from .consumers import sendToAllGroup, sendToGroup
+from .CheckConsumers import checkWsSendToAllGroup
 from .form import PropertyImageForm, PropertyImportantForm
 
 """
@@ -824,6 +825,7 @@ def updateSingleData(request):
     # 從前端接收檔案
     files = request.FILES.get('file')
     
+    checkId = request.POST.get("checkId")
     propId = request.POST.get('propId')
     name = request.POST.get('name')
     number = request.POST.get('number')
@@ -849,8 +851,26 @@ def updateSingleData(request):
             'reason': 'NotExists'
         })
     
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查重複序號及編號存在
+    """""""""""""""""""""""""""""""""""""""""""""
+    if Property.objects.filter(property_number=number, serial_number=serial).exclude(id=propId).exists():
+        return JsonResponse({
+            'result': 'failed',
+            'reason': 'Duplicated'
+        })
+
     prop = Property.objects.filter(id=propId).first()
+
+    if name != None:
+        prop.name = name
     
+    if number!= None:
+        prop.property_number = number
+
+    if serial!= None:
+        prop.serial_number = serial
+
     """""""""""""""""""""""""""""""""""""""""""""
         檢查有外鍵之部分，外鍵是否存在
     """""""""""""""""""""""""""""""""""""""""""""
@@ -931,9 +951,12 @@ def updateSingleData(request):
             month = int(getDate[5:7])
             day = int(getDate[8:10])
             datetime.date(year, month, day)
-            prop.getDate = getDate
+            prop.get_date = getDate
         except Exception as e:
             print("日期格式不正確")
+
+    if tips != None:
+        prop.tips = tips
 
     """""""""""""""""""""""""""""""""""""""""""""
     # 圖片檢查、確定有圖片上傳
@@ -985,6 +1008,7 @@ def updateSingleData(request):
     noti.save()
 
     sendToAllGroup({"action": "newNotify"})
+    checkWsSendToAllGroup({"action": "updateData", "checkId": checkId})
 
     return JsonResponse({'result': 'success'})
 
@@ -1185,6 +1209,47 @@ def getCheckProperty(request):
     result = {'result': 'success', 'data': data}
 
     return JsonResponse(result)
+
+@API_CheckLogin
+def getCheckSingleProperty(request):
+    checkId = request.GET.get('checkId')
+    # Change Property to python dictionary
+    newsdata = CurrentCheckProperty.objects.filter(id=checkId)
+
+    if not newsdata.exists():
+        return JsonResponse({'result': 'faild', 'reason': 'NotFound'})
+
+    singleCheck = newsdata.first()
+    singleProperty = singleCheck.prop
+    singleDict = {}
+    # Wrapper the data
+    singleDict.setdefault('id', singleCheck.id.__str__())
+    singleDict.setdefault('is_check', singleCheck.status.__str__())
+    singleDict.setdefault('action_user', singleCheck.action_user.__str__())
+    # Single Property
+    singleDict.setdefault('propId', singleProperty.id.__str__())
+    singleDict.setdefault('product_name', singleProperty.name.__str__())
+    singleDict.setdefault('number', singleProperty.serial_number.__str__())
+    singleDict.setdefault('product_number', singleProperty.property_number.__str__())
+    singleDict.setdefault('tip', singleProperty.tips.__str__())
+    singleDict.setdefault('get_date', singleProperty.get_date.__str__())
+    singleDict.setdefault('age_limit', singleProperty.expiry_date.__str__())
+    singleDict.setdefault('quantity', singleProperty.quantity.__str__())
+    singleDict.setdefault('single_value', singleProperty.price.__str__())
+
+    # With foreign key filter
+    singleDict.setdefault('position', singleProperty.position.__str__())
+    singleDict.setdefault('brand', singleProperty.brand.__str__())
+    singleDict.setdefault('label_position', singleProperty.label_position.__str__())
+    singleDict.setdefault('unit', singleProperty.quantity_unit.__str__())
+    singleDict.setdefault('status', singleProperty.status.__str__())
+
+    if singleProperty.image != None:
+        singleDict.setdefault('image', '/' + singleProperty.image.image.__str__())
+    else:
+        singleDict.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
+
+    return JsonResponse({'result': 'success', 'data': singleDict})
 
 # 更改盤點狀態
 # (需要登入)
