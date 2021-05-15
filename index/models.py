@@ -445,7 +445,7 @@ class Notification(models.Model):
         ('n', 'notknown'),
         ('d', 'deleteData'),
         ('a', 'addData'),
-        ('w', 'writeData'),
+        ('m', 'modifyData'),
         ('l', 'loanProperty'),
         ('r', 'ReturnProperty'),
         ('i', 'importExcel'),

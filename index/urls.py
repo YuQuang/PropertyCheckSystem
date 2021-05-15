@@ -38,11 +38,14 @@ urlpatterns = [
     # 取得所有位置
     path('getPosition/', views.getPosition, name='getPosition'),
     path('getBrand/', views.getBrand, name='getBrand'),
+    path('getUnit/', views.getUnit, name='getUnit'),
     # 取得用戶資料
     path('getUserInfo/', views.getUserInfo, name='getUserInfo'),
     # 儲存資料
     path('saveData/', views.saveData, name='saveData'),
     path('saveSingleData', views.saveSingleData, name='saveSingleData'),
+    # 更新資料
+    path('updateSingleData', views.updateSingleData, name='updateSingleData'),
     # 取得資料、取得單一資料、刪除單筆資料
     path('getData/', views.getData, name='getData'),
     path('getSingleData/', views.getSingleData, name='getSingleData'),

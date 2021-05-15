@@ -160,6 +160,17 @@ def getBrand(request):
     
     return JsonResponse({"brand": brandList})
 
+# 取得所有單位
+@API_CheckLogin
+def getUnit(request):
+    unit = Unit.objects.all()
+    
+    unitList = []
+    for u in unit:
+        unitList.append(u.name.__str__())
+    
+    return JsonResponse({"unit":unitList})
+
 """
 # 租借與歸還、同意租借與同意歸還
 """
@@ -801,6 +812,182 @@ def saveSingleData(request):
 
     return JsonResponse({'result': 'success'})
 
+# 更新單一檔案帶圖片
+# (需要新增財產權限 index.change_property)
+# 會留下提醒
+@API_CheckLogin
+def updateSingleData(request):
+    user = request.user
+    if not user.has_perm('index.change_property'):
+        return HttpResponse(status=403)
+
+    # 從前端接收檔案
+    files = request.FILES.get('file')
+    
+    propId = request.POST.get('propId')
+    name = request.POST.get('name')
+    number = request.POST.get('number')
+    serial = request.POST.get('serial')
+    brand = request.POST.get('brand')
+    position = request.POST.get('position')
+    realPosition = request.POST.get('realPosition')
+    tips = request.POST.get('tips')
+    getDate = request.POST.get('getDate')
+    expiryDate = request.POST.get('expiryDate')
+    amount = request.POST.get('amount')
+    price = request.POST.get('price')
+    unit = request.POST.get('unit')
+
+
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查存在
+    """""""""""""""""""""""""""""""""""""""""""""
+    if not Property.objects.filter(id=propId).exists():
+        # 產品是否存在
+        return JsonResponse({
+            'result': 'failed',
+            'reason': 'NotExists'
+        })
+    
+    prop = Property.objects.filter(id=propId).first()
+    
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查有外鍵之部分，外鍵是否存在
+    """""""""""""""""""""""""""""""""""""""""""""
+    if brand != None:
+        brand = brand.replace(' ','')   # 去掉空白
+        # 檢查品牌是否存在
+        b = Brand.objects.filter(name=brand)
+        if not b.exists():
+            print(f"品牌不存在創建{brand}.")
+            b = Brand.objects.create(name=brand)
+            b.save()
+        else: b = b.first()
+        prop.brand = b
+
+    if position != None:
+        position = position.replace(' ','') # 去掉空白
+        # 檢查位置是否存在
+        p = Position.objects.filter(name=position)
+        if not p.exists():
+            print(f"位置不存在創建{position}.")
+            p = Position.objects.create(name=position)
+            p.save()
+        else: p = p.first()
+        prop.label_position = p
+    
+    if realPosition != None:
+        realPosition = realPosition.replace(' ','') # 去掉空白
+        # 檢查真實位置是否存在
+        rp = Position.objects.filter(name=realPosition)
+        if not rp.exists():
+            print(f"真實位置不存在創建{realPosition}.")
+            rp = Position.objects.create(name=realPosition)
+            rp.save()
+        else: rp = rp.first()
+        prop.position = rp
+
+    if unit != None:
+        unit = unit.replace(' ','') # 去掉空白
+        # 檢查單位位置是否存在
+        u = Unit.objects.filter(name=unit)
+        if not u.exists():
+            print(f"單位不存在創建{unit}.")
+            u = Position.objects.create(name=unit)
+            u.save()
+        else: u = u.first()
+        prop.quantity_unit = u
+    
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查數字是否正確
+    """""""""""""""""""""""""""""""""""""""""""""
+    if expiryDate != None:
+        try:
+            expiryDate = float(expiryDate)
+            prop.expiry_date = expiryDate
+        except Exception as e:
+            print("expiryDate 格式不符")
+
+    if amount != None:
+        try:
+            amount = float(amount)
+            prop.quantity = amount
+        except Exception as e:
+            print("amount 格式不符")
+
+    if price != None:
+        try:
+            price = float(price)
+            prop.price = price
+        except Exception as e:
+            print("price 格式不符")
+    
+    """""""""""""""""""""""""""""""""""""""""""""
+        檢查日期是否正確
+    """""""""""""""""""""""""""""""""""""""""""""
+    if getDate != None:
+        try:
+            year = int(getDate[:4])
+            month = int(getDate[5:7])
+            day = int(getDate[8:10])
+            datetime.date(year, month, day)
+            prop.getDate = getDate
+        except Exception as e:
+            print("日期格式不正確")
+
+    """""""""""""""""""""""""""""""""""""""""""""
+    # 圖片檢查、確定有圖片上傳
+    """""""""""""""""""""""""""""""""""""""""""""
+    Imageform = PropertyImageForm(request.POST, request.FILES)
+    # 若圖片不存在則上傳圖片，若重複則更新舊圖片
+    if Imageform.is_valid():
+        # 副檔名
+        extension = re.findall(r".[a-zA-Z]+$", files._name)
+        # 若檔案沒有副檔名
+        if not extension:
+            extension = ['.jpg']
+        # 圖片於資料庫內的名稱
+        imageName = name + serial + number
+        # 更改檔名
+        files._name = imageName + extension[0]
+        imagePosition = os.path.abspath(os.getcwd()) + "/static/PropertyImage/"
+        if os.path.isfile(imagePosition + files._name):
+            os.remove(imagePosition + files._name)
+            print(f"刪除原有圖檔{files._name}")
+
+        pi = PropertyImage.objects.filter(image_name=imageName)
+        if not pi.exists():
+            pi = PropertyImage()
+            pi.image = files
+            pi.image_name = imageName
+            pi.save()
+        else:
+            pi = pi.first()
+            pi.image = files
+            pi.save()
+        prop.image = pi
+    else: 
+        print('沒有上傳圖片')
+
+    """""""""""""""""""""""""""""""""""""""""""""
+    # 寫入資料庫
+    """""""""""""""""""""""""""""""""""""""""""""
+    prop.save()
+
+    """
+        將提醒事件添加至資料表內
+    """
+    noti = Notification()
+    noti.action = 'm'
+    noti.action_user = user
+    noti.action_date = datetime.datetime.now()
+    noti.notify_group = Group.objects.filter(name="admin").first()
+    noti.save()
+
+    sendToAllGroup({"action": "newNotify"})
+
+    return JsonResponse({'result': 'success'})
+
 # 刪除財產
 # (需要租刪除財產權限 index.delete_property)
 # 會留下提醒
@@ -971,6 +1158,8 @@ def getCheckProperty(request):
         singleDict.setdefault('id', singleCheck.id.__str__())
         singleDict.setdefault('is_check', singleCheck.status.__str__())
         singleDict.setdefault('action_user', singleCheck.action_user.__str__())
+        # Single Property
+        singleDict.setdefault('propId', singleProperty.id.__str__())
         singleDict.setdefault('product_name', singleProperty.name.__str__())
         singleDict.setdefault('number', singleProperty.serial_number.__str__())
         singleDict.setdefault('product_number', singleProperty.property_number.__str__())
@@ -988,7 +1177,7 @@ def getCheckProperty(request):
         singleDict.setdefault('status', singleProperty.status.__str__())
 
         if singleProperty.image != None:
-            singleDict.setdefault('image', singleProperty.image.image.__str__())
+            singleDict.setdefault('image', '/' + singleProperty.image.image.__str__())
         else:
             singleDict.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
 

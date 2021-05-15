@@ -120,6 +120,7 @@
                                         <img v-if="item.action == 'loanProperty'" src="{% static 'images/loan.svg' %}" class="md:h-16 h-12">
                                         <img v-if="item.action == 'deleteData'" src="{% static 'images/delete.svg' %}" class="md:h-16 h-12">
                                         <img v-if="item.action == 'addData'" src="{% static 'images/add.svg' %}" class="md:h-16 h-12">
+                                        <img v-if="item.action == 'modifyData'" src="{% static 'images/edit.svg' %}" class="md:h-16 h-12">
                                     </div>
                                     <!-- 資訊欄 -->
                                     {% verbatim %}
@@ -229,7 +230,7 @@
     <script>
         var mySocket = null;
         function initWebSocket(){
-            mySocket = new WebSocket("wss://" + window.location.hostname + "/ws/notify");
+            mySocket = new WebSocket("ws://" + window.location.hostname + "/ws/notify");
             // 連結成功
             mySocket.onopen = ()=>{
                 // 向後台要求最近的通知
@@ -284,7 +285,7 @@
                 console.log(err);
             };
         }
-        // initWebSocket();
+        initWebSocket();
 
         const navbar =  Vue.createApp({
             data() {
