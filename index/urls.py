@@ -63,4 +63,5 @@ urlpatterns = [
     path('getCheckSingleProperty/', views.getCheckSingleProperty, name='getCheckSingleProperty'),
     path('changePropStatus/', views.changePropStatus, name='changePropStatus'),
     path('resetCheckProp/', views.resetCheckProp, name='resetCheckProp'),
+    path('saveCheckProp/', views.saveCheckProp, name='saveCheckProp'),
 ]

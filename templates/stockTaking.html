@@ -52,6 +52,34 @@
             {% endverbatim %}
         </div>
     </div>
+    <!-- 等待 視窗 -->
+    <div v-cloak :class="{'fixed flex justify-center z-30 w-full top-2 transition-opacity duration-500':true, 'opacity-0': !isWaitingShow, 'opacity-100': isWaitingShow, 'hidden': isWaitingHide}">
+        <div :class="'text-white px-6 py-4 border-0 rounded relative md:w-auto w-10/12 max-w-lg bg-yellow-500'">
+            {% verbatim %}
+            <span class="text-xl inline-block mr-3 align-middle w-6 animate-spin">
+                <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 512 512" viewBox="0 0 512 512">
+                    <g>
+                    <path d="m256 0c-141.382 0-256 114.618-256 256s114.618 256 256 256 256-114.618 256-256-114.618-256-256-256zm0 450.189c-107.077
+                    0-194.189-87.112-194.189-194.189s87.112-194.189 194.189-194.189 194.189 87.112 194.189 194.189-87.112 194.189-194.189 194.189z"
+                    fill="#71abdf"/><g fill="#4a9bd9">
+                    <path d="m240.547 62.426c-5.099-.403-10.252-.615-15.453-.615-107.076 0-194.189 87.112-194.189 194.189s87.112 194.189 194.189 194.189c5.201 
+                    0 10.354-.212 15.453-.615-99.879-7.901-178.736-91.698-178.736-193.574s78.857-185.673 178.736-193.574z"/>
+                    <path d="m256 0c-5.19 0-10.339.173-15.453.478 134.185 7.992 240.548 119.33 240.548 255.522s-106.363 247.53-240.548 255.522c5.114.305 
+                    10.263.478 15.453.478 141.382 0 256-114.618 256-256s-114.618-256-256-256z"/></g>
+                    <path d="m256 0v61.811c107.077 0 194.189 87.112 194.189 194.189h61.811c0-141.382-114.618-256-256-256z" fill="#a8c9eb"/>
+                    <path d="m256 0v1.863c126.807 15.262 225.095 123.217 225.095 254.137h30.905c0-141.382-114.618-256-256-256z" fill="#8dbbe5"/>
+                    </g>
+                </svg>
+            </span>
+            <div class="inline-block align-middle mr-8">
+                等待中
+            </div>
+            <button @click="" class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none">
+            <span>×</span>
+            </button>
+            {% endverbatim %}
+        </div>
+    </div>
     <!-- 顯示資料的表單 -->
     <div class='overflow-auto w-full py-10'>
         <!-- 顯示盤點資料 -->
@@ -263,6 +291,33 @@
             <div class="px-5 py-4 flex justify-end">
                 <button @click="confirmModel(false)" class="bg-orange-500 mr-1 rounded text-sm py-2 px-3 text-gray-500 hover:text-black transition duration-150">Cancel</button>
                 <button @click="confirmModel(true)" class="text-sm py-2 px-3 text-gray-500 hover:text-black transition duration-150">OK</button>
+            </div>
+        </div>
+    </div>
+    <!-- 盤點次數輸入視窗 彈跳視窗 -->
+    <div v-cloak :class="{'fixed flex justify-center align-middle top-0 w-full p-5 z-20':true, 'hidden': !isCheckNumberModel}">
+        <div @click="showCheckNumberModel(false)" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"></div>
+        <div class="md:w-1/3 w-11/12 rounded-lg shadow-lg bg-gray-100 my-20 z-10">
+            <div class="flex justify-between border-b border-gray-300 px-5 py-4">
+                <div>
+                <i class="fa fa-exclamation-triangle text-orange-500"></i>
+                <span class="font-bold text-black text-lg">提示</span>
+                </div>
+            </div>
+        
+            <div class="px-10 py-5 text-black flex flex-col gap-3">
+                <div class="w-full">
+                    保存為第<input type="number" v-model="checkNumber">次盤點
+                </div>
+                <div class="w-full">
+                    <textarea placeholder="備註" class="w-full" v-model="checkTips"></textarea>
+                </div>
+            </div>
+        
+            <div class="px-5 py-4 flex justify-end">
+                <button @click="showCheckNumberModel(false)" class="bg-orange-500 mr-1 rounded text-sm py-2 px-3 text-gray-500 hover:text-black transition duration-150">Cancel</button>
+                <button @click="saveCheckProp();" class="text-sm py-2 px-3 text-gray-500 hover:text-black transition duration-150">OK</button>
             </div>
         </div>
     </div>
@@ -901,7 +956,7 @@
                         duration-75 sm:max-w-lg sm:w-10/12 w-full max-h-full p-4 md:text-3xl text-xl text-center font-semibold">
                 <ul class="flex flex-col p-4">
                     <!-- 保存按鈕 -->
-                    <li class="border-gray-400 flex flex-row mb-2">
+                    <li @click="showCheckNumberModel(true)" class="border-gray-400 flex flex-row mb-2">
                         <div class="select-none cursor-pointer bg-gray-200 rounded-md flex flex-1 items-center p-4  transition duration-500 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
                             <div class="flex flex-col rounded-md w-10 h-10 justify-center items-center mr-4">
                                 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -1060,7 +1115,7 @@
             let miliSeconds = 5000;
             console.log("CheckSocket closed!Try connect after " + miliSeconds/1000 + "s...");
             setTimeout(()=>{
-                initWebSocket();
+                initCheckWebSocket();
             }, miliSeconds);
         };
         // 接收到訊息
@@ -1076,6 +1131,8 @@
                 // 後台通知有新訊息
                 if(message['action'] == 'updateData'){
                     app.updateSingleProperty(message['checkId']);
+                }else if(message['action'] == 'newCheckData'){
+                    app.updateRealTimeStatus(message['data']);
                 }
             }catch{
                 console.log("CheckSocket onMessage Error")
@@ -1100,6 +1157,7 @@
                 getPositionUrl: "{% url 'getPosition' %}",
                 getBrandUrl: "{% url 'getBrand' %}",
                 getUnitUrl: "{% url 'getUnit' %}",
+                saveCheckPropUrl: "{% url 'saveCheckProp' %}",
 
 
                 nowCheckedList: [],
@@ -1137,6 +1195,10 @@
                 cancelCallBack: "",
                 isConfirmModel: false,
                 
+                // 等待提醒視窗
+                isWaitingShow: false,
+                isWaitingHide: true,
+                
 
                 // 統計視窗
                 isStaticModel: false,
@@ -1156,6 +1218,11 @@
 
                 // 相機視窗
                 isCameraModel: false,
+
+                // 盤點次數視窗
+                checkNumber: 0,
+                checkTips: "",
+                isCheckNumberModel: false,
 
 
                 // 修改視窗
@@ -1535,8 +1602,12 @@
             },
             // 送出盤點資料
             sendPropertyCheck(){
+                
                 let self = this;
                 this.showConfirmModel(()=>{
+                    if(this.isWaitingHide == false)
+                        return;
+                    this.showWaiting(true);
                     axios.post(this.changePropStatusUrl, {
                         data: this.nowCheckedList,
                     },{
@@ -1544,9 +1615,11 @@
                     })
                     .then((res)=>{
                         self.showAlert("成功");
+                        self.showWaiting(false);
                     })
                     .catch((err)=>{
                         self.showAlert("錯誤", "bg-red-500");
+                        self.showWaiting(false);
                         console.log(err);
                     })
                 },
@@ -1575,6 +1648,19 @@
                 setTimeout(()=>{
                     self.isAlertHide = true;
                 }, 500);
+            },
+            /*
+            # 等待部分
+            # 彈跳提醒
+            */
+            // 顯示等待提醒
+            showWaiting(status){
+                this.isWaitingHide = !status;
+                this.isWaitingShow = status;
+            },
+            // 顯示點儲存次數視窗
+            showCheckNumberModel(status){
+                this.isCheckNumberModel = status;
             },
             // 顯示確認視窗
             showConfirmModel(confirm, cancel){
@@ -1729,6 +1815,45 @@
                     else if(status == 413) alert("檔案大小過大");
                     else alert(status);
                 });
+            },
+            // 取得及時更新盤點狀態
+            updateRealTimeStatus(data){
+                let self = this;
+                data.forEach((d)=>{
+                    self.propertyList.forEach((p)=>{
+                        if(d.id == p.id){
+                            p.is_check = d.is_check;
+                            p.action_user = d.action_user;
+                            return
+                        }
+                    });
+                });
+            },
+            // 儲存當前盤點表為歷史紀錄
+            saveCheckProp(){
+                if(this.isWaitingHide == false)
+                    return;
+                if(this.checkNumber == 0){
+                    this.showAlert("請填入比0大的數字", "bg-red-500");
+                    return;
+                }
+
+                this.showWaiting(true);
+                let self = this;
+                axios({
+                    method: "get",
+                    url: this.saveCheckPropUrl,
+                    params: {'number': this.checkNumber, 'tips': this.checkTips},
+                })
+                .then((res)=>{
+                    self.showCheckNumberModel(false);
+                    self.showAlert("Success save CheckList");
+                    self.showWaiting(false);
+                })
+                .catch((err)=>{
+                    self.showAlert("Something went wrong", "bg-red-500");
+                    self.showWaiting(false);
+                })
             }
         },
         mounted() {
@@ -1746,24 +1871,31 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
             
+            let constraints = { video: true }
             // Camera Initial
             var self = this;
-            self.scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 1, mirror: true});
-            // 設定掃描 Listener
-            self.scanner.addListener('scan', function (content, image) {
-                self.content = content;
-                window.navigator.vibrate(200);
-                self.decodeQRcode();
-            });
+            navigator.mediaDevices.getUserMedia(constraints)
+            .then(function(stream) {
+                self.scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 1, mirror: true});
+                // 設定掃描 Listener
+                self.scanner.addListener('scan', function (content, image) {
+                    self.content = content;
+                    window.navigator.vibrate(200);
+                    self.decodeQRcode();
+                });
 
-            // 獲取相機資源
-            Instascan.Camera.getCameras().then(function (cameras) {
-                self.cameras = cameras;
+                // 獲取相機資源
+                Instascan.Camera.getCameras().then(function (cameras) {
+                    self.cameras = cameras;
+                })
+                .catch(function (e) {
+                    console.error(e);
+                });
             })
-            .catch(function (e) {
-                console.error(e);
+            .catch(function(err) {
+                /* handle the error */
             });
-
+            
             
             // 首先讓我們確定瀏覽器支援 Notification
             if (!("Notification" in window)) {

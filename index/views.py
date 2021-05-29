@@ -5,8 +5,11 @@ from django.contrib.auth.decorators import login_required
 #
 import json
 import os, datetime, re, os.path
+
+from django.utils import timezone
 #
-from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage, CurrentCheckProperty
+from .models import Property, Brand, Position, Unit, LeaseProperty, LeaseHistory, Notification, PropertyImage
+from .models import CurrentCheckProperty, CheckPropertyStatisticHistory, CheckPropertyHistory
 #
 from .consumers import sendToAllGroup, sendToGroup
 from .CheckConsumers import checkWsSendToAllGroup
@@ -459,7 +462,7 @@ def agreeReturnProperty(request):
 # 儲存檔案、刪除、取得全部、取得單一檔案
 """
 # 儲存檔案
-# (需要新增財產權限 index.add_property)
+# (需要新增財產權限 index.add_property, index.delete_property, index.change_property)
 # 會留下提醒
 @API_CheckLogin
 def saveData(request):
@@ -469,10 +472,15 @@ def saveData(request):
     # (need login)
     """
     user = request.user
-    if not user.has_perm('index.add_property'):
+    if not (user.has_perm('index.add_property') and user.has_perm('index.delete_property') and user.has_perm('index.change_property')):
         return HttpResponse(status=403)
 
     if request.POST.get('data') is None:
+        # Check the data that client send is empty or not
+        data = {'result': 'empty'}
+        return JsonResponse(data)
+    
+    if request.POST.get('data') == '[]':
         # Check the data that client send is empty or not
         data = {'result': 'empty'}
         return JsonResponse(data)
@@ -1270,6 +1278,8 @@ def changePropStatus(request):
         preSave.status = check.get('is_check', 'x')
         preSave.save()
 
+    checkWsSendToAllGroup({"action": "newCheckData", "data": data['data']})
+
     return JsonResponse({'result': 'success'})
 
 @API_CheckLogin
@@ -1283,5 +1293,46 @@ def resetCheckProp(request):
         checkProp.status = 'x'
         checkProp.action_user = None
         checkProp.save()
+
+    return JsonResponse({'result': 'success'})
+
+# 保存當前盤點狀態至歷史紀錄
+@API_CheckLogin
+def saveCheckProp(request):
+    tips = request.GET.get('tips')
+    number = 0
+    try:
+        number = int(request.GET.get('number'))
+    except Exception as e:
+        return JsonResponse({'result': 'failed'})
+
+    CPSH = CheckPropertyStatisticHistory.objects.filter(id=number).first()
+    if CPSH == None:
+        CPSH = CheckPropertyStatisticHistory(id=number, modify_date=timezone.now(), tips=tips)
+        CPSH.save()
+    else:
+        CPSH.tips = tips
+        CPSH.save()
+
+    CCP = CurrentCheckProperty.objects.all()
+
+    CPHListCreate = []
+    CPHListUpdate = []
+
+    for singleCCP in CCP:
+        CPH = CheckPropertyHistory.objects.filter(checkID=CPSH, prop=singleCCP.prop).first()
+        if CPH == None:
+            CPH = CheckPropertyHistory(prop=singleCCP.prop,status=singleCCP.status ,action_user=singleCCP.action_user, checkID=CPSH)
+            CPHListCreate.append(CPH)
+            continue
+        CPH.status = singleCCP.status
+        CPH.action_user = singleCCP.action_user
+        CPH.prop = singleCCP.prop
+        CPHListUpdate.append(CPH)
+
+    if CPHListCreate != []:
+        CheckPropertyHistory.objects.bulk_create(CPHListCreate)
+    if CPHListUpdate != []:
+        CheckPropertyHistory.objects.bulk_update(CPHListUpdate, ['action_user', 'prop', 'status'])
 
     return JsonResponse({'result': 'success'})

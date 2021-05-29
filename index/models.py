@@ -533,6 +533,29 @@ class CurrentCheckProperty(models.Model):
         )
 
 """
+# The Status of everyCheck
+# 每一次盤點的統計狀態
+"""
+class CheckPropertyStatisticHistory(models.Model):
+    id = models.AutoField(
+            primary_key=True,
+        )
+    save_date = models.DateTimeField(
+            auto_now_add=True,
+        )
+    modify_date = models.DateTimeField(
+            auto_created=True,
+            verbose_name='最後修改日期',
+            default=timezone.now
+        )
+    tips = models.CharField(
+            max_length=50,
+            verbose_name='備註',
+            null=True,
+            blank=True,
+        )
+
+"""
 # The CheckPropertyHistory
 # 歷史盤點表單
 """
@@ -563,10 +586,15 @@ class CheckPropertyHistory(models.Model):
         )
     # 最後做動作的使用者
     action_user = models.ForeignKey(
-        User,
+            User,
             verbose_name='用戶',
             on_delete=models.SET_NULL,
             null=True,
             blank=True,
         )
-    
+    # 第幾次盤點
+    checkID = models.ForeignKey(
+            CheckPropertyStatisticHistory,
+            verbose_name='盤點第幾次',
+            on_delete=models.CASCADE,
+        )

@@ -16,8 +16,9 @@
 {% block content %}
 {% verbatim %}
 <div id="itemCard">
+    <!-- 上方功能欄位 -->
     <div v-cloak class="container mx-auto px-2" @scroll="hideContextMenu( $event )">
-        <!-- 搜尋欄位 -->
+        <!-- 排列欄位 -->
         <div class="py-2">
             <div class="lg:w-2/3 md:w-1/2 w-1/2 p-3 inline-block flex-wrap">
                 <svg class="inline-block mr-3 w-6" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 301.219 301.219" style="enable-background:new 0 0 301.219 301.219;" xml:space="preserve">
@@ -28,17 +29,17 @@
                     <path d="M74.244,262.736H10c-5.523,0-10,4.477-10,10v10c0,5.523,4.477,10,10,10h64.244c5.522,0,10-4.477,10-10v-10   C84.244,267.213,79.767,262.736,74.244,262.736z"/>
                     <path d="M298.29,216.877l-7.071-7.071c-1.875-1.875-4.419-2.929-7.071-2.929c-2.652,0-5.196,1.054-7.072,2.929l-34.393,34.393   V18.736c0-5.523-4.477-10-10-10h-10c-5.523,0-10,4.477-10,10v225.462l-34.393-34.393c-1.876-1.875-4.419-2.929-7.071-2.929   c-2.652,0-5.196,1.054-7.071,2.929l-7.072,7.071c-3.904,3.905-3.904,10.237,0,14.142l63.536,63.536   c1.953,1.953,4.512,2.929,7.071,2.929c2.559,0,5.119-0.976,7.071-2.929l63.536-63.536   C302.195,227.113,302.195,220.781,298.29,216.877z"/>
                 </svg>
-                <select class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 flex-grow
-                             focus:border-indigo-500 text-base pl-3 pr-10">
-                    <option>名稱</option>
-                    <option>編號</option>
-                    <option>地點</option>
-                    <option>地點</option>
-                    <option>取得日期</option>
-                    <option>登記日期</option>
-                    <option>價格</option>
+                <select @change="sortProperty()" class="rounded border appearance-none border-gray-300 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 flex-grow
+                             focus:border-indigo-500 text-base pl-3 pr-10" v-model="nowSort">
+                    <option value="0">請選擇</option>
+                    <option value="1">名稱</option>
+                    <option value="3">編號</option>
+                    <option value="5">地點</option>
+                    <option value="7">取得日期</option>
+                    <option value="8">價格</option>
                 </select>
             </div>
+            <!-- 搜尋欄位 -->
             <div class="lg:w-1/3 md:w-1/2 w-1/2 p-3 inline-block">
                 <input v-model="searchInput" v-on:keydown="search" class="py-3 px-4 bg-white rounded-lg placeholder-gray-400
                     text-gray-900 appearance-none shadow-md w-full focus:outline-none
@@ -379,6 +380,9 @@
                 searchInput: "",
                 currentData: "",
 
+                // 當前排列
+                nowSort: 0,
+
                 loadFlag: false,
 
                 // 當前頁數 、 總頁數 、 一頁幾筆
@@ -435,6 +439,8 @@
 
                     // 接收完整資料
                     this.propertyData = response.data.data;
+                    
+                    this.sortProperty();
 
                     // 計算總共有幾頁
                     this.total_page = parseInt(this.propertyData.length / this.num_one_page) + 1;
@@ -567,7 +573,7 @@
                 // Replace current querystring with the new one.
                 history.replaceState(null, null, "?" + queryParams.toString());
             },
-            // 測試
+            // 搜尋
             search(event) {
                 if (event.keyCode == 13) {    // Enter keycode is 13
                     // 搜尋結果，並將頁面重設為第一頁
@@ -669,10 +675,114 @@
                 this.changePage(e.target.options.selectedIndex+1)
             },
             // 排序產品
-            sortProperty(){
-                function compare(){
-
+            sortProperty(isReverse = false){
+                // 1 按照 名稱 排序
+                function nameCompare( a, b ) {
+                    if ( a.product_name > b.product_name ) return -1;
+                    if ( a.product_name < b.product_name ) return 1;
+                    return 0;
                 }
+                // 2 按照 盤點 排序
+                function checkCompare( a, b ) {
+                    if ( a.is_check == 'v' ) return -1;
+                    if ( b.is_check == 'v' ) return 1;
+                    return 0;
+                }
+                // 3 按照 產品編號 排序
+                function productNumberCompare( a, b ) {
+                    if ( a.product_number > b.product_number ) return -1;
+                    else if ( a.product_number < b.product_number ) return 1;
+                    if ( a.number > b.number ) return -1;
+                    else if ( a.number < b.number ) return 1;
+                    return 0;
+                }
+                // 4 按照 序號 排序
+                function numberCompare( a, b ) {
+                    if ( a.number > b.number ) return -1;
+                    if ( a.number < b.number ) return 1;
+                    return 0;
+                }
+                // 5 按照 位置 排序
+                function positionCompare( a, b ) {
+                    if ( a.position > b.position ) return -1;
+                    if ( a.position < b.position ) return 1;
+                    return 0;
+                }
+                // 6 按照 產貼位置 排序
+                function labelPositionCompare( a, b ) {
+                    if ( a.label_position > b.label_position ) return -1;
+                    if ( a.label_position < b.label_position ) return 1;
+                    return 0;
+                }
+                // 7 按照 產貼位置 排序
+                function labelPositionCompare( a, b ) {
+                    if ( a.label_position > b.label_position ) return -1;
+                    if ( a.label_position < b.label_position ) return 1;
+                    return 0;
+                }
+                // 8 按照 取得日期 排序
+                function getDateCompare( a, b ){
+                    if ( a.get_date > b.get_date ) return -1;
+                    if ( a.get_date < b.get_date ) return 1;
+                    return 0;
+                }
+                // 9 按照 價格 排序
+                function priceCompare( a, b ){
+                    if ( a.single_value > b.single_value ) return -1;
+                    if ( a.single_value < b.single_value ) return 1;
+                    return 0;
+                }
+
+                let mode = 1;
+                try{
+                    mode = parseInt(this.nowSort);
+                }catch{
+                    return;
+                }
+                // 選取排序模式
+                switch(mode){
+                    case 1:
+                        console.log("按照名稱排序");
+                        this.propertyData.sort(nameCompare);
+                        break;
+                    case 2:
+                        console.log("按照盤點排序");
+                        this.propertyData.sort(checkCompare);
+                        break;
+                    case 3:
+                        console.log("按照編號排序");
+                        this.propertyData.sort(productNumberCompare);
+                        break;
+                    case 4:
+                        console.log("按照序號排序");
+                        this.propertyData.sort(numberCompare);
+                        break;
+                    case 5:
+                        console.log("按照真實位置排序");
+                        this.propertyData.sort(positionCompare);
+                        break;
+                    case 6:
+                        console.log("按照產貼邊號排序");
+                        this.propertyData.sort(labelPositionCompare);
+                        break;
+                    case 7:
+                        console.log("按照取得日期排序");
+                        this.propertyData.sort(getDateCompare);
+                        break;
+                    case 8:
+                        console.log("按照取得價格排序");
+                        this.propertyData.sort(priceCompare);
+                        break;
+                }
+                
+                if(isReverse)
+                    this.propertyData.reverse();
+
+                // 初始化
+                this.pagePropertyData = []
+                // 頁面當前陣列資料
+                for (i = (this.now_page - 1) * this.num_one_page, o = 0; i < this.now_page * this.num_one_page && i < this.propertyData.length; i++, o++)
+                    this.pagePropertyData[o] = this.propertyData[i]
             },
         },
         mounted() {
