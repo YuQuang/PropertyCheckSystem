@@ -433,6 +433,8 @@ def agreeReturnProperty(request):
     # 將資料存到借閱歷史紀錄中
     if agree == "True":
         leasing = LeaseProperty.objects.filter(id=product_id).first()
+        if leasing == None:
+            return JsonResponse({'result': 'Leasing dosent exist'})
         leasing.leaseProperty.status = 'a'
         leasing.leaseProperty.save()
 

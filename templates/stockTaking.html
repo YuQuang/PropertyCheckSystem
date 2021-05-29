@@ -1871,31 +1871,35 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
             
-            let constraints = { video: true }
-            // Camera Initial
-            var self = this;
-            navigator.mediaDevices.getUserMedia(constraints)
-            .then(function(stream) {
-                self.scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 1, mirror: true});
-                // 設定掃描 Listener
-                self.scanner.addListener('scan', function (content, image) {
-                    self.content = content;
-                    window.navigator.vibrate(200);
-                    self.decodeQRcode();
-                });
+            try{
+                let constraints = { video: true }
+                // Camera Initial
+                var self = this;
+                navigator.mediaDevices.getUserMedia(constraints)
+                .then(function(stream) {
+                    self.scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 1, mirror: true});
+                    // 設定掃描 Listener
+                    self.scanner.addListener('scan', function (content, image) {
+                        self.content = content;
+                        window.navigator.vibrate(200);
+                        self.decodeQRcode();
+                    });
 
-                // 獲取相機資源
-                Instascan.Camera.getCameras().then(function (cameras) {
-                    self.cameras = cameras;
+                    // 獲取相機資源
+                    Instascan.Camera.getCameras().then(function (cameras) {
+                        self.cameras = cameras;
+                    })
+                    .catch(function (e) {
+                        console.error(e);
+                    });
                 })
-                .catch(function (e) {
-                    console.error(e);
+                .catch(function(err) {
+                    /* handle the error */
                 });
-            })
-            .catch(function(err) {
-                /* handle the error */
-            });
-            
+            }
+            catch{
+
+            }
             
             // 首先讓我們確定瀏覽器支援 Notification
             if (!("Notification" in window)) {
@@ -1920,7 +1924,10 @@
             }
         },
         created() {
-            
+            window.onbeforeunload = function(e){
+            　　var e = window.event || e;
+            　　e.returnValue=("有未送出資料");
+            }
         },
     }).mount("#stockTaking")
 </script>

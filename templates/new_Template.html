@@ -182,6 +182,13 @@
                 </div>
             </div>
         </nav>
+        <!-- 同意Cookie -->
+        <div :class="{'fixed right-4 bottom-4 w-3/4 max-w-lg max-h-64 bg-gray-100 rounded-xl shadow-lg p-4 z-50':true, 'hidden': !isCookieModel}">
+            <div class="text-2xl text-center font-bold">Welcome</div>
+            <div class="text-lg">You need to accept using Cookie, you can see detail on EULA, thanks.</div>
+            <button @click="acceptCookie()" class="text-lg bg-blue-500 rounded-xl shadow-lg w-full p-1 text-white mt-2">Accept Cookie</button>
+            <button class="text-lg bg-white rounded-xl shadow-lg w-full p-1 text-black mt-2">View EULA</button>
+        </div>
     </div>
 
     <!-- 內容部分 -->
@@ -189,6 +196,8 @@
         {% block content %}
         {% endblock %}
     </div>
+
+    
     
     <!-- 下方Footer -->
     {% block footer %}
@@ -329,6 +338,9 @@
                     ],
 
                     userInfo: "",
+
+                    // 顯示同意Cookie使用視窗
+                    isCookieModel: false,
                 }
             },
             methods:{
@@ -397,9 +409,45 @@
                 sendMsgToSocket(JsonMsg){
                     if(mySocket.readyState == 1)
                         mySocket.send(JSON.stringify(JsonMsg));
+                },
+                // 同意使用Cookie
+                acceptCookie(){
+                    function setCookie(cname, cvalue, exdays) {
+                        var d = new Date();
+                        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+                        var expires = "expires="+ d.toUTCString();
+                        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+                    }
+                    setCookie("acceptCookie", "true", 1);
+                    this.showCookie(false);
+                },
+                // 關閉Cookie視窗
+                showCookie(status){
+                    this.isCookieModel = status;
+                },
+                // 取得Cookie
+                getCookie(cname) {
+                    var name = cname + "=";
+                    var decodedCookie = decodeURIComponent(document.cookie);
+                    var ca = decodedCookie.split(';');
+                    for(var i = 0; i <ca.length; i++) {
+                        var c = ca[i];
+                        while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                        }
+                        if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                        }
+                    }
+                    return "";
                 }
             },
             mounted(){
+
+                if(this.getCookie("acceptCookie") != "true" )
+                    this.showCookie(true);
+
+
                 window.addEventListener('scroll', ()=>{
                     this.switchProfileMenu(false);
                 }, true);

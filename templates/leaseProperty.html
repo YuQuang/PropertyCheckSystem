@@ -263,6 +263,7 @@
                 },
                 // 同意租借功能
                 agreeBorrow(id, leasePropertyId, agree){
+                    let self = this;
                     if(agree){
                         axios.get(this.agreeLoanProperty,{
                                 params:{
@@ -272,7 +273,14 @@
                                 },
                             })
                             .then(function(response){
-                                location.reload();
+                                let i = 0;
+                                self.waiting_data.forEach(e => {
+                                    if(e.id == id){
+                                        self.loaning_data.push(self.waiting_data[i]);
+                                        self.waiting_data.splice(i, 1);
+                                    }
+                                    i++;
+                                });
                             })
                             .catch(function (error) {
                             })
@@ -288,7 +296,11 @@
                                 },
                             })
                             .then(function(response){
-                                location.reload();
+                                let i = 0;
+                                self.waiting_data.forEach(e => {
+                                    if(e.id == id) self.waiting_data.splice(i, 1);
+                                    i++;
+                                });
                             })
                             .catch(function (error) {
                             })
@@ -298,6 +310,7 @@
                 },
                 // 同意歸還功能
                 agreeReturn(id, agree){
+                    let self = this;
                     if(agree){
                         axios.get(this.agreeReturnProperty,{
                                 params:{
@@ -306,7 +319,11 @@
                                 },
                             })
                             .then(function(response){
-                                location.reload();
+                                let i = 0;
+                                self.waiting_return_data.forEach(e => {
+                                    if(e.id == id) self.waiting_return_data.splice(i, 1);
+                                    i++;
+                                });
                             })
                             .catch(function (error) {
                             })
@@ -321,7 +338,11 @@
                                 },
                             })
                             .then(function(response){
-                                location.reload();
+                                let i = 0;
+                                self.waiting_return_data.forEach(e => {
+                                    if(e.id == id) self.waiting_return_data.splice(i, 1);
+                                    i++;
+                                });
                             })
                             .catch(function (error) {
                             })
@@ -342,13 +363,21 @@
                 },
                 // 歸還租借物品
                 returnProperty(id){
+                    let self = this;
                     axios.get(this.returnPropertyURL,{
                             params:{
                                 "id": id,
                             },
                         })
                         .then(function(response){
-                            location.reload();
+                            let i = 0;
+                            self.loaning_data.forEach(e => {
+                                if(e.id == id){
+                                    self.waiting_return_data.push(self.loaning_data[i]);
+                                    self.loaning_data.splice(i, 1);
+                                }
+                                i++;
+                            });
                         })
                         .catch(function (error) {
                         })
