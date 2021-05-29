@@ -160,6 +160,8 @@ USE_TZ = True
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 STATIC_URL = '/static/'
 
+STATIC_ROOT = './static_file/'
+
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]

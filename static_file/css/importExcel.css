@@ -1,0 +1,30 @@
+table tbody {
+    display:block;
+    height: 63vh;
+    overflow-y:scroll;
+}
+
+table thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
+
+table thead {
+    width: 100%;
+}
+
+#saveBtn{
+    right: 0px;
+    position: absolute;
+}
+
+#clearBtn{
+    right: 70px;
+    position: absolute;
+}
+
+#bottom-container{
+    width: 90vw;
+    position: relative;
+}
