@@ -14,10 +14,10 @@
 
 
 {% block content %}
-{% verbatim %}
 <div id="itemCard">
     <!-- 上方功能欄位 -->
     <div v-cloak class="container mx-auto px-2" @scroll="hideContextMenu( $event )">
+        {% verbatim %}
         <!-- 排列欄位 -->
         <div class="py-2">
             <div class="lg:w-2/3 md:w-1/2 w-1/2 p-3 inline-block flex-wrap">
@@ -169,10 +169,48 @@
                 </div>
             </div>
         </div>
+        {% endverbatim %}
+    </div>
+    <!-- Alert視窗 -->
+    <div v-cloak :class="{'fixed flex justify-center z-30 w-full top-2 transition-opacity duration-500':true, 'opacity-0': !isAlertShow, 'opacity-100': isAlertShow, 'hidden': isAlertHide}">
+        <div :class="'text-white px-6 py-4 border-0 rounded relative md:w-auto w-10/12 max-w-lg ' + alertColor">
+            {% verbatim %}
+            <span class="text-xl inline-block mr-3 align-middle w-6 animate-bounce">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                 viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve">
+                    <path style="fill:#F2B844;" d="M403.065,81.145c-5.657,0-11.398-1.187-16.866-3.699c-9.846-4.523-17.342-12.608-21.107-22.767
+                        c-3.764-10.159-3.346-21.177,1.175-31.023c4.52-9.845,12.606-17.342,22.766-21.107c10.159-3.765,21.176-3.348,31.023,1.174
+                        c20.325,9.334,29.268,33.464,19.933,53.79l0,0C433.165,72.37,418.435,81.145,403.065,81.145z M403.138,18.106
+                        c-2.635,0-5.274,0.469-7.819,1.411c-5.627,2.086-10.105,6.237-12.609,11.69c-2.504,5.454-2.736,11.557-0.65,17.184
+                        S388.297,58.495,393.75,61c11.256,5.171,24.624,0.217,29.794-11.041l0,0c5.169-11.259,0.217-24.624-11.041-29.793
+                        C409.515,18.796,406.331,18.106,403.138,18.106z M431.767,53.737h0.012H431.767z"/>
+                    <path style="fill:#FCC447;" d="M284.133,456.309c-3.517,7.657-8.342,14.319-14.08,19.817c-18.71,17.91-47.17,23.604-72.143,12.135
+                        c-24.973-11.469-39.202-36.766-37.808-62.628c0.432-7.936,2.339-15.936,5.856-23.595L284.133,456.309z"/>
+                    <path style="fill:#F2B844;" d="M284.133,456.309c-3.517,7.657-8.342,14.319-14.08,19.817l-109.951-50.494
+                        c0.432-7.936,2.339-15.936,5.856-23.595L284.133,456.309z"/>
+                    <path style="fill:#F2B844;" d="M198.517,416.99l-32.558-14.952c-14.986,32.63-0.679,71.237,31.952,86.223
+                        c5.648,2.594,11.478,4.291,17.331,5.186C193.777,475.027,186.126,443.972,198.517,416.99z"/>
+                    <path style="fill:#FCC447;" d="M389.974,69.224c-78.145-35.888-169.326-4.377-218.533,102.771l-20.455,44.542
+                        c-15.164,33.021-57.887,58.939-96.618,76.548c-25.741,11.703-25.906,48.172-0.21,59.973l169.682,77.925l169.682,77.924
+                        c25.696,11.801,53.25-12.092,45.353-39.241c-11.883-40.852-20.065-90.148-4.899-123.17l20.455-44.542
+                        C503.637,194.807,468.119,105.111,389.974,69.224z"/>
+                    <path style="fill:#F2B844;" d="M108.632,318.006c38.731-17.608,81.454-43.528,96.618-76.548l20.455-44.542
+                        c43.362-94.423,119.32-130.095,190.229-112.68c-8.008-5.719-16.679-10.749-25.96-15.011
+                        c-78.145-35.889-169.326-4.378-218.532,102.77l-20.455,44.542c-15.164,33.02-57.887,58.939-96.618,76.548
+                        c-25.741,11.703-25.906,48.172-0.21,59.973c0,0,24.171,11.1,54.264,24.92C82.726,366.178,82.892,329.708,108.632,318.006z"/>
+                </svg>
+            </span>
+            <div class="inline-block align-middle mr-8" v-html="alertMsg">
+            </div>
+            <button @click="closeAlert()" class="absolute bg-transparent text-2xl font-semibold leading-none right-0 top-0 mt-4 mr-6 outline-none focus:outline-none">
+            <span>×</span>
+            </button>
+            {% endverbatim %}
+        </div>
     </div>
     <!-- 彈跳視窗 對話框 -->
-    <div v-cloak :class="[ dialogBackgroundCss, dialogBackgroundStatus ]" aria-labelledby="modal-title" role="dialog"
-        aria-modal="true">
+    <div v-cloak :class="[ dialogBackgroundCss, dialogBackgroundStatus ]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        {% verbatim %}
         <div class="flex flex-wrap justify-center content-center text-center sm:p-0 h-full p-3">
             <!-- 背景黑色 -->
             <div @click="vanishDialog(false)" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
@@ -207,10 +245,8 @@
                     </div>
                     <div class="border-t border-gray-200 overflow-y-auto">
                         <dl>
-                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <div></div>
+                            <div class="bg-gray-100 px-4 py-5 sm:gap-4 sm:px-6">
                                 <img :src="currentData.image">
-                                <div></div>
                             </div>
                             <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                 <dt class="text-sm font-medium text-gray-500">
@@ -332,13 +368,196 @@
                                     </ul>
                                 </dd>
                             </div>
+                            <div class="bg-gray-100 px-4 py-5 flex-row flex justify-center sm:px-6 gap-5">
+                                <button @click="showRevise(true)" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                    修改資料
+                                </button>
+                            </div>
                         </dl>
                     </div>
                 </div>
             </div>
         </div>
+        {% endverbatim %}
     </div>
-    {% endverbatim %}
+    <!-- 修改資訊 彈跳視窗 -->
+    <div v-cloak :class="{'fixed z-20 inset-0 overflow-y-auto':true, 'hidden': !isReviseModel }" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex flex-wrap justify-center content-center text-center sm:p-0 h-full p-3">
+            <!-- 背景黑色 -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                aria-hidden="true"></div>
+
+            <!-- 對話框實體 sm:align-middle sm:max-w-lg  -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left shadow-xl transform transition-all
+                        duration-75 sm:max-w-2xl sm:w-10/12 w-full max-h-full">
+                <!-- 關閉叉叉按鈕 -->
+                <div @click="showRevise(false)"
+                    class="absolute right-0 w-8 h-8 flex flex-wrap justify-center content-center m-2 rounded-lg hover:bg-red-200 active:bg-blue-400 active:text-white transition-all duration-500">
+                    <svg class="w-3 h-3" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512.001 512.001"
+                        style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve">
+                        <g>
+                            <path d="M284.286,256.002L506.143,34.144c7.811-7.811,7.811-20.475,0-28.285c-7.811-7.81-20.475-7.811-28.285,0L256,227.717
+                                L34.143,5.859c-7.811-7.811-20.475-7.811-28.285,0c-7.81,7.811-7.811,20.475,0,28.285l221.857,221.857L5.858,477.859
+                                c-7.811,7.811-7.811,20.475,0,28.285c3.905,3.905,9.024,5.857,14.143,5.857c5.119,0,10.237-1.952,14.143-5.857L256,284.287
+                                l221.857,221.857c3.905,3.905,9.024,5.857,14.143,5.857s10.237-1.952,14.143-5.857c7.811-7.811,7.811-20.475,0-28.285
+                                L284.286,256.002z" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="bg-white pt-5 pb-4 sm:pb-4 flex flex-col h-full overflow-hidden rounded-lg">
+                    <div class="px-4 sm:px-6 pb-5">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            修改產品資料
+                        </h3>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 overflow-y-auto">
+                        {% verbatim %}
+                        <dl>
+                            <div class="bg-gray-100 px-4 py-5">
+                                <div class="relative w-auto">
+                                    <img :src="image">
+                                    <input type="file" class="absolute left-0 top-0 w-full h-full opacity-0"
+                                           accept="image/gif, image/jpeg, image/png" @change="getImg($event)" >
+                                </div>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Full name
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2 relative">
+                                    <input v-model="product_name" type="text" class="w-full">
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Brand
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="brand" type="text" class="w-full" list="brandSelect">
+                                    <datalist id="brandSelect">
+                                        <option disabled selected>Choose</option>
+                                            <option v-for="b in brandList">
+                                                {{ b }}
+                                            </option>
+                                    </datalist>
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Product number
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="product_number" type="text" class="w-full">
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Serial
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="number" type="text" class="w-full">
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Position
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="position" type="text" class="w-full" list="PositionSelect">
+                                    <datalist id="PositionSelect">
+                                        <option disabled selected>Choose</option>
+                                            <option v-for="p in positionList">
+                                                {{ p }}
+                                            </option>
+                                    </datalist>
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    LabelPosition
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="label_position" type="text" class="w-full" list="labelPositionSelect">
+                                    <datalist id="labelPositionSelect">
+                                        <option disabled selected>Choose</option>
+                                            <option v-for="p in positionList">
+                                                {{ p }}
+                                            </option>
+                                    </datalist>
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    GetDate
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="get_date" type="date" class="w-full">
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Expiry
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="age_limit" type="number" class="w-full">
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Price
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="single_value" type="number" class="w-full">
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    quantity
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="quantity" type="number" class="w-full">
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    unit
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <input v-model="unit" type="text" class="w-full" list="UnitSelect">
+                                    <datalist id="UnitSelect">
+                                        <option disabled selected>Choose</option>
+                                            <option v-for="u in unitList">
+                                                {{ u }}
+                                            </option>
+                                    </datalist>
+                                </dd>
+                            </div>
+                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Tips
+                                </dt>
+                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <textarea v-model="tip" class="w-full"></textarea>
+                                </dd>
+                            </div>
+                            <div class="bg-gray-100 px-4 py-5 flex-row flex justify-center sm:px-6 gap-5">
+                                <button @click="showRevise(false)" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                    取消
+                                </button>
+                                <button @click="updateData()" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                    保存
+                                </button>
+                            </div>
+                        </dl>
+                        {% endverbatim %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- 右鍵選單 -->
     <div v-cloak id="selectmenu" class="select-none cursor-pointer hidden origin-top-right fixed top-0 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5
      focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
@@ -367,10 +586,14 @@
         data() {
             return {
                 // Restful API URL
-                getData: "{% url 'getData' %}",
-                propertyDetail: "{% url 'newpropertydetail' %}",
-                deleteDataURL: "{% url 'deleteData' %}",
-                loanPropertyURL: "{% url 'loanProperty' %}",
+                getData:            "{% url 'getData' %}",
+                propertyDetail:     "{% url 'newpropertydetail' %}",
+                deleteDataURL:      "{% url 'deleteData' %}",
+                loanPropertyURL:    "{% url 'loanProperty' %}",
+                getPositionUrl:     "{% url 'getPosition' %}",
+                getBrandUrl:        "{% url 'getBrand' %}",
+                getUnitUrl:         "{% url 'getUnit' %}",
+                updateSingleDataUrl:"{% url 'updateSingleData' %}",
 
                 propertyData: [],
                 pagePropertyData: [],
@@ -382,16 +605,82 @@
 
                 // 當前排列
                 nowSort: 0,
-
                 loadFlag: false,
 
                 // 當前頁數 、 總頁數 、 一頁幾筆
                 now_page: 1,
                 total_page: 1,
                 num_one_page: 12,
+
+                // 位置、品牌、單位列表
+                positionList: [],
+                brandList:    [],
+                unitList:     [],
+
+                // 通知CSS管理
+                isAlertShow: false,
+                isAlertHide: true,
+                alertMsg: "",
+                closeAlertTimer: "",
+                alertColor: "bg-green-500",
+
+                // 修改視窗
+                isReviseModel: false,
+                // 修改資料
+                currentImage: "",
+                sampleImage: "https://i.pinimg.com/originals/fb/f7/64/fbf76458d74b5236cb7ee9208563bebc.gif",
+                checkId: 0,
+                age_limit: 0,
+                brand: "",
+                get_date: "",
+                propId: 0,
+                image: "",
+                unit: "",
+                label_position: "",
+                number: "",
+                position: "",
+                product_name: "",
+                product_number: "",
+                quantity: 0,
+                single_value: 0,
+                tip: "",
             }
         },
         methods: {
+            // 取得上傳圖片
+            getImg(e){
+                let files = e.target.files;
+                if(files.length == 0)
+                    return;
+                var reader = new FileReader();
+                let self = this;
+                reader.onload = function (e) {
+                    self.image = e.target.result;
+                }
+                reader.readAsDataURL(files[0]);
+                this.currentImage = files[0];
+            },
+            // 讀取Cookie
+            readCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+            // 取得位置、單位、品牌
+            getUnitBrandPosition(){
+                let self = this;
+                axios.get(this.getPositionUrl)
+                .then((res)=>{self.positionList = res.data.position});
+                axios.get(this.getBrandUrl)
+                .then((res)=>{self.brandList = res.data.brand});
+                axios.get(this.getUnitUrl)
+                .then((res)=>{self.unitList = res.data.unit});
+            },
             async Load(numPage, isReLoad=false) {
                 if(this.loadFlag)
                     return;
@@ -532,6 +821,28 @@
                         init()
                     });
 
+            },
+            /*
+            # 通知部分
+            # 彈跳通知
+            */
+            // 顯示通知
+            showAlert(msg, bgColor = "bg-green-500", duration = 3000){
+                this.alertColor = bgColor;
+                this.alertMsg = msg;
+                this.isAlertShow = true;
+                this.isAlertHide = false;
+                let self = this;
+                clearTimeout(this.closeAlertTimer);
+                this.closeAlertTimer = setTimeout(()=>{self.closeAlert()}, duration);
+            },
+            // 關閉提醒
+            closeAlert(){
+                this.isAlertShow = false;
+                let self = this;
+                setTimeout(()=>{
+                    self.isAlertHide = true;
+                }, 500);
             },
             // 使對話框改變
             vanishDialog(isShow) {
@@ -784,10 +1095,97 @@
                 for (i = (this.now_page - 1) * this.num_one_page, o = 0; i < this.now_page * this.num_one_page && i < this.propertyData.length; i++, o++)
                     this.pagePropertyData[o] = this.propertyData[i]
             },
+            // 顯示修改視窗
+            showRevise(status){
+                this.isReviseModel = status;
+                if(status == true){
+                    this.image = this.sampleImage;
+                    this.product_name = this.currentData.product_name;
+                    this.brand = this.currentData.brand;
+                    this.product_number = this.currentData.product_number;
+                    this.get_date = this.currentData.get_date;
+                    this.propId = this.currentData.id;
+                    this.checkId = this.currentData.id;
+                    this.label_position = this.currentData.label_position;
+                    this.number = this.currentData.number;
+                    this.position = this.currentData.position;
+                    this.unit = this.currentData.unit;
+                    this.quantity = this.currentData.quantity;
+                    this.single_value = this.currentData.single_value;
+                    this.tip = this.currentData.tip;
+                }
+            },
+            // 更新資料
+            updateData(){
+                let myformData = new FormData();
+                myformData.append('file', this.currentImage);
+                myformData.append('name', this.product_name);
+                myformData.append('checkId', this.checkId);
+                myformData.append('propId', this.propId);
+                myformData.append('brand', this.brand);
+                myformData.append('number', this.product_number);
+                myformData.append('serial', this.number);
+                myformData.append('position', this.label_position);
+                myformData.append('realPosition', this.position);
+                myformData.append('getDate', this.get_date);
+                myformData.append('expiryDate', this.age_limit);
+                myformData.append('amount', this.quantity);
+                myformData.append('price', this.single_value);
+                myformData.append('tips', this.tip);
+                myformData.append('unit', this.unit);
+
+                let self = this;
+                axios({
+                    method: "post",
+                    url: this.updateSingleDataUrl,
+                    headers: { 
+                        'X-CSRFToken': this.readCookie('csrftoken'),
+                        "Content-Type": "multipart/form-data",
+                        },
+                    data: myformData,
+                })
+                .then((res)=>{
+                    result = res.data.result;
+                    // 成功則顯示成功，然後退出
+                    if(result != "failed"){
+                        this.showAlert(result);
+                        this.showRevise(false);
+                        this.syncData();
+                    }else{
+                        // 失敗看原因
+                        reason = res.data.reason;
+                        if(reason == "Duplicated"){
+                            this.showAlert("序號重複", "bg-red-500");
+                        }
+                    }
+                })
+                .catch((err)=>{
+                    status = err.response.status;
+                    if(status == 403) alert("你!沒有!權限!");
+                    else if(status == 413) alert("檔案大小過大");
+                    else alert(status);
+                });
+            },
+            // 同步更新用戶端資料
+            syncData(){
+                this.currentData.image = this.image;
+                this.currentData.product_name = this.product_name;
+                this.currentData.brand = this.brand;
+                this.currentData.product_number = this.product_number;
+                this.currentData.get_date = this.get_date;
+                this.currentData.label_position = this.label_position;
+                this.currentData.number = this.number;
+                this.currentData.position = this.position;
+                this.currentData.unit = this.unit;
+                this.currentData.quantity = this.quantity;
+                this.currentData.single_value = this.single_value;
+                this.currentData.tip = this.tip;
+            }
         },
         mounted() {
             window.addEventListener('click', this.hideContextMenu);
             window.addEventListener('scroll', this.hideContextMenu, true);
+            this.getUnitBrandPosition();
         },
         created() {
             this.Load(undefined,true);

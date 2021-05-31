@@ -850,6 +850,8 @@ def updateSingleData(request):
     price = request.POST.get('price')
     unit = request.POST.get('unit')
 
+    if propId == None:
+        return JsonResponse({'result': 'failed'})
 
     """""""""""""""""""""""""""""""""""""""""""""
         檢查存在
