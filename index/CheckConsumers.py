@@ -7,7 +7,9 @@ import json
 from asgiref.sync import async_to_sync
 
 userAction = {
-    'changeCheckStatus': 'changeCheckStatus',
+    'changePropStatus': 'changePropStatus',
+    'resetCheckData': 'resetCheckData',
+    'loadCheckData': 'loadCheckData',
 }
 
 ##################
@@ -73,10 +75,17 @@ class CheckConsumer(AsyncWebsocketConsumer):
             if action == None or action == '':
                 return
 
-            # 用戶取得最近未讀+已讀的10則通知
-            if action == userAction['changeCheckStatus']:
+            if action == userAction['changePropStatus']:
                 await self.sendToAllGroup({
-                    'message': {"result": 123}
+                    'message': {"action": "newCheckData", "data": data['data']},
+                })
+            elif action == userAction['resetCheckData']:
+                await self.sendToAllGroup({
+                    'message': {"action": "resetCheckData"},
+                })
+            elif action == userAction['loadCheckData']:
+                await self.sendToAllGroup({
+                    'message': {"action": "loadCheckData"},
                 })
         except Exception as e:
             print("CheckWebsocket接收錯誤")

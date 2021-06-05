@@ -1196,7 +1196,7 @@
         // 連結成功
         CheckSocket.onopen = ()=>{
             // 向後台要求最近的通知
-            CheckSocket.send(JSON.stringify({"action": "Hello"}));
+            // CheckSocket.send(JSON.stringify({"action": "Hello"}));
         };
         // 通訊關閉
         CheckSocket.onclose = ()=>{
@@ -1211,12 +1211,13 @@
         CheckSocket.onmessage = (msg)=>{
             try{
                 data = JSON.parse(msg.data)
-                message = data['message'];
-
+                message = data['message']['message'];
+                
                 // 解決後臺若傳送空值問題
                 if(message["action"] == '' || message["action"] == undefined)
                     return
 
+                
                 // 後台通知有新訊息
                 if(message['action'] == 'updateData'){
                     app.updateSingleProperty(message['checkId']);
@@ -1729,6 +1730,7 @@
                     .then((res)=>{
                         self.showAlert("成功");
                         self.showWaiting(false);
+                        CheckSocket.send(JSON.stringify({"action": "changePropStatus", "data": this.nowCheckedList}));
                     })
                     .catch((err)=>{
                         self.showAlert("錯誤", "bg-red-500");
@@ -1803,6 +1805,7 @@
                     axios.get(this.resetCheckPropUrl)
                     .then((res)=>{
                         self.showAlert("重置成功");
+                        CheckSocket.send(JSON.stringify({'action': 'resetCheckData'}));
                     })
                     .catch((err)=>{ self.showAlert("權限不足", "bg-red-500"); })
                 },
@@ -2013,6 +2016,7 @@
                     .then((res)=>{
                         self.showAlert("加載成功");
                         self.showPropCheckHist(false);
+                        CheckSocket.send(JSON.stringify({"action": "loadCheckData"}));
                     })
                     .catch((err)=>{
                         self.showAlert("得不到回應 :(", "bg-red-500");

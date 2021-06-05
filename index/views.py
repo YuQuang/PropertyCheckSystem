@@ -1289,8 +1289,6 @@ def changePropStatus(request):
         preSave.status = check.get('is_check', 'x')
         preSave.save()
 
-    checkWsSendToAllGroup({"action": "newCheckData", "data": data['data']})
-
     return JsonResponse({'result': 'success'})
 
 # 重設盤點表
@@ -1308,7 +1306,6 @@ def resetCheckProp(request):
         checkProp.action_user = None
         checkProp.save()
 
-    checkWsSendToAllGroup({"action": "resetCheckData"})
 
     """
         將提醒事件添加至資料表內
@@ -1413,8 +1410,6 @@ def loadCheckProperty(request):
             )
         )
     CurrentCheckProperty.objects.bulk_create(CCPList)
-    
-    checkWsSendToAllGroup({"action": "loadCheckData"})
 
     """
         將提醒事件添加至資料表內
