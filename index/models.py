@@ -451,6 +451,8 @@ class Notification(models.Model):
         ('i', 'importExcel'),
         ('y', 'agreeLoan'),
         ('x', 'notAgreeLoan'),
+        ('q', 'resetCheckProp'),
+        ('w', 'loadCheckProp'),
         )
     # 用戶動作
     action = models.CharField(

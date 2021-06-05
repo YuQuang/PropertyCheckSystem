@@ -64,4 +64,6 @@ urlpatterns = [
     path('changePropStatus/', views.changePropStatus, name='changePropStatus'),
     path('resetCheckProp/', views.resetCheckProp, name='resetCheckProp'),
     path('saveCheckProp/', views.saveCheckProp, name='saveCheckProp'),
+    path('loadCheckPropertyHistory/', views.loadCheckPropertyHistory, name='loadCheckPropertyHistory'),
+    path('loadCheckProperty/', views.loadCheckProperty, name='loadCheckProperty'),
 ]

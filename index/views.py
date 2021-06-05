@@ -1070,6 +1070,7 @@ def deleteData(request):
     return JsonResponse({'result': 'success'})
 
 # 取得財產資訊
+# (需要登入)
 @API_CheckLogin
 def getData(request):
     """
@@ -1135,6 +1136,7 @@ def getData(request):
     return JsonResponse(result)
 
 # 取得單一財產資訊
+# (需要登入)
 @API_CheckLogin
 def getSingleData(request):
     """
@@ -1182,6 +1184,8 @@ def getSingleData(request):
 """
 # 盤點API
 """
+# 取得全部物品盤點狀態
+# (需要登入)
 @API_CheckLogin
 def getCheckProperty(request):
     # Change Property to python dictionary
@@ -1222,6 +1226,8 @@ def getCheckProperty(request):
 
     return JsonResponse(result)
 
+# 取得單一物品盤點狀態
+# (需要登入)
 @API_CheckLogin
 def getCheckSingleProperty(request):
     checkId = request.GET.get('checkId')
@@ -1266,6 +1272,7 @@ def getCheckSingleProperty(request):
 # 更改盤點狀態
 # (需要登入)
 # need Login
+# 會發送提醒
 @API_CheckLogin
 def changePropStatus(request):
     user = request.user
@@ -1286,6 +1293,9 @@ def changePropStatus(request):
 
     return JsonResponse({'result': 'success'})
 
+# 重設盤點表
+# (需要登入)
+# 會發送提醒
 @API_CheckLogin
 def resetCheckProp(request):
     user = request.user
@@ -1298,9 +1308,24 @@ def resetCheckProp(request):
         checkProp.action_user = None
         checkProp.save()
 
+    checkWsSendToAllGroup({"action": "resetCheckData"})
+
+    """
+        將提醒事件添加至資料表內
+    """
+    noti = Notification()
+    noti.action = 'q'
+    noti.action_user = user
+    noti.action_date = datetime.datetime.now()
+    noti.notify_group = Group.objects.filter(name="admin").first()
+    noti.save()
+
+    sendToAllGroup({"action": "newNotify"})
+
     return JsonResponse({'result': 'success'})
 
 # 保存當前盤點狀態至歷史紀錄
+# (需要登入)
 @API_CheckLogin
 def saveCheckProp(request):
     tips = request.GET.get('tips')
@@ -1310,14 +1335,22 @@ def saveCheckProp(request):
     except Exception as e:
         return JsonResponse({'result': 'failed'})
 
+    if tips != None and len(tips) > 50:
+        return JsonResponse({'result': 'failed', 'reason': 'TipsTooLong'})
+
+    # 於資料庫內搜索是否存在紀錄
     CPSH = CheckPropertyStatisticHistory.objects.filter(id=number).first()
+    # 無此資料創建
     if CPSH == None:
         CPSH = CheckPropertyStatisticHistory(id=number, modify_date=timezone.now(), tips=tips)
         CPSH.save()
+    # 有資料修改Tips以及更新修改日期
     else:
         CPSH.tips = tips
+        CPSH.modify_date = timezone.now()
         CPSH.save()
 
+    # 取得
     CCP = CurrentCheckProperty.objects.all()
 
     CPHListCreate = []
@@ -1338,5 +1371,62 @@ def saveCheckProp(request):
         CheckPropertyHistory.objects.bulk_create(CPHListCreate)
     if CPHListUpdate != []:
         CheckPropertyHistory.objects.bulk_update(CPHListUpdate, ['action_user', 'prop', 'status'])
+
+    return JsonResponse({'result': 'success'})
+
+# 讀取歷史盤點紀錄
+# (需要登入)
+@API_CheckLogin
+def loadCheckPropertyHistory(request):
+    data = []
+    CPSH = CheckPropertyStatisticHistory.objects.all()
+
+    for cps in CPSH:
+        data.append({
+                'id':          cps.id,
+                'save_date':   cps.save_date.strftime("%Y-%m-%d"),
+                'modify_date': cps.modify_date.strftime("%Y-%m-%d"),
+                'tips':        cps.tips,
+            })
+    return JsonResponse({'result': 'success', 'data': data})
+
+# 加載前幾次盤點狀態
+# (需要登入)
+# 會發送提醒
+@API_CheckLogin
+def loadCheckProperty(request):
+    user = request.user
+    cphID = request.GET.get('id')
+    
+    # 先將原本擁有資料移除
+    CurrentCheckProperty.objects.all().delete()
+
+    # 將歷史紀錄拷貝過去
+    CPH = CheckPropertyHistory.objects.filter(checkID=cphID)
+    CCPList = []
+    for cph in CPH:
+        CCPList.append(
+            CurrentCheckProperty(
+                prop = cph.prop,
+                status = cph.status,
+                action_user = cph.action_user,
+            )
+        )
+    CurrentCheckProperty.objects.bulk_create(CCPList)
+    
+    checkWsSendToAllGroup({"action": "loadCheckData"})
+
+    """
+        將提醒事件添加至資料表內
+    """
+    noti = Notification()
+    noti.action = 'w'
+    noti.action_user = user
+    noti.action_date = datetime.datetime.now()
+    noti.notify_group = Group.objects.filter(name="admin").first()
+    noti.save()
+
+    sendToAllGroup({"action": "newNotify"})
+
 
     return JsonResponse({'result': 'success'})
