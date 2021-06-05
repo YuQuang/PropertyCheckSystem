@@ -332,9 +332,6 @@ def loanProperty(request):
     noti.notify_group = Group.objects.filter(name="admin").first()
     noti.save()
 
-    # 通知前端
-    sendToAllGroup({"action": "newNotify"})
-
     return JsonResponse({'result': 'success'})
 
 # 同意租借財產
@@ -407,9 +404,6 @@ def returnProperty(request):
     noti.action_date = datetime.datetime.now()
     noti.notify_group = Group.objects.filter(name="admin").first()
     noti.save()
-
-    # 通知前端
-    sendToAllGroup({"action": "newNotify"})
 
     return JsonResponse({'result': 'success'})
 
@@ -613,21 +607,23 @@ def saveData(request):
         preSaveData.brand           = Brand.objects.filter(name=brand).first()
         preSaveData.quantity_unit   = Unit.objects.filter(name=unit).first()
         totalSaveData.append(preSaveData)
-
-        """
-        # 建立盤點部分關聯資料
-        """
-        preCheckProp = CurrentCheckProperty()
-        preCheckProp.status = is_check
-        preCheckProp.prop = preSaveData
-        preCheckProp.save()
-
+        
     Property.objects.bulk_create(totalSaveData)
     # except Exception as e:
     #     exc_type, exc_obj, exc_tb = sys.exc_info()
     #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     #     print(exc_type, fname, exc_tb.tb_lineno)
     #     return JsonResponse({'result': 'failed'})
+    """
+    # 建立盤點部分關聯資料
+    """
+    for prop in Property.objects.all():
+        if not CurrentCheckProperty.objects.filter(prop=prop).exists():
+            CurrentCheckProperty(
+                    status=prop.check,
+                    prop=prop,
+                ).save()
+
 
     """
         將提醒事件添加至資料表內
@@ -638,8 +634,6 @@ def saveData(request):
     noti.action_date = datetime.datetime.now()
     noti.notify_group = Group.objects.filter(name="admin").first()
     noti.save()
-
-    sendToAllGroup({"action": "newNotify"})
 
     print(f"{saveData.__name__ }() Done!\n")
     return JsonResponse({'result': 'success', 'duplicatelist': duplicatePropertyList})
@@ -1019,9 +1013,6 @@ def updateSingleData(request):
     noti.notify_group = Group.objects.filter(name="admin").first()
     noti.save()
 
-    sendToAllGroup({"action": "newNotify"})
-    checkWsSendToAllGroup({"action": "updateData", "checkId": checkId})
-
     return JsonResponse({'result': 'success'})
 
 # 刪除財產
@@ -1064,8 +1055,6 @@ def deleteData(request):
     noti.action_date = datetime.datetime.now()
     noti.notify_group = Group.objects.filter(name="admin").first()
     noti.save()
-
-    sendToAllGroup({"action": "newNotify"})
 
     return JsonResponse({'result': 'success'})
 
@@ -1272,7 +1261,6 @@ def getCheckSingleProperty(request):
 # 更改盤點狀態
 # (需要登入)
 # need Login
-# 會發送提醒
 @API_CheckLogin
 def changePropStatus(request):
     user = request.user
@@ -1316,8 +1304,6 @@ def resetCheckProp(request):
     noti.action_date = datetime.datetime.now()
     noti.notify_group = Group.objects.filter(name="admin").first()
     noti.save()
-
-    sendToAllGroup({"action": "newNotify"})
 
     return JsonResponse({'result': 'success'})
 
@@ -1420,8 +1406,6 @@ def loadCheckProperty(request):
     noti.action_date = datetime.datetime.now()
     noti.notify_group = Group.objects.filter(name="admin").first()
     noti.save()
-
-    sendToAllGroup({"action": "newNotify"})
 
 
     return JsonResponse({'result': 'success'})

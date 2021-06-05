@@ -378,6 +378,7 @@
                                 }
                                 i++;
                             });
+                            mySocket.send(JSON.stringify({"action": "newNotify"}));
                         })
                         .catch(function (error) {
                         })

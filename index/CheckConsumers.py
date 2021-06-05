@@ -10,6 +10,7 @@ userAction = {
     'changePropStatus': 'changePropStatus',
     'resetCheckData': 'resetCheckData',
     'loadCheckData': 'loadCheckData',
+    'updateData': 'updateData',
 }
 
 ##################
@@ -86,6 +87,10 @@ class CheckConsumer(AsyncWebsocketConsumer):
             elif action == userAction['loadCheckData']:
                 await self.sendToAllGroup({
                     'message': {"action": "loadCheckData"},
+                })
+            elif action == userAction['updateData']:
+                await self.sendToAllGroup({
+                    'message': {"action": "updateData", "checkId": data['checkId']},
                 })
         except Exception as e:
             print("CheckWebsocket接收錯誤")

@@ -906,6 +906,7 @@
                     .then(function (response) {
                         alert(response.data.result);
                         self.reLoad(self.now_page);
+                        mySocket.send(JSON.stringify({"action": "newNotify"}));
                     })
                     .catch(function (error) {
                     })
@@ -928,6 +929,7 @@
                             if(response.data.result == 'success'){
                                 alert("成功預約，請等管理員同意");
                                 mySocket.send(JSON.stringify({"action": "getRecentNotify"}));
+                                mySocket.send(JSON.stringify({"action": "newNotify"}));
                             }else if(response.data.result == 'empty'){
                                 alert("序號以及編號有錯，聯絡管理員");
                             }else if(response.data.result == 'loaning'){
@@ -1156,6 +1158,7 @@
                         reason = res.data.reason;
                         if(reason == "Duplicated"){
                             this.showAlert("序號重複", "bg-red-500");
+                            mySocket.send({"action": "newNotify"});
                         }
                     }
                 })

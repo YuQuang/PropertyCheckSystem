@@ -1217,7 +1217,6 @@
                 if(message["action"] == '' || message["action"] == undefined)
                     return
 
-                
                 // 後台通知有新訊息
                 if(message['action'] == 'updateData'){
                     app.updateSingleProperty(message['checkId']);
@@ -1806,6 +1805,7 @@
                     .then((res)=>{
                         self.showAlert("重置成功");
                         CheckSocket.send(JSON.stringify({'action': 'resetCheckData'}));
+                        mySocket.send(JSON.stringify({"action": "newNotify"}));
                     })
                     .catch((err)=>{ self.showAlert("權限不足", "bg-red-500"); })
                 },
@@ -1928,13 +1928,15 @@
                     result = res.data.result;
                     // 成功則顯示成功，然後退出
                     if(result != "failed"){
-                        this.showAlert(result);
-                        this.showRevise(false);
+                        self.showAlert(result);
+                        self.showRevise(false);
+                        CheckSocket.send(JSON.stringify({"action": "updateData", "checkId": self.checkId}));
+                        mySocket.send(JSON.stringify({"action": "newNotify"}));
                     }else{
                         // 失敗看原因
                         reason = res.data.reason;
                         if(reason == "Duplicated"){
-                            this.showAlert("序號重複", "bg-red-500");
+                            self.showAlert("序號重複", "bg-red-500");
                         }
                     }
                 })
@@ -2017,6 +2019,7 @@
                         self.showAlert("加載成功");
                         self.showPropCheckHist(false);
                         CheckSocket.send(JSON.stringify({"action": "loadCheckData"}));
+                        mySocket.send(JSON.stringify({"action": "newNotify"}));
                     })
                     .catch((err)=>{
                         self.showAlert("得不到回應 :(", "bg-red-500");

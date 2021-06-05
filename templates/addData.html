@@ -292,6 +292,7 @@
                         if(result != "failed"){
                             alert(result);
                             self.clearForm();
+                            mySocket.send(JSON.stringify({"action": "newNotify"}));
                             return
                         }
                         // 失敗看原因

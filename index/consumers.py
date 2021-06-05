@@ -10,6 +10,7 @@ userAction = {
     'getRecentNotify': 'getRecentNotify',
     'getNewNotify': 'getNewNotify',
     'userReadNotify': 'userReadNotify',
+    'newNotify': 'newNotify',
 }
 
 
@@ -87,6 +88,10 @@ class NotifyConsumer(AsyncWebsocketConsumer):
                 })
             elif action == userAction['userReadNotify']:
                 await userReadNotify(self.now_user_id, self.now_group)
+            elif action == userAction['newNotify']:
+                await self.Notify_sendMsg({
+                    'message': {"action": "newNotify"},
+                })
         except Exception as e:
             print("Websocket接收錯誤")
             print(e)

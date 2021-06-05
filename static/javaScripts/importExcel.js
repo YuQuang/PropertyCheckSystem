@@ -201,6 +201,7 @@ function saveData(){
             if(res['result'] == 'success'){
                 console.log('print duplicate');
                 console.log(res['duplicatelist']);
+                mySocket.send(JSON.stringify({"action": "newNotify"}));
             }
         }
     });
