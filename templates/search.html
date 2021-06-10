@@ -74,7 +74,7 @@
                             ondragstart='return false' @click="href( singleData )"
                             @contextMenu="contextmenu( $event , singleData );" oncontextmenu="return false;">
                             <img class="h-40 rounded w-full object-cover object-center rounded-t-xl"
-                                :src="singleData.image" alt="content">
+                                :src="singleData.image" alt="content" loading="lazy">
                             <div class="select-none mt-2 p-4">
                                 <h3 class="uppercase tracking-wide text-indigo-500 text-md title-font break-words">{{
                                     singleData.product_name }}</h3>

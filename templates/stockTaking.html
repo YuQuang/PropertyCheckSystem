@@ -1381,7 +1381,8 @@
                             e.age_limit      = data.age_limit;
                             e.brand          = data.brand;
                             e.id             = data.id;
-                            e.image          = data.image + "?s="+ (new Date()).getTime();;
+                            e.image          = "";
+                            e.image          = data.image + "?s="+ (new Date()).getTime();
                             e.is_check       = data.is_check;
                             e.label_position = data.label_position;
                             e.number         = data.number;
@@ -1932,6 +1933,7 @@
                         self.showRevise(false);
                         CheckSocket.send(JSON.stringify({"action": "updateData", "checkId": self.checkId}));
                         mySocket.send(JSON.stringify({"action": "newNotify"}));
+                        self.currentData.image = self.image;
                     }else{
                         // 失敗看原因
                         reason = res.data.reason;
