@@ -170,3 +170,62 @@ STATICFILES_DIRS = [
 #   Redirect to home URL after login (Default redirects to /accounts/profile/)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 LOGIN_REDIRECT_URL = '/'
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+#   LDAP 連線部分
+#   將LDAP串接到伺服器上
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+#Django-auth-ldap 配置部分
+import ldap
+from django_auth_ldap.config import LDAPSearch,GroupOfNamesType
+
+#修改Django认证先走ldap，再走本地认证
+AUTHENTICATION_BACKENDS = [
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+#ldap的连接基础配置
+AUTH_LDAP_SERVER_URI = "ldap://qnap.com:389" # ldap or ad 服务器地址
+AUTH_LDAP_BIND_DN = "cn=admin,dc=qnap,dc=com" # 管理员的dn路径
+AUTH_LDAP_BIND_PASSWORD = '1234' # 管理员密码
+
+#允许认证用户的路径
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    "ou=people,dc=qnap,dc=com",
+    ldap.SCOPE_SUBTREE,
+    "(uid=%(user)s)"
+)
+
+#通过组进行权限控制
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    "ou=groups,dc=qnap,dc=com",
+    ldap.SCOPE_SUBTREE,
+    "(objectClass=groupOfNames)"
+)
+
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
+
+#is_staff:这个组里的成员可以登录；is_superuser:组成员是django admin的超级管理员；is_active:组成员可以登录django admin后台，但是无权限查看后台内容
+# AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+#     "is_staff": "ou=groups,dc=qnap,dc=com",
+#     "is_superuser": "cn=admin,dc=qnap,dc=com",
+# }
+#通过组进行权限控制end
+
+#如果ldap服务器是Windows的AD，需要配置上如下选项
+AUTH_LDAP_CONNECTION_OPTIONS = {
+    ldap.OPT_DEBUG_LEVEL: 1,
+    ldap.OPT_REFERRALS: 0,
+}
+
+#当ldap用户登录时，从ldap的用户属性对应写到django的user数据库，键为django的属性，值为ldap用户的属性
+AUTH_LDAP_USER_ATTR_MAP = {
+    "username": "uid",
+    "name": "sn",
+    "email": "mail",
+}
+
+#如果为True，每次组成员都从ldap重新获取，保证组成员的实时性；反之会对组成员进行缓存，提升性能，但是降低实时性
+AUTH_LDAP_FIND_GROUP_PERMS = True

@@ -10,3 +10,10 @@
     <p><a href="{% url 'index'%}">Return to Home page.</a></p>
   </div>
 {% endblock %}
+
+{# 此部分為javaScript #}
+{% block javascript %}
+<script>
+  document.location.href="/";
+</script>
+{% endblock %}

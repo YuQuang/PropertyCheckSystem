@@ -11,187 +11,272 @@
 
 {% block content %}
     <div id="leaseTable">
+        <!-- 上方分頁標籤 -->
+        <div v-cloak class="bg-gray-800 w-full">
+            <nav class="flex flex-row justify-center">
+                <button @click="changeTab(1)" :class="'text-gray-50 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + borrowTabCss">
+                    租借
+                </button>
+                <button @click="changeTab(2)" :class="'text-gray-50 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + returnTabCss">
+                    歸還
+                </button>
+                <button @click="changeTab(3)" :class="'text-gray-50 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + historyTabCss">
+                    歷史紀錄
+                </button>
+            </nav>
+        </div>
         <div class="container mx-auto">
-            <!-- 上方分頁標籤 -->
-            <div class="bg-white w-full">
-                <nav class="flex flex-row">
-                    <button @click="changeTab(1)" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + borrowTabCss">
-                        租借
-                    </button>
-                    <button @click="changeTab(2)" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + returnTabCss">
-                        歸還
-                    </button>
-                    <button @click="" :class="'text-gray-600 py-4 px-6 block hover:text-blue-500 focus:outline-none ' + historyTabCss">
-                        歷史紀錄
-                    </button>
-                </nav>
-            </div>
-
+            
             <!-- 租借頁面 -->
-            <div :class="'container ' + borrowContainerCss">
-                <!-- 待審核部分 -->
-                <div class="my-4 text-4xl text-center">
-                    等待核准
-                </div>
+            <div v-cloak :class="'container ' + borrowContainerCss">
                 <!-- 待審核表格 -->
-                <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
-                    <div class="min-w-full rounded-lg flex flex-col divide-y divide-gray-200">
-                        <!-- 表格 HEAD -->
-                        <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
-                            <div>財產</div>
-                            <div>借用人</div>
-                            <div>申請日期</div>
-                            {% if user.is_superuser %}
-                                <div>同意</div>
-                            {% endif %}
-                        </div>
-                        <!-- 表格 BODY -->
-                        <div class="bg-white divide-y divide-gray-200 overflow-auto text-left text-lg font-bold resize-y">
-                            <div v-cloak v-for="waiting in waiting_data" class="p-3 font-medium uppercase text-center">
-                                {% if user.is_superuser %}
-                                    <div class="w-1/4 inline-block">
-                                        {% verbatim %}
-                                        {{ waiting.leaseProperty }}
-                                    </div>
-                                    <div class="w-1/4 inline-block">{{ waiting.borrower }}</div>
-                                    <div class="w-1/4 inline-block">{{ waiting.borrow_date }}</div>
-                                    <div class="w-1/4 inline-block">
-                                        <div class="grid grid-flow-col grid-cols-2 gap-10">
-                                            <button type="button" class="group relative h-full justify-center border border-transparent
-                                                text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
-                                                focus:ring-offset-2 focus:ring-indigo-500"
-                                                @click="agree(waiting.id, waiting.leasePropertyId, true, false)"
-                                                >Agree</button>
-                                            <button type="button" class="group relative h-full justify-center border border-transparent
-                                                text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
-                                                focus:ring-offset-2 focus:ring-indigo-500"
-                                                @click="agree(waiting.id, waiting.leasePropertyId, false, false)"
-                                                >Disagree</button>
-                                        </div>
-                                    </div>
-                                    {% endverbatim %}
-                                {% else %}
-                                    {% verbatim %}
-                                    <div class="w-1/3 inline-block">{{ waiting.leaseProperty }}</div>
-                                    <div class="w-1/3 inline-block">{{ waiting.borrower }}</div>
-                                    <div class="w-1/3 inline-block">{{ waiting.borrow_date }}</div>
-                                    {% endverbatim %}
-                                {% endif %}
-                            </div>
-                        </div>
+                <div class="align-middle inline-block max-w-full w-full">
+                    <div class="text-xl text-center font-bold m-2">
+                        等待核准
                     </div>
-                </div>
-                <!-- 已經借出的物品 -->
-                <div class="my-4 text-4xl text-center">
-                    借出中
-                </div>
-                <!-- 借出表格 -->
-                <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
-                    <div class="min-w-full rounded-lg flex flex-col divide-y divide-gray-200">
-                        <!-- 表格 HEAD -->
-                        <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
-                            <div>財產</div>
-                            <div>借用人</div>
-                            <div>申請日期</div>
-                            <div>同意借用人</div>
-                            <div>同意日期</div>
-                            <div>歸還</div>
-                        </div>
-                        <!-- 表格 BODY -->
-                        <div class="bg-white divide-y divide-gray-200 overflow-auto text-left text-lg font-bold resize-y">
-                            <div v-cloak v-for="loaning in loaning_data" class="p-3 font-medium uppercase text-center flex justify-around">
-                                {% verbatim %}
-                                    <div>{{ loaning.leaseProperty }}</div>
-                                    <div>{{ loaning.borrower }}</div>
-                                    <div>{{ loaning.borrow_date }}</div>
-                                    
-                                    <div>{{ loaning.borrow_administrator }}</div>
-                                    <div>{{ loaning.agree_date }}</div>
-                                    <div v-if="username == loaning.borrower || (perm.change_leaseproperty && perm.delete_leaseproperty && 
-                                        perm.add_leaseproperty && perm.view_leaseproperty)">
-                                        <button type="button" class="group relative justify-center border border-transparent
+                    <div class="overflow-x-auto">
+                        <table class="w-full divide-y divide-gray-200 rounded-lg bg-gray-50">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        財產
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        借用人
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        日期
+                                    </th>
+                                    {% if user.is_superuser %}
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            同意
+                                        </th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr v-for="waiting in waiting_data">
+                                    {% verbatim %}
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm font-medium text-gray-900 break-words">
+                                            {{ waiting.leaseProperty }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            {{ waiting.borrower }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-500">
+                                            {{ waiting.borrow_date }}
+                                        </div>
+                                    </td>
+                                    {% endverbatim %}
+                                    {% if user.is_superuser %}
+                                    <td class="px-4 py-4 text-sm text-gray-500 grid grid-flow-col grid-cols-2 sm:gap-10 gap-2 sm:w-auto w-24">
+                                        <button type="button" class="relative h-full justify-center border border-transparent
                                             text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
                                             focus:ring-offset-2 focus:ring-indigo-500"
-                                            @click="returnProperty(loaning.id)"
-                                            >Return</button>
-                                    </div>
-                                {% endverbatim %}
-                            </div>
-                        </div>
+                                            @click="agree(waiting.id, waiting.leasePropertyId, true, false)">yes</button>
+                                        <button type="button" class="relative h-full justify-center border border-transparent
+                                            text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2
+                                            focus:ring-offset-2 focus:ring-indigo-500"
+                                            @click="agree(waiting.id, waiting.leasePropertyId, false, false)">no</button>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 借出表格 -->
+                <div class="align-middle inline-block max-w-full w-full">
+                    <div class="text-xl text-center font-bold m-2">
+                        借出中
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full divide-y divide-gray-200 rounded-lg bg-gray-50">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        財產
+                                    </th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        借用人
+                                    </th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        申請日期
+                                    </th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        同意借用人
+                                    </th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        同意日期
+                                    </th>
+                                    <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        歸還
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr v-for="loaning in loaning_data">
+                                    {% verbatim %}
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm font-medium text-gray-900 break-words">
+                                            {{ loaning.leaseProperty }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            {{ loaning.borrower }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            {{ loaning.borrow_date }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-500">
+                                            {{ loaning.borrow_administrator }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-500">
+                                            {{ loaning.agree_date }}
+                                        </div>
+                                    </td>
+                                    <td class="px-2 py-2 text-sm text-gray-500 w-32">
+                                        <button type="button" class="justify-center border border-transparent text-sm font-medium rounded-md
+                                            text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                            @click="returnProperty(loaning.id)">Return</button>
+                                    </td>
+                                    {% endverbatim %}
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
             <!-- 歸還頁面 -->
-            <div :class="'container ' + returnContainerCss">
-                <div class="my-4 text-4xl text-center">
-                    等待核准歸還
-                </div>
-                <div class="shadow border-b border-gray-200 rounded-lg overflow-hidden h-auto">
-                    <div class="min-w-full rounded-lg flex flex-col divide-y divide-gray-200">
-                        <!-- 表格 HEAD -->
-                        <div class="p-3 bg-gray-50 text-left text-xl font-bold uppercase flex justify-around">
-                            <div>財產</div>
-                            <div>借用人</div>
-                            <div>同意借用人</div>
-                            <div>歸還人</div>
-                            {% if user.is_superuser %}
-                                <div>同意</div>
-                            {% endif %}
-                        </div>
-                        <!-- 表格 BODY -->
-                        <div v-cloak class="bg-white divide-y divide-gray-200 overflow-auto text-left text-lg font-bold resize-y">
-                            <div v-for="waiting_return in waiting_return_data" class="p-3 font-medium flex justify-around">
-                                {% verbatim %}
-                                    <div>{{ waiting_return.leaseProperty }}</div>
-                                    <div>{{ waiting_return.borrower }}</div>
-                                    <div>{{ waiting_return.borrow_administrator }}</div>
-                                    <div>{{ waiting_return.returner }}</div>
-                                {% endverbatim %}
-                                {% if user.is_superuser %}
-                                    <div v-if="username == waiting_return.borrower || (perm.change_leaseproperty && perm.delete_leaseproperty && 
+            <div v-cloak :class="'container ' + returnContainerCss">
+                <!-- 等待核准歸還表格 -->
+                <div class="align-middle inline-block max-w-full w-full">
+                    <div class="text-xl text-center font-bold m-2">
+                        等待核准歸還
+                    </div>
+                    <div class="overflow-auto max-h-96 rounded-lg">
+                        <table class="w-full divide-y divide-gray-200 bg-gray-50">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        財產
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        借用人
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        同意借用人
+                                    </th>
+                                    {% if user.is_superuser %}
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            同意
+                                        </th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr v-for="waiting_return in waiting_return_data">
+                                    {% verbatim %}
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm font-medium text-gray-900 break-words">
+                                            {{ waiting_return.leaseProperty }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-500">
+                                            {{ waiting_return.borrower }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">
+                                            {{ waiting_return.borrow_administrator }}
+                                        </div>
+                                    </td>
+                                    {% endverbatim %}
+                                    <td class="md:py-4 md:px-10 p-4 text-sm text-gray-500 w-24"
+                                        v-if="username == waiting_return.borrower || (perm.change_leaseproperty && perm.delete_leaseproperty && 
                                         perm.add_leaseproperty && perm.view_leaseproperty)">
-                                        <button type="button" class="group relative h-full border border-transparent p-2
-                                            text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2
-                                            focus:ring-offset-2 focus:ring-indigo-500"
-                                            @click="agree(waiting_return.id, None, true, true)"
-                                            >Return</button>
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
+                                            <button type="button" class="relative h-full border border-transparent p-2
+                                                    text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none
+                                                    focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                                    @click="agree(waiting_return.id, None, true, true)">Return</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="my-4 text-4xl text-center">
-                    歸還紀錄
-                </div>
-                <div class="my-2 overflow-x-auto resize-y overflow-auto" style="min-height: 20rem; height: 20rem;">
-                    <table class="w-full">
-                        <thead class="text-xl bg-white">
-                            <th class="w-1/6">財產</th>
-                            <th class="w-1/6">借用人</th>
-                            <th class="w-1/6">同意借用人</th>
-                            <th class="w-1/6">歸還人</th>
-                            <th class="w-1/6">同意歸還人</th>
-                            <th class="w-1/6">同意歸還日期</th>
-                        </thead>
-                        <tbody v-cloak class="text-xl text-center divide-y">
-                            <tr v-for="returned in returned_data">
-                                <td class="w-1/6 font-extrabold">
-                                    <a :href="'/newpropertydetail?id=' + returned.leasePropertyID">
-                                        {% verbatim %}
-                                        {{ returned.leaseProperty }}
-                                    </a>
-                                </td>
-                                <td class="w-1/6">{{ returned.borrower }}</td>
-                                <td class="w-1/6">{{ returned.borrow_administrator }}</td>
-                                <td class="w-1/6">{{ returned.returner }}</td>
-                                <td class="w-1/6">{{ returned.returner_administrator }}</td>
-                                <td class="w-1/6">{{ returned.return_date }}</td>
-                                {% endverbatim %}
-                            </tr>
-                        </tbody>
-                    </table>
+            </div>
+
+            <!-- 歷史紀錄頁面 -->
+            <div v-cloak :class="'container ' + historyContainerCss">
+                <div class="align-middle inline-block max-w-full w-full">
+                    <div class="text-xl text-center font-bold m-2">
+                        歸還紀錄
+                    </div>
+                    <div class="overflow-auto rounded-lg">
+                        <table class="w-full divide-y divide-gray-200 bg-gray-50">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        財產
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        借用人
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        同意借用
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        歸還人
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        同意歸還
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        同意日期
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr v-for="returned in returned_data">
+                                    {% verbatim %}
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm font-medium text-gray-900 break-words">{{ returned.leaseProperty }}</div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">{{ returned.borrower }}</div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">{{ returned.borrow_administrator }}</div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">{{ returned.returner }}</div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">{{ returned.returner_administrator }}</div>
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="text-sm text-gray-900">{{ returned.return_date }}</div>
+                                    </td>
+                                    {% endverbatim %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -221,10 +306,11 @@
                     TabSelectCss: "border-b-2 font-medium border-blue-500",
                     borrowTabCss: "border-b-2 font-medium border-blue-500",
                     returnTabCss: "",
+                    historyTabCss: "",
 
-                    ContainerCss: "show",
                     borrowContainerCss: "show",
                     returnContainerCss: "hidden",
+                    historyContainerCss: "hidden",
                 }
             },
             methods:{
@@ -234,14 +320,26 @@
                         case 1:
                             this.borrowTabCss = this.TabSelectCss;
                             this.returnTabCss = "";
-                            this.borrowContainerCss = this.ContainerCss;
+                            this.historyTabCss = "";
+                            this.borrowContainerCss = "show";
+                            this.historyContainerCss = "hidden";
                             this.returnContainerCss = "hidden";
                             break;
                         case 2:
                             this.borrowTabCss = "";
                             this.returnTabCss = this.TabSelectCss;
-                            this.returnContainerCss = this.ContainerCss;
+                            this.historyTabCss = "";
                             this.borrowContainerCss = "hidden";
+                            this.returnContainerCss = "show";
+                            this.historyContainerCss = "hidden";
+                            break;
+                        case 3:
+                            this.borrowTabCss = "";
+                            this.returnTabCss = "";
+                            this.historyTabCss = this.TabSelectCss;
+                            this.borrowContainerCss = "hidden";
+                            this.returnContainerCss = "hidden";
+                            this.historyContainerCss = "show";
                             break;
                     }
                 },
