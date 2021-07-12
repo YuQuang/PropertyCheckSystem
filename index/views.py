@@ -28,7 +28,6 @@ def index(request):
 """
 # Web Appearance
 """
-
 # 查找資料頁面
 # (需要登入)
 # (need login)
@@ -1164,7 +1163,7 @@ def getSingleData(request):
     data.setdefault('unit', result.quantity_unit.__str__())
 
     if result.image != None:
-        data.setdefault('image', result.image.image.__str__())
+        data.setdefault('image', '/' + result.image.image.__str__())
     else:
         data.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
 

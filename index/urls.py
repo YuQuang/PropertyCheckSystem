@@ -12,7 +12,6 @@ urlpatterns = [
 
     # HomePage
     path('', view=views.index, name='index'),
-    
 
     # 網頁部分
     path('importExcel/', views.importExcel, name='importExcel'),
