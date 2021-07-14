@@ -23,6 +23,7 @@ EXPOSE 80
 WORKDIR /pandian
 
 
-RUN python3 manage
+RUN python3 manage.py makemigrations
+RUN python3 manage.py migrate
 ENTRYPOINT [ "python3", "manage.py", "runserver" ]
 CMD [ "0.0.0.0:80" ]
