@@ -2,28 +2,35 @@ FROM ubuntu:focal
 
 LABEL author="YuQuang" email="bbb233456@gmail.com"
 
+# 複製網站檔案到pandian工作區
 COPY . /pandian
-# COPY ./index /pandian/index 
-# COPY ./static /pandian/static
-# COPY ./static_file /pandian/static_file
-# COPY ./templates /pandian/templates
-# COPY ./Web /pandian/Web
-# COPY ./manage.py /pandian
 
+# 系統更新
 RUN apt update
 RUN apt -y upgrade
-RUN apt install -y libsasl2-dev python-dev libldap2-dev libssl-dev libmysqlclient-dev
-RUN apt -y --fix-missing install
-RUN apt install -y python3-pip
-RUN apt -y --fix-missing install
-RUN pip3 install wheel django python-ldap django_auth_ldap django_werkzeug_debugger_runserver django_extensions channels mysqlclient pillow 
 
-EXPOSE 80
+# 檢查缺漏
+RUN apt -y --fix-missing install
 
+# 安裝必要套件
+RUN apt install -y libsasl2-dev python3-dev libldap2-dev libssl-dev libmysqlclient-dev python3-pip
+
+# 檢查缺漏
+RUN apt -y --fix-missing install
+
+# 安裝python套件
+RUN pip3 install wheel django python-ldap django_auth_ldap django_werkzeug_debugger_runserver django_extensions channels mysqlclient pillow uwsgi
+
+# Port 8080
+EXPOSE 8080
+
+# 設定當前工作區為/pandian
 WORKDIR /pandian
 
-
+# 初始化資料庫部分
 RUN python3 manage.py makemigrations
 RUN python3 manage.py migrate
+
+# 伺服器開啟指令
 ENTRYPOINT [ "python3", "manage.py", "runserver" ]
-CMD [ "0.0.0.0:80" ]
+CMD [ "0.0.0.0:8080" ]
