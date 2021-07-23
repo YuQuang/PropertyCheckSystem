@@ -116,7 +116,7 @@ DATABASES = {
         'NAME': 'myweb',
         'USER': 'root',
         'PASSWORD': 'root',
-        'HOST': '172.19.112.1',
+        'HOST': 'aimma.com',
         'PORT': '3306',
     }
 }

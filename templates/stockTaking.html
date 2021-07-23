@@ -1192,7 +1192,7 @@
 
     var CheckSocket = null;
     function initCheckWebSocket(){
-        CheckSocket = new WebSocket("ws://" + window.location.hostname + "/ws/check");
+        CheckSocket = new WebSocket("wss://" + window.location.hostname + ":8000/ws/check");
         // 連結成功
         CheckSocket.onopen = ()=>{
             // 向後台要求最近的通知

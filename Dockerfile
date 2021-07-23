@@ -7,7 +7,7 @@ COPY . /pandian
 
 # 系統更新
 RUN apt update
-RUN apt -y upgrade
+# RUN apt -y upgrade
 
 # 檢查缺漏
 RUN apt -y --fix-missing install
@@ -19,10 +19,10 @@ RUN apt install -y libsasl2-dev python3-dev libldap2-dev libssl-dev libmysqlclie
 RUN apt -y --fix-missing install
 
 # 安裝python套件
-RUN pip3 install wheel django python-ldap django_auth_ldap django_werkzeug_debugger_runserver django_extensions channels mysqlclient pillow uwsgi
+RUN pip3 install wheel django python-ldap django_auth_ldap django_werkzeug_debugger_runserver django_extensions channels mysqlclient pillow uwsgi daphne
 
-# Port 8080
-EXPOSE 8080
+# Port 80 443 8000
+EXPOSE 80 443 8000
 
 # 設定當前工作區為/pandian
 WORKDIR /pandian
@@ -32,5 +32,4 @@ RUN python3 manage.py makemigrations
 RUN python3 manage.py migrate
 
 # 伺服器開啟指令
-ENTRYPOINT [ "python3", "manage.py", "runserver" ]
-CMD [ "0.0.0.0:8080" ]
+ENTRYPOINT [ "sh", "/pandian/run.sh" ]
