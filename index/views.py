@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
+from django.contrib import auth
 #
 import json
 import os, datetime, re, os.path
@@ -14,6 +15,7 @@ from .models import CurrentCheckProperty, CheckPropertyStatisticHistory, CheckPr
 from .consumers import sendToAllGroup, sendToGroup
 from .CheckConsumers import checkWsSendToAllGroup
 from .form import PropertyImageForm, PropertyImportantForm
+from django.views.decorators.csrf import csrf_exempt
 
 """
 # HomePage
@@ -129,6 +131,7 @@ def UserInGroup(user, groupName: str):
 # 取得用戶資訊
 """
 # 取得該用戶基本資訊
+@csrf_exempt
 @API_CheckLogin
 def getUserInfo(request):
     user = request.user
@@ -1059,6 +1062,7 @@ def deleteData(request):
 
 # 取得財產資訊
 # (需要登入)
+@csrf_exempt
 @API_CheckLogin
 def getData(request):
     """
@@ -1112,12 +1116,16 @@ def getData(request):
         singleDict.setdefault('status', singleProperty.status.__str__())
 
         if singleProperty.image != None:
-            singleDict.setdefault('image', singleProperty.image.image.__str__())
+            singleDict.setdefault('image',
+                request.build_absolute_uri('/').strip("/") + '/' +
+                singleProperty.image.image.__str__())
         else:
             # https://i.imgur.com/3ZTDX.jpeg
             # https://i.imgur.com/WNL6utH.jpeg
+            # singleDict.setdefault('image', 
+            #     request.build_absolute_uri('/').strip("/") +
+            #     "/static/PropertyImage/%E4%BC%BA%E6%9C%8D%E5%99%A8%E7%AD%89%E7%B4%9A%E6%A9%9F%E6%AE%BC1-13010202-05.png")
             singleDict.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
-
         data.append(singleDict)
     result = {'result': 'success', 'data': data}
 
@@ -1406,5 +1414,65 @@ def loadCheckProperty(request):
     noti.notify_group = Group.objects.filter(name="admin").first()
     noti.save()
 
+
+    return JsonResponse({'result': 'success'})
+
+"""
+API for APP
+"""
+@csrf_exempt
+def appLogin(request):
+    # Do some stuffs...
+    username = request.POST.get("username")
+    pwd = request.POST.get("password")
+    user = auth.authenticate(username=username, password=pwd)
+    print(user)
+
+    if user is not None and user.is_active:
+        auth.login(request, user)
+        return JsonResponse({'result': 'success'})
+
+    # Return an HHTPResponse as Django expects a response from the view
+    return JsonResponse({'result': 'failed'})
+
+@csrf_exempt
+@API_CheckLogin
+def applendItem(request):
+    # 取得是哪個用戶要做租借
+    user = request.GET.get('username')
+    # 取得序號以及產品編號
+    product_id = request.GET.get('id')
+
+    # 檢查序號以及編號
+    if product_id == None:
+        return JsonResponse({'result': 'empty'})
+
+    # 查詢
+    result = Property.objects.filter(id=product_id).first()
+    if result == None:
+        return JsonResponse({'result': 'empty'})
+
+    # 被借走了
+    if result.status == 'o':
+        return JsonResponse({'result': 'loaning'})
+    
+    # 申請過了
+    if LeaseProperty.objects.filter(borrower=user.__str__(), leaseProperty=result, status='w').first() != None:
+        return JsonResponse({'result': 'duplicate'})
+
+    leasing = LeaseProperty()
+    leasing.leaseProperty = result
+    leasing.borrower = user.__str__()
+    leasing.save()
+
+    """
+        將提醒事件添加至資料表內
+    """
+    noti = Notification()
+    noti.action = 'l'
+    noti.action_user = user
+    noti.action_date = datetime.datetime.now()
+    noti.notify_group = Group.objects.filter(name="admin").first()
+    noti.save()
 
     return JsonResponse({'result': 'success'})

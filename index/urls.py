@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.urls import path
 from django.conf.urls import include
 from . import views
@@ -65,4 +66,9 @@ urlpatterns = [
     path('saveCheckProp/', views.saveCheckProp, name='saveCheckProp'),
     path('loadCheckPropertyHistory/', views.loadCheckPropertyHistory, name='loadCheckPropertyHistory'),
     path('loadCheckProperty/', views.loadCheckProperty, name='loadCheckProperty'),
+    
+    ######################
+    # 給 APP 使用的 API  #
+    ######################
+    path('appLogin/', views.appLogin, name='appLogin'),
 ]
