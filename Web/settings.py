@@ -183,7 +183,7 @@ from django_auth_ldap.config import LDAPSearch,GroupOfNamesType
 #修改Django认证先走ldap，再走本地认证
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'django_auth_ldap.backend.LDAPBackend',
+    # 'django_auth_ldap.backend.LDAPBackend',
 ]
 
 #ldap的连接基础配置

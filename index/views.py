@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 #
@@ -1062,8 +1062,8 @@ def deleteData(request):
 
 # 取得財產資訊
 # (需要登入)
+# @API_CheckLogin
 @csrf_exempt
-@API_CheckLogin
 def getData(request):
     """
     # 取得資料
@@ -1436,19 +1436,31 @@ def appLogin(request):
     return JsonResponse({'result': 'failed'})
 
 @csrf_exempt
-@API_CheckLogin
-def applendItem(request):
+def appLendItem(request):
     # 取得是哪個用戶要做租借
     user = request.GET.get('username')
+    user = User.objects.filter(username=user).first()
     # 取得序號以及產品編號
-    product_id = request.GET.get('id')
+    product_id = request.GET.get('product_id')
+
 
     # 檢查序號以及編號
     if product_id == None:
         return JsonResponse({'result': 'empty'})
+    elif user == None:
+        return JsonResponse({'result': 'notValidUser'})
+
+    
+    property_number, serial_number = product_id.split('-')
+
+    temp = ""
+    for s in serial_number:
+        if s == "0": continue
+        else: temp+=s
+    serial_number = temp + "-" + temp
 
     # 查詢
-    result = Property.objects.filter(id=product_id).first()
+    result = Property.objects.filter(property_number=property_number, serial_number=serial_number).first()
     if result == None:
         return JsonResponse({'result': 'empty'})
 

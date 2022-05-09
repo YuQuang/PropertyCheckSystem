@@ -71,4 +71,5 @@ urlpatterns = [
     # 給 APP 使用的 API  #
     ######################
     path('appLogin/', views.appLogin, name='appLogin'),
+    path('appLendItem/', views.appLendItem, name='appLendItem'),
 ]
