@@ -1,16 +1,11 @@
 # PropertyCheckSystem網站建置
 
-![盤點圖片](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGIL0tDpFmqdgwYPSXBKMXYuRVfL3T0k-zRA&usqp=CAU)]
+![盤點圖片](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGIL0tDpFmqdgwYPSXBKMXYuRVfL3T0k-zRA&usqp=CAU)
 
 1. [To-Do](#To-Do)
 1. [套件](#套件)
 1. [執行](#架設環境)
 1. [開始部屬](#)
-
-# To-Do
-1. - [X] a 
-1. - [X] a 
-1. - [X] a 
 
 # 套件
 ### 後端環境
