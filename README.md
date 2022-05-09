@@ -1,13 +1,17 @@
 # PropertyCheckSystem網站建置
 
-![盤點圖片](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRGIL0tDpFmqdgwYPSXBKMXYuRVfL3T0k-zRA&usqp=CAU)
+![盤點圖片](./img/mainWindow.png)
 
-1. [To-Do](#To-Do)
-1. [套件](#套件)
-1. [執行](#架設環境)
+1. [使用](#使用)
+1. [安裝](#安裝)
+1. [執行](#執行)
 1. [開始部屬](#)
 
-# 套件
+## 使用
+可以參考此篇文章使用
+[使用教學](https://hackmd.io/5qiim1AbSYeLNpIUu-mMNQ)
+
+## 安裝
 ### 後端環境
 > channels
 > Django
@@ -47,7 +51,7 @@ sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev libmysqlclient-
 1. pillow
 
 
-# 執行
+## 執行
 ### 使用django內部伺服器執行
 ``` shell
 # 首次執行需要先初始話資料庫
