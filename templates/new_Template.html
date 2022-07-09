@@ -243,7 +243,7 @@
     <script>
         var mySocket = null;
         function initWebSocket(){
-            mySocket = new WebSocket("wss://" + window.location.hostname + ":8000/ws/notify");
+            mySocket = new WebSocket("ws://" + window.location.hostname + ":80/ws/notify");
             // 連結成功
             mySocket.onopen = ()=>{
                 // 向後台要求最近的通知

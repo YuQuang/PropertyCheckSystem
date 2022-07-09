@@ -42,7 +42,7 @@ sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev libmysqlclient-
 
 ### python需要的套件
 1. django
-1. ldap
+1. python-ldap
 1. django_auth_ldap
 1. django_werkzeug_debugger_runserver
 1. django_extensions
