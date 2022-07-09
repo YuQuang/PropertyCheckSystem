@@ -33,9 +33,11 @@
         </div>
         {# 儀錶板部分 #}
         {% if user.is_authenticated %}
-        <div class="container grid grid-cols-2 gap-4">
+        <div class="container grid md:grid-cols-2 grid-cols-1 gap-4 md:px-2 px-5">
             <div id="rent_status" class="h-96 bg-white bg-opacity-70 rounded-xl pt-10 px-10"></div>
             <div id="pandian_status" class="h-96 bg-white bg-opacity-70 rounded-xl pt-10 px-10"></div>
+            <div id="position_status" class="h-96 bg-white bg-opacity-70 rounded-xl pt-10 px-10"></div>
+            <div id="limit_status" class="h-96 bg-white bg-opacity-70 rounded-xl pt-10 px-10"></div>
         </div>
         {% endif %}
         {# 選項部分 #}
@@ -245,23 +247,40 @@
             盤點圖表
         */
         var pandianChart = echarts.init(document.getElementById('pandian_status'));
+        var positionChart = echarts.init(document.getElementById('position_status'));
+        var limitChart = echarts.init(document.getElementById('limit_status'));
         $.get('/getCheckProperty', (response)=>{
+            var today= new Date();
             let is_check_v_length = 0;
             let is_check_b_length = 0;
             let is_check_o_length = 0;
             let is_check_x_length = 0;
             let is_check_m_length = 0;
+
+            let overLimited = 0;
+            let underlimited = 0;
+
+            let label_position = {};
             response.data.forEach(d => {
                 if(d.is_check == "v") is_check_v_length++;
                 else if(d.is_check == "b") is_check_b_length++;
                 else if(d.is_check == "o") is_check_o_length++;
                 else if(d.is_check == "x") is_check_x_length++;
                 else if(d.is_check == "m") is_check_m_length++;
+
+                if(label_position[d.label_position] == undefined) label_position[d.label_position] = 0;
+                else label_position[d.label_position]++;
+
+                let limitDate = new Date(d.get_date);
+                limitDate.setFullYear(limitDate.getFullYear() + parseInt(d.age_limit));
+
+                if(limitDate > today) underlimited++;
+                else overLimited++;
             });
 
             var pandianOption = {
             title: {
-                text: '盤點情形',
+                text: '盤點狀態',
                 left: 'center'
             },
             tooltip: {
@@ -301,12 +320,72 @@
                 }
             ]
         };
-        pandianChart.setOption(pandianOption);
+            pandianChart.setOption(pandianOption);
 
+            var positionOption = {
+                title: {
+                    text: '分布位置',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: Object.keys(label_position),
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                    data: Object.values(label_position),
+                    type: 'bar'
+                    }
+                ]
+            };
+            positionChart.setOption(positionOption);
+
+            var limitOption = {
+            title: {
+                text: '年限狀態',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: [
+                    { value: underlimited, name: '未超過' },
+                    { value: overLimited, name: '已超過' },
+                ],
+                emphasis: {
+                    itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+                }
+            ]
+        };
+        limitChart.setOption(limitOption);
         })
         var pandianOption = {
             title: {
-                text: '盤點情形',
+                text: '盤點狀態',
                 left: 'center'
             },
             tooltip: {
@@ -334,6 +413,63 @@
             ]
         };
         pandianChart.setOption(pandianOption);
+        var positionOption = {
+            title: {
+                text: '分布位置',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            xAxis: {
+                type: 'category',
+                data: ['E419-3','E419-1','E419-2','E423','E420',]
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                data: [10,10,10,10,10],
+                type: 'bar'
+                }
+            ]
+        };
+        positionChart.setOption(positionOption);
+        var limitOption = {
+            title: {
+                text: '年限狀態',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: [
+                ],
+                emphasis: {
+                    itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+                }
+            ]
+        };
+        limitChart.setOption(limitOption);
     </script>
     {% endif %}
 {% endblock %}
