@@ -34,12 +34,6 @@
         {# 儀錶板部分 #}
         {% if user.is_authenticated %}
         <div class="container grid grid-cols-2 gap-4">
-            <div class="bg-white rounded-xl bg-opacity-70 text-center p-2 text-2xl font-bold">
-                租借情形
-            </div>
-            <div class="bg-white rounded-xl bg-opacity-70 text-center p-2 text-2xl font-bold">
-                盤點情形
-            </div>
             <div id="rent_status" class="h-96 bg-white bg-opacity-70 rounded-xl pt-10 px-10"></div>
             <div id="pandian_status" class="h-96 bg-white bg-opacity-70 rounded-xl pt-10 px-10"></div>
         </div>
@@ -173,19 +167,52 @@
     </script>
     {% if user.is_authenticated %}
     <script type="text/javascript">
-
+        /*
+            租借圖表
+        */
+        var rentChart = echarts.init(document.getElementById('rent_status'));
         $.get('/getLoanProperty', (response)=>{
-            console.log(response);
-
+            let loaning_data = response.loaning_data
+            let returned_data = response.returned_data
+            let waiting_data = response.waiting_data
+            let waiting_return_data = response.waiting_return_data
+            var option = {
+                title: {
+                    text: '租借情形',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                    name: 'Access From',
+                    type: 'pie',
+                    radius: '50%',
+                    data: [
+                        { value: response.loaning_data.length, name: '租借中' },
+                        { value: response.waiting_return_data.length, name: '等待歸還' },
+                        { value: response.waiting_data.length, name: '等待同意' },
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                    }
+                ]
+            };
+            rentChart.setOption(option);
         })
-
-        // Initialize the echarts instance based on the prepared dom
-        var myChart = echarts.init(document.getElementById('rent_status'));
-
-        // Specify the configuration items and data for the chart
-        var option = {
+        var rentOption = {
             title: {
-                text: 'Referer of a Website',
+                text: '租借情形',
                 left: 'center'
             },
             tooltip: {
@@ -201,9 +228,6 @@
                 type: 'pie',
                 radius: '50%',
                 data: [
-                    { value: 1048, name: 'Search Engine' },
-                    { value: 735, name: 'Direct' },
-                    { value: 580, name: 'Email' },
                 ],
                 emphasis: {
                     itemStyle: {
@@ -215,9 +239,101 @@
                 }
             ]
         };
+        rentChart.setOption(rentOption);
 
-        // Display the chart using the configuration items and data just specified.
-        myChart.setOption(option);
+        /*
+            盤點圖表
+        */
+        var pandianChart = echarts.init(document.getElementById('pandian_status'));
+        $.get('/getCheckProperty', (response)=>{
+            let is_check_v_length = 0;
+            let is_check_b_length = 0;
+            let is_check_o_length = 0;
+            let is_check_x_length = 0;
+            let is_check_m_length = 0;
+            response.data.forEach(d => {
+                if(d.is_check == "v") is_check_v_length++;
+                else if(d.is_check == "b") is_check_b_length++;
+                else if(d.is_check == "o") is_check_o_length++;
+                else if(d.is_check == "x") is_check_x_length++;
+                else if(d.is_check == "m") is_check_m_length++;
+            });
+
+            var pandianOption = {
+            title: {
+                text: '盤點情形',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: [
+                    { value: is_check_v_length, name: '已盤點' },
+                    { value: is_check_x_length, name: '未盤點' },
+                    { value: is_check_m_length, name: '丟失' },
+                    { value: is_check_o_length, name: '報廢' },
+                    { value: is_check_b_length, name: '損毀' },
+                ],
+                emphasis: {
+                    itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                },
+                // A palette only work for the series:
+                color: [
+                    '#37C713',
+                    '#DD1C1C',
+                    '#67E0E3',
+                    '#8E13C7',
+                    '#FFDB5C',
+                ]
+                }
+            ]
+        };
+        pandianChart.setOption(pandianOption);
+
+        })
+        var pandianOption = {
+            title: {
+                text: '盤點情形',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: [
+                ],
+                emphasis: {
+                    itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+                }
+            ]
+        };
+        pandianChart.setOption(pandianOption);
     </script>
     {% endif %}
 {% endblock %}
