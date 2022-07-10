@@ -33,7 +33,7 @@
       background-size: cover;
       isolation: isolate;
       position: relative;
-      height: 100vh;
+      height: 60vh;
       padding: 1em;
       z-index: -3;
     }
@@ -57,7 +57,7 @@
       background: red;
     }
     .one .wrapper:after {
-      content: "OurCrew";
+      content: "About";
     }
     .two {
       background-image: url(https://source.unsplash.com/1920x1080?portrait);
@@ -67,7 +67,7 @@
       mix-blend-mode: difference;
     }
     .two .wrapper:after {
-      content: "Adviser";
+      content: "Goal";
     }
     .three {
       background-image: url(https://source.unsplash.com/1920x1080?landscape);
@@ -77,7 +77,7 @@
       mix-blend-mode: screen;
     }
     .three .wrapper:after {
-      content: "Equip";
+      content: "Room";
     }
     .four {
       background-image: url(https://source.unsplash.com/1920x1080?stars);
@@ -86,7 +86,7 @@
       background: #e4135d;
     }
     .four .wrapper:after {
-      content: "Future";
+      content: "Method";
     }
     .content_block{
       width: 100wv;
@@ -99,7 +99,7 @@
       display: inline-block;
       background-color: white;
       top: 0;left: 0;right: 0;bottom: 0;
-      min-height: 40vh;
+      min-height: 15vh;
     }
     .content_block:nth-child(4n+3):before{
       transform: skew(0deg, 4deg) scaleY(1.4);
@@ -127,49 +127,9 @@
   </section>
   
   <div class="content_block">
-    <h1>About our Crewmates</h1>
+    <h1 class="text-3xl font-bold">關於我們</h1>
     <p>
-      Hi, We are labmate in NCUT laboratory.<br>
-      We have some inventions can make your life more convinient.<br>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eget arcu ex.
-      In tortor odio, laoreet sed risus quis, mattis rhoncus dolor.
-      Proin ultricies nibh massa, vel consectetur nunc dapibus vel.
-      Suspendisse nec cursus mauris.
-      Nullam et risus sit amet elit aliquam auctor. Nullam sit amet mollis lectus, ut aliquam nisi.
-      Vivamus varius a lorem vel pellentesque.
-
-      Mauris lacinia sapien non est pulvinar rutrum ac a erat.
-      Fusce viverra, ante quis gravida euismod, neque mauris facilisis risus, facilisis lobortis mauris libero eu turpis.
-      Fusce pellentesque magna vulputate, ullamcorper lectus sed, molestie est.
-      Sed libero diam, mattis ac vehicula in, consequat in tortor. Vestibulum id vehicula mi.
-      Nulla ac justo sit amet lacus blandit molestie quis vitae turpis.
-      Aenean risus odio, fringilla sit amet rhoncus ut, placerat semper libero.
-      Donec velit nunc, elementum ac fermentum et, ornare rutrum libero.
-
-      Morbi sodales nibh eget sollicitudin sagittis.
-      Sed euismod orci justo, eu maximus dui maximus ut.
-      Proin in velit in ipsum viverra ornare. Praesent ac mauris vestibulum, sagittis ex sed, semper ligula.
-      Praesent elementum auctor nunc, volutpat porttitor mauris volutpat a. Nunc dapibus turpis a commodo dignissim.
-      Nulla metus arcu, elementum vitae sollicitudin eu, pellentesque sit amet neque.
-      Fusce sollicitudin pharetra ipsum id congue. Integer finibus id lorem a lacinia.
-      Suspendisse ultrices lectus id quam facilisis finibus.
-      Donec turpis arcu, accumsan et sagittis ac, ullamcorper et libero.
-      Donec auctor ligula libero, quis fringilla diam faucibus sit amet.
-      Morbi et molestie massa.
-
-      Fusce velit felis, aliquet in tellus in, accumsan luctus odio.
-      In hendrerit, sem sed pretium scelerisque, erat massa pretium erat, vitae faucibus nulla orci in est.
-      Vestibulum ut justo at leo convallis venenatis nec eu ex. Cras ut odio ut arcu pulvinar malesuada quis ac ex.
-      Sed rutrum pretium molestie. Quisque lacinia nisi a interdum varius. Nullam tincidunt quis est ut commodo.
-      Nunc eget tortor viverra, dapibus enim et, molestie ante. Donec convallis venenatis mollis.
-
-      Aenean mi orci, convallis eu metus eu, hendrerit tempus sem.
-      Sed sed lacinia sem.
-      Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-      Proin ligula sem, gravida ut scelerisque at, varius at urna. Aenean facilisis accumsan rutrum.
-      Pellentesque at congue erat, vel hendrerit justo. Praesent suscipit arcu velit, et eleifend leo sodales a.
-      Quisque mattis scelerisque turpis. Nulla blandit mauris ut leo mollis cursus.
-      Nulla in efficitur quam, ac condimentum sem.
+      Hello, 我們是國立勤益科技大學E419-3實驗室, 熱衷於研究以及技術開發, 歡迎與我們進行交流, 不論是技術或是相關興趣都可以。
     </p>
   </div>
 
@@ -178,9 +138,9 @@
   </section>
 
   <div class="content_block">
-    <h1>Our Adivser, Professor Wong</h1>
+    <h1 class="text-3xl font-bold">研究方向</h1>
     <p>
-      
+      主要研究項目為影像辨識、影像處理、網路架構、網站設計、自動光學檢查等相關領域, 也熱衷於其他領域的學習。
     </p>
   </div>
 
@@ -189,9 +149,9 @@
   </section>
 
   <div class="content_block">
-    <h1>Our Laboratory Equipment</h1>
+    <h1 class="text-3xl font-bold">負責教室</h1>
     <p>
-      
+      所屬負責教室為E420, 若有相關問題可以回報給我們實驗室, 我們也會盡快處理。
     </p>
   </div>
 
@@ -200,49 +160,9 @@
   </section>
 
   <div class="content_block" style="background-color: white;">
-    <h1>About our Crewmates</h1>
+    <h1 class="text-3xl font-bold">管理方案</h1>
     <p>
-      Hi, We are labmate in NCUT laboratory.<br>
-      We have some inventions can make your life more convinient.<br>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eget arcu ex.
-      In tortor odio, laoreet sed risus quis, mattis rhoncus dolor.
-      Proin ultricies nibh massa, vel consectetur nunc dapibus vel.
-      Suspendisse nec cursus mauris.
-      Nullam et risus sit amet elit aliquam auctor. Nullam sit amet mollis lectus, ut aliquam nisi.
-      Vivamus varius a lorem vel pellentesque.
-
-      Mauris lacinia sapien non est pulvinar rutrum ac a erat.
-      Fusce viverra, ante quis gravida euismod, neque mauris facilisis risus, facilisis lobortis mauris libero eu turpis.
-      Fusce pellentesque magna vulputate, ullamcorper lectus sed, molestie est.
-      Sed libero diam, mattis ac vehicula in, consequat in tortor. Vestibulum id vehicula mi.
-      Nulla ac justo sit amet lacus blandit molestie quis vitae turpis.
-      Aenean risus odio, fringilla sit amet rhoncus ut, placerat semper libero.
-      Donec velit nunc, elementum ac fermentum et, ornare rutrum libero.
-
-      Morbi sodales nibh eget sollicitudin sagittis.
-      Sed euismod orci justo, eu maximus dui maximus ut.
-      Proin in velit in ipsum viverra ornare. Praesent ac mauris vestibulum, sagittis ex sed, semper ligula.
-      Praesent elementum auctor nunc, volutpat porttitor mauris volutpat a. Nunc dapibus turpis a commodo dignissim.
-      Nulla metus arcu, elementum vitae sollicitudin eu, pellentesque sit amet neque.
-      Fusce sollicitudin pharetra ipsum id congue. Integer finibus id lorem a lacinia.
-      Suspendisse ultrices lectus id quam facilisis finibus.
-      Donec turpis arcu, accumsan et sagittis ac, ullamcorper et libero.
-      Donec auctor ligula libero, quis fringilla diam faucibus sit amet.
-      Morbi et molestie massa.
-
-      Fusce velit felis, aliquet in tellus in, accumsan luctus odio.
-      In hendrerit, sem sed pretium scelerisque, erat massa pretium erat, vitae faucibus nulla orci in est.
-      Vestibulum ut justo at leo convallis venenatis nec eu ex. Cras ut odio ut arcu pulvinar malesuada quis ac ex.
-      Sed rutrum pretium molestie. Quisque lacinia nisi a interdum varius. Nullam tincidunt quis est ut commodo.
-      Nunc eget tortor viverra, dapibus enim et, molestie ante. Donec convallis venenatis mollis.
-
-      Aenean mi orci, convallis eu metus eu, hendrerit tempus sem.
-      Sed sed lacinia sem.
-      Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-      Proin ligula sem, gravida ut scelerisque at, varius at urna. Aenean facilisis accumsan rutrum.
-      Pellentesque at congue erat, vel hendrerit justo. Praesent suscipit arcu velit, et eleifend leo sodales a.
-      Quisque mattis scelerisque turpis. Nulla blandit mauris ut leo mollis cursus.
-      Nulla in efficitur quam, ac condimentum sem.
+      使用派送系統以及防火牆來管理實驗室, 並提供內部實驗生相關服務, 像是NAS、財產管理系統、OpenVPN等服務來讓實驗室更方便使用。
     </p>
   </div>
 {% endblock %}
