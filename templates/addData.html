@@ -169,6 +169,7 @@
 {% endblock %}
 
 {% block javascript %}
+    {% load static %}
     <script>
         navbar.navbarMenuAddCss = navbar.navbarMainMenuCss;
 
@@ -186,7 +187,7 @@
 
                     // 表格資料
                     Image: "",
-                    productImg: "https://i.pinimg.com/originals/fb/f7/64/fbf76458d74b5236cb7ee9208563bebc.gif",
+                    productImg: "{% static 'images/uploadFile.jpg' %}",
                     productName: "",
                     productBrand: "",
                     productSerial: "",

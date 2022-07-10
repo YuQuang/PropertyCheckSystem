@@ -144,6 +144,19 @@ def getUserInfo(request):
 
     return JsonResponse({"userName": userName, "userGroup": userGroup})
 
+# 取得用戶詳細資訊
+@csrf_exempt
+@API_CheckLogin
+def getUserDetail(request):
+    user = request.user
+
+    return JsonResponse({
+        "userName": user.username,
+        "email": user.email,
+        "last_login": user.last_login,
+        "date_joined": user.date_joined,
+    })
+
 # 取得所有位置
 @API_CheckLogin
 def getPosition(request):

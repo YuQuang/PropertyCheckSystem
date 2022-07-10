@@ -155,7 +155,8 @@
                             <div>
                                 <button type="button" :class="profileButtonCss" id="user-menu" aria-expanded="false" aria-haspopup="true"
                                         @click="switchProfileMenu();switchNotifyMenu(false)">
-                                    <img class="h-8 w-8 rounded-full" src="{% static './images/user.svg' %}" alt="">
+                                    <img class="h-8 w-8 rounded-full" src="{% static 'images/user.svg' %}" alt="">
+                                    <!-- <img class="h-8 w-8 rounded-full" src="{% static 'images/search.svg' %}" alt=""> -->
                                 </button>
                             </div>
                             <div v-cloak id="profileMenu" :class="[profileMenuCss, profileMenuStatus ]" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
@@ -210,7 +211,7 @@
             <span class="ml-3 text-xl">AIMMA</span>
         </a>
         <p class="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">© 2021 AIMMA —
-            <a href="https://twitter.com/knyttneve" class="text-gray-600 ml-1" rel="noopener noreferrer" target="_blank">@Michelle</a>
+            <a href="https://twitter.com/knyttneve" class="text-gray-600 ml-1" rel="noopener noreferrer" target="_blank">@Roy.Xu</a>
         </p>
         <span class="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
             <a class="text-gray-500">
