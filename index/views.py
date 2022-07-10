@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 #
 import json
-import os, datetime, re, os.path
+import os, datetime, re, os.path, shutil
 
 from django.utils import timezone
 #
@@ -428,7 +428,7 @@ def returnProperty(request):
 def agreeReturnProperty(request):
     user = request.user
     
-    if not user.has_perm('index.change_leaseproperty') and not user.has_perm('index.delete_leaseproperty') and not user.has_perm('index.add_leaseproperty'):
+    if not user.has_perm('index.change_leaseproperty') or not user.has_perm('index.delete_leaseproperty') or not user.has_perm('index.add_leaseproperty'):
         return JsonResponse({'result': 'permissionDeny'})
 
     # 取得序號以及產品編號
@@ -802,6 +802,7 @@ def saveSingleData(request):
             pi.image = files
             pi.save()
         prop.image = pi
+
     else: 
         print('沒有上傳圖片')
 
@@ -1010,6 +1011,7 @@ def updateSingleData(request):
             pi.image = files
             pi.save()
         prop.image = pi
+
     else: 
         print('沒有上傳圖片')
 

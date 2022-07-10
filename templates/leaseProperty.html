@@ -207,12 +207,12 @@
                                 </td>
                                 {% endverbatim %}
                                 <td class="md:py-4 md:px-10 p-4 text-sm text-gray-500 w-24"
-                                    v-if="username == waiting_return.borrower || (perm.change_leaseproperty && perm.delete_leaseproperty && 
-                                    perm.add_leaseproperty && perm.view_leaseproperty)">
+                                    v-if="perm.change_leaseproperty && perm.delete_leaseproperty && 
+                                    perm.add_leaseproperty && perm.view_leaseproperty">
                                         <button type="button" class="relative h-full border border-transparent p-2
                                                 text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none
                                                 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                                @click="agree(waiting_return.id, None, true, true)">Return</button>
+                                                @click="agree(waiting_return.id, None, true, true)">同意</button>
                                 </td>
                             </tr>
                         </tbody>
