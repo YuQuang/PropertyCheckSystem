@@ -12,14 +12,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Web.settings')
 import django
 django.setup()
 
-from channels.http import AsgiHandler
+from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import index.routing
 
 
 application = ProtocolTypeRouter({
-    # "http": AsgiHandler(),
+    "http": get_asgi_application(),
     'websocket': AuthMiddlewareStack(
         URLRouter(
             index.routing.websocket_urlpatterns

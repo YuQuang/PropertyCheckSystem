@@ -22,8 +22,8 @@ RUN apt -y --fix-missing install
 RUN pip3 install django==3.2.13
 RUN pip3 install wheel python-ldap django_auth_ldap django_werkzeug_debugger_runserver django_extensions channels mysqlclient pillow uwsgi daphne
 
-# Port 80 443
-EXPOSE 80 443
+# Port 443
+EXPOSE 443
 
 # 設定當前工作區為/pandian
 WORKDIR /pandian
@@ -33,4 +33,4 @@ RUN python3 manage.py makemigrations
 RUN python3 manage.py migrate
 
 # 伺服器開啟指令
-CMD ["/bin/bash", "start.sh"]
+CMD ["daphne", "-e", "ssl:443:privateKey=cert/cert.key:certKey=cert/cert.crt", "Web.asgi:application"]

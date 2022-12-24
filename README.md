@@ -56,7 +56,7 @@ sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev libmysqlclient-
 ``` shell
 # 首次執行需要先初始話資料庫
 python manage.py makemigrations
-python manage.py migration
+python manage.py migrate
 # 創建SuperUser
 python manage.py createsuperuser
 # 執行伺服器監聽所有IP於80 port

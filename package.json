@@ -9,7 +9,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "sudo venv/bin/daphne -e ssl:443:privateKey=cert/cert.key:certKey=cert/cert.crt Web.asgi:application",
     "tailwind": "tailwindcss build ./static/css/main.css -o ./static/css/app.css"
   },
   "author": "",

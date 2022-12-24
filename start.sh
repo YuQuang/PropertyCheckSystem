@@ -1,1 +1,0 @@
-daphne -e ssl:443:privateKey=cert/cert.key:certKey=cert/cert.crt Web.asgi:application
