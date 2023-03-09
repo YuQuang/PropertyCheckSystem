@@ -74,7 +74,7 @@
                             ondragstart='return false' @click="href( singleData )"
                             @contextMenu="contextmenu( $event , singleData );" oncontextmenu="return false;">
                             <img class="h-40 rounded w-full object-cover object-center rounded-t-xl"
-                                :src="singleData.image" alt="content" loading="lazy">
+                                :src="singleData.image.replace('localhost:8000', 'property.aimmalab.com')" alt="content" loading="lazy">
                             <div class="select-none mt-2 p-4">
                                 <h3 class="uppercase tracking-wide text-indigo-500 text-md title-font break-words">{{
                                     singleData.product_name }}</h3>
@@ -654,7 +654,7 @@
                     return;
                 var reader = new FileReader();
                 let self = this;
-                reader.onload = function (e) {
+                reader.onload = (e) => {
                     self.image = e.target.result;
                 }
                 reader.readAsDataURL(files[0]);
@@ -663,13 +663,20 @@
             // 讀取Cookie
             readCookie(name) {
                 var nameEQ = name + "=";
-                var ca = document.cookie.split(';');
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-                }
-                return null;
+                return R.defaultTo(null)(R.find(
+                    R.pipe( R.equals(undefined), R.not),
+                    R.map(
+                        R.ifElse(
+                                R.pipe(R.indexOf(nameEQ), R.equals(-1), R.not),
+                                R.ap(
+                                    R.flip(R.takeLast),
+                                    R.pipe(R.length, R.flip(R.subtract)(nameEQ.length))
+                                ),
+                                R.always(undefined)
+                            ),
+                        R.split(';', document.cookie)
+                    )
+                ))
             },
             // 取得位置、單位、品牌
             getUnitBrandPosition(){
