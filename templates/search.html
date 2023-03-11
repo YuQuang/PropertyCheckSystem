@@ -678,16 +678,6 @@
                     )
                 ))
             },
-            // 取得位置、單位、品牌
-            getUnitBrandPosition(){
-                let self = this;
-                axios.get(this.getPositionUrl)
-                .then((res)=>{self.positionList = res.data.position});
-                axios.get(this.getBrandUrl)
-                .then((res)=>{self.brandList = res.data.brand});
-                axios.get(this.getUnitUrl)
-                .then((res)=>{self.unitList = res.data.unit});
-            },
             async Load(numPage, isReLoad=false) {
                 if(this.loadFlag)
                     return;
@@ -852,16 +842,20 @@
                 }, 500);
             },
             // 使對話框改變
-            vanishDialog(isShow) {
-                if (isShow) {
-                    this.dialogBackgroundStatus = "";
-                    this.dialogBackgroundStatus = "opacity-100";
-                } else {
-                    this.dialogBackgroundStatus = "opacity-0";
-                    setTimeout(() => {
-                        this.dialogBackgroundStatus = "hidden";
-                    }, 300)
-                }
+            vanishDialog(isShow){
+                R.ifElse(                
+                    R.identity,
+                    (x)=>{
+                        this.dialogBackgroundStatus = "";
+                        this.dialogBackgroundStatus = "opacity-100";
+                    },
+                    (x)=>{
+                        this.dialogBackgroundStatus = "opacity-0";
+                        setTimeout(() => {
+                            this.dialogBackgroundStatus = "hidden";
+                        }, 300)
+                    }
+                )(isShow)
             },
             // 使消失加載畫面
             switchSpinCircle() {
@@ -1126,24 +1120,31 @@
             },
             // 更新資料
             updateData(){
-                let myformData = new FormData();
-                myformData.append('file', this.currentImage);
-                myformData.append('name', this.product_name);
-                myformData.append('checkId', this.checkId);
-                myformData.append('propId', this.propId);
-                myformData.append('brand', this.brand);
-                myformData.append('number', this.product_number);
-                myformData.append('serial', this.number);
-                myformData.append('position', this.label_position);
-                myformData.append('realPosition', this.position);
-                myformData.append('getDate', this.get_date);
-                myformData.append('expiryDate', this.age_limit);
-                myformData.append('amount', this.quantity);
-                myformData.append('price', this.single_value);
-                myformData.append('tips', this.tip);
-                myformData.append('unit', this.unit);
+                const data = {
+                    file: this.currentImage,
+                    name: this.product_name,
+                    checkId: this.checkId,
+                    propId: this.propId,
+                    brand: this.brand,
+                    number: this.product_number,
+                    serial: this.number,
+                    position: this.label_position,
+                    realPosition: this.position,
+                    getDate: this.get_date,
+                    expireDate: this.age_limit,
+                    amount: this.quantity,
+                    price: this.single_value,
+                    tips: this.tip,
+                    unit: this.unit
+                }
+                const myformData = new FormData();
+                R.map(
+                    (x)=>{
+                        myformData.append(x, R.prop(x, data));
+                    },
+                    R.keys(data)
+                )
 
-                let self = this;
                 axios({
                     method: "post",
                     url: this.updateSingleDataUrl,
@@ -1161,19 +1162,14 @@
                         this.showRevise(false);
                         this.syncData();
                     }else{
-                        // 失敗看原因
-                        reason = res.data.reason;
-                        if(reason == "Duplicated"){
+                        if(res.data.reason == "Duplicated"){
                             this.showAlert("序號重複", "bg-red-500");
                             mySocket.send({"action": "newNotify"});
                         }
                     }
                 })
                 .catch((err)=>{
-                    status = err.response.status;
-                    if(status == 403) alert("你!沒有!權限!");
-                    else if(status == 413) alert("檔案大小過大");
-                    else alert(status);
+                    alert(`Server response ${err.response.status}.`)
                 });
             },
             // 同步更新用戶端資料
@@ -1195,7 +1191,13 @@
         mounted() {
             window.addEventListener('click', this.hideContextMenu);
             window.addEventListener('scroll', this.hideContextMenu, true);
-            this.getUnitBrandPosition();
+            let self = this;
+            axios.get(this.getPositionUrl)
+            .then((res)=>{self.positionList = res.data.position});
+            axios.get(this.getBrandUrl)
+            .then((res)=>{self.brandList = res.data.brand});
+            axios.get(this.getUnitUrl)
+            .then((res)=>{self.unitList = res.data.unit});
         },
         created() {
             this.Load(undefined,true);
