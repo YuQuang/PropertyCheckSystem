@@ -15,6 +15,7 @@
 
 {% block content %}
 <div id="itemCard">
+    {% load static %}
     <!-- 上方功能欄位 -->
     <div v-cloak class="container mx-auto px-2" @scroll="hideContextMenu( $event )">
         {% verbatim %}
@@ -244,136 +245,85 @@
                         </p>
                     </div>
                     <div class="border-t border-gray-200 overflow-y-auto">
-                        <dl>
-                            <div class="bg-gray-100 px-4 py-5 sm:gap-4 sm:px-6">
-                                <img :src="currentData.image">
-                            </div>
-                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Full name
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.product_name }}
-                                </dd>
-                            </div>
-                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Brand
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.brand }}
-                                </dd>
-                            </div>
-                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Number
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.product_number }}-{{ currentData.number }}
-                                </dd>
-                            </div>
-                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Position
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.position }}
-                                </dd>
-                                <dt class="text-sm font-medium text-gray-500">
-                                    LabelPosition
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.label_position }}
-                                </dd>
-                            </div>
-                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    GetDate
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.get_date }}
-                                </dd>
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Expiry
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.age_limit }}
-                                </dd>
-                            </div>
-                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Price
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    ${{ currentData.single_value }}
-                                </dd>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.quantity }}/{{ currentData.unit }}
-                                </dd>
-                            </div>
-                            <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Tips
-                                </dt>
-                                <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {{ currentData.tip }}
-                                </dd>
-                            </div>
-                            <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Link
-                                </dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                    <ul class="border border-gray-200 rounded-md divide-y divide-gray-200">
-                                        <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                            <div class="w-0 flex-1 flex items-center">
-                                                <!-- Heroicon name: solid/paper-clip -->
-                                                <svg class="flex-shrink-0 h-5 w-5 text-gray-400"
-                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                    fill="currentColor" aria-hidden="true">
-                                                    <path fill-rule="evenodd"
-                                                        d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                <span class="ml-2 flex-1 w-0 truncate">
-                                                    resume_back_end_developer.pdf
-                                                </span>
-                                            </div>
-                                            <div class="ml-4 flex-shrink-0">
-                                                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
-                                                    Download
-                                                </a>
-                                            </div>
-                                        </li>
-                                        <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                                            <div class="w-0 flex-1 flex items-center">
-                                                <!-- Heroicon name: solid/paper-clip -->
-                                                <svg class="flex-shrink-0 h-5 w-5 text-gray-400"
-                                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                    fill="currentColor" aria-hidden="true">
-                                                    <path fill-rule="evenodd"
-                                                        d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                <span class="ml-2 flex-1 w-0 truncate">
-                                                    coverletter_back_end_developer.pdf
-                                                </span>
-                                            </div>
-                                            <div class="ml-4 flex-shrink-0">
-                                                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
-                                                    Download
-                                                </a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </dd>
-                            </div>
-                            <div class="bg-gray-100 px-4 py-5 flex-row flex justify-center sm:px-6 gap-5">
-                                <button @click="showRevise(true)" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
-                                    修改資料
-                                </button>
-                            </div>
-                        </dl>
+                        <div class="bg-gray-100 px-4 py-5 sm:gap-4 sm:px-6 relative">
+                            <img class="mx-auto" :src="currentData.image" style="width: 70%;">
+                        </div>
+                        <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">
+                                Full name
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.product_name }}
+                            </dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">
+                                Brand
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.brand }}
+                            </dd>
+                        </div>
+                        <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">
+                                Number
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.product_number }}-{{ currentData.number }}
+                            </dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">
+                                Position
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.position }}
+                            </dd>
+                            <dt class="text-sm font-medium text-gray-500">
+                                LabelPosition
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.label_position }}
+                            </dd>
+                        </div>
+                        <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">
+                                GetDate
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.get_date }}
+                            </dd>
+                            <dt class="text-sm font-medium text-gray-500">
+                                Expiry
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.age_limit }}
+                            </dd>
+                        </div>
+                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">
+                                Price
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                ${{ currentData.single_value }}
+                            </dd>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.quantity }}/{{ currentData.unit }}
+                            </dd>
+                        </div>
+                        <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt class="text-sm font-medium text-gray-500">
+                                Tips
+                            </dt>
+                            <dd class="mt-1 text-xl text-gray-900 sm:mt-0 sm:col-span-2">
+                                {{ currentData.tip }}
+                            </dd>
+                        </div>
+                        <div class="bg-gray-100 px-4 py-5 flex-row flex justify-center sm:px-6 gap-5">
+                            <button @click="showRevise(true)" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                修改資料
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -416,9 +366,9 @@
                     <div class="border-t border-gray-200 overflow-y-auto">
                         {% verbatim %}
                         <dl>
-                            <div class="bg-gray-100 px-4 py-5">
-                                <div class="relative w-auto">
-                                    <img :src="image">
+                            <div class="relative bg-gray-100 px-4 py-5">
+                                <div class="mx-auto" style="width: 70%;">
+                                    <img :src="image" />
                                     <input type="file" class="absolute left-0 top-0 w-full h-full opacity-0"
                                            accept="image/gif, image/jpeg, image/png" @change="getImg($event)" >
                                 </div>
@@ -628,7 +578,7 @@
                 isReviseModel: false,
                 // 修改資料
                 currentImage: "",
-                sampleImage: "https://i.pinimg.com/originals/fb/f7/64/fbf76458d74b5236cb7ee9208563bebc.gif",
+                sampleImage: "{% static 'images/uploadFile.jpg' %}",
                 checkId: 0,
                 age_limit: 0,
                 brand: "",
@@ -698,7 +648,6 @@
 
                 
                 var queryParams = new URLSearchParams(window.location.search);
-                //console.log(queryParams.get("page"));
                 // 檢查頁碼
                 if (page == NaN || page == undefined) {
                     this.pagePropertyData = []

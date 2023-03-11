@@ -1135,12 +1135,8 @@ def getData(request):
                 request.build_absolute_uri('/').strip("/") + '/' +
                 singleProperty.image.image.__str__())
         else:
-            # https://i.imgur.com/3ZTDX.jpeg
-            # https://i.imgur.com/WNL6utH.jpeg
-            # singleDict.setdefault('image', 
-            #     request.build_absolute_uri('/').strip("/") +
-            #     "/static/PropertyImage/%E4%BC%BA%E6%9C%8D%E5%99%A8%E7%AD%89%E7%B4%9A%E6%A9%9F%E6%AE%BC1-13010202-05.png")
-            singleDict.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
+            singleDict.setdefault('image',
+                request.build_absolute_uri('/').strip("/") + '/static/images/noImage.jpg')
         data.append(singleDict)
     result = {'result': 'success', 'data': data}
 
