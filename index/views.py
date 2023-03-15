@@ -102,6 +102,13 @@ def stockTaking(request):
 def profile(request):
     return render(request, "profile.html")
 
+# 使用者詳細訊息
+# (需要登入)
+# (need login)
+@login_required
+def importXslxFromSchool(request):
+    return render(request, "importXslxFromSchool.html")
+
 """
 #   Web API部分
 #   Restfull API

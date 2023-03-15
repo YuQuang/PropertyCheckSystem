@@ -58,9 +58,7 @@ $('#inputFile').on('change',(e)=>{
 
 // 當保存按鈕被按下時
 $('#saveBtn').on('click',(e)=>{
-    
     saveData();
-
 });
 
 // 當清除按鈕被按下時

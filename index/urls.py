@@ -22,6 +22,7 @@ urlpatterns = [
     path('leaseProperty/', views.leaseProperty, name='leaseProperty'),
     path('stockTaking/', views.stockTaking, name='stockTaking'),
     path('profile/', views.profile, name='profile'),
+    path('importXslxFromSchool/', views.importXslxFromSchool, name='importXslxFromSchool'),
 
 
     # 新版介面

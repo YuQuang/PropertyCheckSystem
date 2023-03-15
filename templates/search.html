@@ -620,7 +620,7 @@
                                 R.pipe(R.indexOf(nameEQ), R.equals(-1), R.not),
                                 R.ap(
                                     R.flip(R.takeLast),
-                                    R.pipe(R.length, R.flip(R.subtract)(nameEQ.length))
+                                    R.pipe(R.length, R.flip(R.subtract)(nameEQ.length+1))
                                 ),
                                 R.always(undefined)
                             ),
@@ -1093,6 +1093,8 @@
                     },
                     R.keys(data)
                 )
+                
+                console.log(this.readCookie('csrftoken'))
 
                 axios({
                     method: "post",
