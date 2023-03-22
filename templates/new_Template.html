@@ -89,7 +89,7 @@
                         <div class="hidden sm:block sm:ml-6">
                             <div class="flex space-x-4">
                                 <a :href="home" :class="navbarMenuHomeCss">Home</a>
-                                <a :href="importExcel" :class="navbarMenuImportCss">Import</a>
+                                <a :href="{% url 'importXslxFromSchool' %}" :class="navbarMenuImportCss">Import</a>
                                 <a :href="search" :class="navbarMenuSearchCss">Search</a>
                                 <a :href="addData" :class="navbarMenuAddCss">Add</a>
                                 <a :href="leaseProperty" :class="navbarMenuLeasePropertyCss">leaseProperty</a>
@@ -181,7 +181,7 @@
                 <div class="px-2 pt-2 pb-3 space-y-1">
                     <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                     <a :href="home" class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium" aria-current="page">Home</a>
-                    <a :href="importExcel" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Import</a>
+                    <a :href="{% url 'importXslxFromSchool' %}" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Import</a>
                     <a :href="search" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Search</a>
                     <a :href="addData" class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Add</a>
                 </div>

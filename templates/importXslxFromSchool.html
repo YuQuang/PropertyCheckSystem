@@ -46,7 +46,7 @@
                     </thead>
                     <tbody>
                         <tr
-                        class="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600"
+                        class="border-b transition duration-300 ease-in-out hover:bg-neutral-400 dark:border-neutral-500 hover:cursor-pointer"
                         v-for="row in sheet" @click="showDetail(row)">
                             <td class="whitespace-nowrap px-6 py-4 font-medium">{{ row["財產編號"] }}</td>
                             <td class="whitespace-nowrap px-6 py-4 font-medium">{{ row["序號"] }}</td>
@@ -129,7 +129,7 @@
                                 ),
                             R.split(';', document.cookie)
                         )
-                    ))
+                    ).replace('=', ''))
                 },
                 whenFileOnUploaded(inputElement){
                     R.when(
@@ -340,7 +340,7 @@
                                 }
                             )
                         )(R.prop('result', jsonRes))
-                        clearSheet()
+                        this.clearSheet()
                     }).finally(()=>{
                         this.isUploading = false
                     })
