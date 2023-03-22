@@ -15,31 +15,44 @@
 {% block content %}
     {% verbatim %}
     <div id="showExcel">
-        <input type="file" :onchange="whenFileOnUploaded" >
-        <div class="flex flex-col">
-            <div class="overflow-x-auto">
-                <div class="inline-block min-w-full py-2 sm:px-10 lg:px-14">
-                    <div class="overflow-auto max-h-96">
-                        <table class="min-w-full text-left text-sm font-light bg-slate-50 rounded-2xl">
-                            <thead class="border-b font-medium dark:border-neutral-500 text-center">
-                                <tr>
-                                <th scope="col" class="px-4 py-3">編號</th>
-                                <th scope="col" class="px-4 py-3">序號</th>
-                                <th scope="col" class="px-4 py-3">財產名稱</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                class="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600"
-                                v-for="row in sheet" @click="showDetail(row)">
-                                    <td class="whitespace-nowrap px-6 py-4 font-medium">{{ row["財產編號"] }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 font-medium">{{ row["序號"] }}</td>
-                                    <td class="whitespace-nowrap px-6 py-4 font-medium">{{ row["財產名稱"] }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+        <div class="inline-block min-w-full py-2 sm:px-10 lg:px-14">
+            <div class="p-3 justify-end flex gap-3">
+                <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" @click="clearSheet">
+                    清除
+                </button>
+                <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" @click="">
+                    送出
+                </button>
+            </div>
+            <div class="overflow-auto h-96 bg-slate-50 rounded-2xl relative">
+                <div class="h-full w-full absolute" :class="{ hidden: !isUploadBox }">
+                    <div class="h-full w-full absolute">
+                        <img class="h-72 mx-auto mt-10" src="/static/images/upload.png">
+                        <div class="text-center text-2xl">拖曳檔案或點選上傳</div>
                     </div>
+                    <input
+                    class="opacity-0 h-full w-full absolute"
+                    id="excelInputField"
+                    type="file" :onchange="whenFileOnUploaded" >
                 </div>
+                <table class="min-w-full text-left text-sm font-light">
+                    <thead class="border-b font-medium dark:border-neutral-500 text-center text-lg">
+                        <tr>
+                        <th scope="col" class="px-4 py-3">編號</th>
+                        <th scope="col" class="px-4 py-3">序號</th>
+                        <th scope="col" class="px-4 py-3">財產名稱</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                        class="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600"
+                        v-for="row in sheet" @click="showDetail(row)">
+                            <td class="whitespace-nowrap px-6 py-4 font-medium">{{ row["財產編號"] }}</td>
+                            <td class="whitespace-nowrap px-6 py-4 font-medium">{{ row["序號"] }}</td>
+                            <td class="whitespace-nowrap px-6 py-4 font-medium">{{ row["財產名稱"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -94,6 +107,7 @@
                     nowShowingData: {},
                     /* Control Showing */
                     isDetailBox: false,
+                    isUploadBox: true,
                 }
             },
             methods:{
@@ -136,6 +150,7 @@
                                     R.head
                                 )(x)
                             )
+                            this.isUploadBox = false
                         }
                     )(inputElement)
                 },
@@ -233,8 +248,12 @@
                 showDetail(row){
                     this.isDetailBox = true;
                     this.nowShowingData = row;
-                    console.log(this.nowShowingData)
-                }
+                },
+                clearSheet(){
+                    this.sheet = []
+                    this.isUploadBox = true
+                    document.getElementById("excelInputField").value = ''
+                },
             },
             created(){
             }
