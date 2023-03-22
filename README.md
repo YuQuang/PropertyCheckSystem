@@ -37,19 +37,15 @@ sudo mysql_secure_installation
 
 ### Debian需要的套件
 ``` shell
-sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev libmysqlclient-dev
+sudo apt install libsasl2-dev python3-dev libldap2-dev libssl-dev libmysqlclient-dev
+sudo apt-get install build-essential slapd ldap-utils tox lcov valgrind
 ```
 
 ### python需要的套件
-1. django
-1. python-ldap
-1. django_auth_ldap
-1. django_werkzeug_debugger_runserver
-1. django_extensions
-1. channels
-1. mysqlclient
-1. pillow
-
+``` shell
+pip install django==3.2.18
+pip install python3-ldap django_auth_ldap django_werkzeug_debugger_runserver django_extensions channels mysqlclient pillow
+```
 
 ## 執行
 ### 使用django內部伺服器執行
