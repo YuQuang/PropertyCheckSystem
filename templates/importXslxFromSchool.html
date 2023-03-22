@@ -20,8 +20,9 @@
                 <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" @click="clearSheet">
                     清除
                 </button>
-                <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" @click="">
-                    送出
+                <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" @click="sendSheetToBackend">
+                    <img class="animate-spin h-8" :class="{ hidden: !isUploading }" src="/static/images/loadingIcon.png">
+                    <p :class="{ hidden: isUploading }">送出</p>
                 </button>
             </div>
             <div class="overflow-auto h-96 bg-slate-50 rounded-2xl relative">
@@ -108,9 +109,28 @@
                     /* Control Showing */
                     isDetailBox: false,
                     isUploadBox: true,
+                    isUploading: false,
                 }
             },
             methods:{
+                // 讀取Cookie
+                readCookie(name) {
+                    var nameEQ = name + "=";
+                    return R.defaultTo(null)(R.find(
+                        R.pipe( R.equals(undefined), R.not),
+                        R.map(
+                            R.ifElse(
+                                    R.pipe(R.indexOf(nameEQ), R.equals(-1), R.not),
+                                    R.ap(
+                                        R.flip(R.takeLast),
+                                        R.pipe(R.length, R.flip(R.subtract)(nameEQ.length))
+                                    ),
+                                    R.always(undefined)
+                                ),
+                            R.split(';', document.cookie)
+                        )
+                    ))
+                },
                 whenFileOnUploaded(inputElement){
                     R.when(
                         R.pipe(
@@ -252,8 +272,79 @@
                 clearSheet(){
                     this.sheet = []
                     this.isUploadBox = true
+                    this.isDetailBox = false
                     document.getElementById("excelInputField").value = ''
                 },
+                sendSheetToBackend(){
+                    const copyValueByKey = (oldKey, newKey)=>{
+                        return R.ap(
+                            R.flip(R.assoc(newKey)),
+                            R.pipe(
+                                R.prop(oldKey),
+                                R.defaultTo(''),
+                                R.replace(/ /g, '')
+                            )
+                        )
+                    }
+                    const transformSheetToBackend = R.map(
+                        R.pipe(
+                            copyValueByKey('財產編號', 'product_number'),
+                            copyValueByKey('財產名稱', 'product_name'),
+                            copyValueByKey('', 'is_check'),
+                            copyValueByKey('', 'tip'),
+                            copyValueByKey('序號', 'number'),
+                            copyValueByKey('取得日期', 'get_date'),
+                            copyValueByKey('數量', 'quantity'),
+                            copyValueByKey('年限', 'age_limit'),
+                            copyValueByKey('單價', 'single_value'),
+                            copyValueByKey('', 'position'),
+                            copyValueByKey('存置地點', 'label_position'),
+                            copyValueByKey('廠牌型式', 'brand'),
+                            copyValueByKey('單位', 'unit'),
+                        )
+                    )
+                    if(this.isUploading) return
+                    this.isUploading = true
+                    fetch(
+                        '/saveData/',
+                        {
+                            method:'POST',
+                            body: JSON.stringify({ 'data': transformSheetToBackend(this.sheet) }),
+                            headers:{
+                                'X-CSRFToken': `${this.readCookie('csrftoken')}`,
+                                'content-type': 'application/json'
+                            }
+                        }
+                    ).then((res)=>{
+                        return res.json()
+                    }).then((jsonRes)=>{
+                        R.pipe(
+                            R.when(
+                                R.equals('empty'),
+                                (title)=>{
+                                    Swal.fire({
+                                        title: `${title}`,
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    })
+                                }
+                            ),
+                            R.when(
+                                R.equals('success'),
+                                (title)=>{
+                                    Swal.fire({
+                                        title: `${title}`,
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    })
+                                }
+                            )
+                        )(R.prop('result', jsonRes))
+                        clearSheet()
+                    }).finally(()=>{
+                        this.isUploading = false
+                    })
+                },   
             },
             created(){
             }

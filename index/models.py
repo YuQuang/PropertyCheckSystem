@@ -93,7 +93,7 @@ class Brand(models.Model):
             editable=False
         )
     name = models.CharField(
-            max_length=100,
+            max_length=160,
             verbose_name='品牌',
             help_text='Enter Unit',
             null=False,

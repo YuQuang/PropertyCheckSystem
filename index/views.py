@@ -493,12 +493,13 @@ def saveData(request):
     if not (user.has_perm('index.add_property') and user.has_perm('index.delete_property') and user.has_perm('index.change_property')):
         return HttpResponse(status=403)
 
-    if request.POST.get('data') is None:
+    fetchData = json.load(request).get('data', [])
+    if request.POST.get('data') is None and fetchData is None:
         # Check the data that client send is empty or not
         data = {'result': 'empty'}
         return JsonResponse(data)
     
-    if request.POST.get('data') == '[]':
+    if len(request.POST.get('data', [])) == 0 and len(fetchData) == 0:
         # Check the data that client send is empty or not
         data = {'result': 'empty'}
         return JsonResponse(data)
@@ -506,7 +507,10 @@ def saveData(request):
     # try:
     print(f"\n{saveData.__name__ }() Loading data...")
     # Change the data format to json
-    data = json.loads(request.POST.get('data'))
+    if fetchData is not None:
+        data = fetchData
+    else:
+        data = json.loads(request.POST.get('data'))
     duplicatePropertyList = []
     totalSaveData = []
     for singleProperty in data:
