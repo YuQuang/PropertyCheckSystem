@@ -6,8 +6,8 @@ Suite Teardown     SuiteTeardown
 
 *** Variables ***
 ${SITE_BASE_URL} =   http://127.0.0.1:8000/
-${VALID_USER} =      root
-${VALID_PW} =        root
+${VALID_USER} =      testuser
+${VALID_PW} =        testpassword
 ${INVALID_USER} =    invalidUser
 ${INVALID_PW} =      invalidPassword
 
@@ -18,7 +18,7 @@ Login with valid user should success
     Fill Text    //*[@id="id_username"]    ${VALID_USER}
     Fill Text    //*[@id="id_password"]    ${VALID_PW}
     Click    //*[@id="login-button"]
-    Verify chrt shown after login
+    Verify chart shown after login
     [Teardown]    Go To    ${SITE_BASE_URL}/accounts/logout/
 
 Login with invalid user should get error message
@@ -36,7 +36,7 @@ SuiteSetup
 SuiteTeardown
     Close Browser
 
-Verify chrt shown after login
+Verify chart shown after login
     Wait Until Network Is Idle
     Wait For Elements State    //*[@id="rent_status"]
     Wait For Elements State    //*[@id="pandian_status"]
