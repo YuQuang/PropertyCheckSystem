@@ -1,32 +1,20 @@
 FROM ubuntu:focal
-
 LABEL author="Roy.Xu" email="bbb233456@gmail.com"
-
-# 複製網站檔案到pandian工作區
 COPY . /pandian
 
-# 系統更新
+######################
+# Install dependency
+######################
 RUN apt update
-# RUN apt -y upgrade
-
-# 檢查缺漏
-RUN apt -y --fix-missing install
-
-# 安裝必要套件
 RUN apt install -y libsasl2-dev python3-dev libldap2-dev libssl-dev libmysqlclient-dev python3-pip
-
-# 檢查缺漏
 RUN apt -y --fix-missing install
-
-# 安裝python套件
+###############################
+# Install python dependency
+###############################
 RUN pip3 install django==3.2.13
 RUN pip3 install wheel python-ldap django_auth_ldap django_werkzeug_debugger_runserver django_extensions channels mysqlclient pillow uwsgi daphne
 
-# Port 443
+
 EXPOSE 443
-
-# 設定當前工作區為/pandian
 WORKDIR /pandian
-
-# 伺服器開啟指令
 CMD ["daphne", "-e", "ssl:443:privateKey=cert/cert.key:certKey=cert/cert.crt", "Web.asgi:application"]
