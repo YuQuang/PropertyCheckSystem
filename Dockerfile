@@ -28,9 +28,5 @@ EXPOSE 443
 # 設定當前工作區為/pandian
 WORKDIR /pandian
 
-# 初始化資料庫部分
-RUN python3 manage.py makemigrations
-RUN python3 manage.py migrate
-
 # 伺服器開啟指令
 CMD ["daphne", "-e", "ssl:443:privateKey=cert/cert.key:certKey=cert/cert.crt", "Web.asgi:application"]

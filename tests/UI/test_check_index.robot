@@ -1,13 +1,9 @@
 *** Settings ***
 Library    Browser
+Variables  ../variables.py
 
 Suite Setup        SuiteSetup
 Suite Teardown     SuiteTeardown
-
-*** Variables ***
-${SITE_BASE_URL} =   http://127.0.0.1:8000/
-${VALID_USER} =      testuser
-${VALID_PW} =        testpassword
 
 *** Test Cases ***
 Index page can show chart after login
@@ -18,6 +14,7 @@ Index page can show chart after login
 *** Keywords ***
 SuiteSetup
     New Browser    browser=chromium    headless=${TRUE}
+    New Context    ignoreHTTPSErrors=${TRUE}
     New Page    ${SITE_BASE_URL}
 
 SuiteTeardown
