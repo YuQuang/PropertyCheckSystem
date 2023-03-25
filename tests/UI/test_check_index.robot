@@ -14,7 +14,7 @@ Index page can show chart after login
 *** Keywords ***
 SuiteSetup
     New Browser    browser=chromium    headless=${TRUE}
-    New Context    ignoreHTTPSErrors=${TRUE}
+    New Context    ignoreHTTPSErrors=${TRUE}    recordVideo=${RECORD_SETTING}
     New Page    ${SITE_BASE_URL}
 
 SuiteTeardown

@@ -24,7 +24,7 @@ Login with invalid user should get error message
 *** Keywords ***
 SuiteSetup
     New Browser    browser=chromium    headless=${TRUE}
-    New Context    ignoreHTTPSErrors=${TRUE}
+    New Context    ignoreHTTPSErrors=${TRUE}    recordVideo=${RECORD_SETTING}
     New Page    ${SITE_BASE_URL}
 
 SuiteTeardown

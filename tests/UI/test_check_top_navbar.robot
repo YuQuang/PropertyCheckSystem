@@ -16,7 +16,7 @@ Check top navbar have list links
 *** Keywords ***
 SuiteSetup
     New Browser    browser=chromium    headless=${TRUE}
-    New Context    ignoreHTTPSErrors=${TRUE}
+    New Context    ignoreHTTPSErrors=${TRUE}    recordVideo=${RECORD_SETTING}
     New Page    ${SITE_BASE_URL}/accounts/login/
     Fill Text    //*[@id="id_username"]    ${VALID_USER}
     Fill Text    //*[@id="id_password"]    ${VALID_PW}

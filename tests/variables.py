@@ -1,5 +1,6 @@
 import os
 
+RECORD_SETTING    = "{'dir': 'results/video/'}"
 SITE_BASE_URL = "https://127.0.0.1"
 VALID_USER    = "testuser"
 VALID_PW      = "testpassword"
