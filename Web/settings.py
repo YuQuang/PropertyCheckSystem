@@ -1,26 +1,14 @@
 from pathlib import Path
 import os
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '3q%frfi_urea*^-23@u&1thgjs(w7zqoagkv+f76ch9=o-idap'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = False
 ALLOWED_HOSTS = ['*']
-
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-SESSION_COOKIE_AGE = 5 * 60 * 60 #
+SESSION_COOKIE_AGE = 5 * 60 * 60
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #   Application definition
@@ -42,7 +30,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -137,38 +125,28 @@ LOGIN_REDIRECT_URL = '/'
 #   LDAP 連線部分
 #   將LDAP串接到伺服器上
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
-#Django-auth-ldap 配置部分
 import ldap
 from django_auth_ldap.config import LDAPSearch,GroupOfNamesType
 
-#修改Django认证先走ldap，再走本地认证
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     # 'django_auth_ldap.backend.LDAPBackend',
 ]
-
-#ldap的连接基础配置
-AUTH_LDAP_SERVER_URI = "ldap://qnap.com:389" # ldap or ad 服务器地址
-AUTH_LDAP_BIND_DN = "cn=admin,dc=qnap,dc=com" # 管理员的dn路径
-AUTH_LDAP_BIND_PASSWORD = '1234' # 管理员密码
-
-#允许认证用户的路径
+AUTH_LDAP_SERVER_URI = "ldap://qnap.com:389"
+AUTH_LDAP_BIND_DN = "cn=admin,dc=qnap,dc=com"
+AUTH_LDAP_BIND_PASSWORD = '1234'
+AUTH_LDAP_FIND_GROUP_PERMS = True
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "ou=people,dc=qnap,dc=com",
     ldap.SCOPE_SUBTREE,
     "(uid=%(user)s)"
 )
-
-#通过组进行权限控制
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
     "ou=groups,dc=qnap,dc=com",
     ldap.SCOPE_SUBTREE,
     "(objectClass=groupOfNames)"
 )
-
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
-
-#如果ldap服务器是Windows的AD，需要配置上如下选项
 AUTH_LDAP_CONNECTION_OPTIONS = {
     ldap.OPT_DEBUG_LEVEL: 1,
     ldap.OPT_REFERRALS: 0,
@@ -178,4 +156,3 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "name": "sn",
     "email": "mail",
 }
-AUTH_LDAP_FIND_GROUP_PERMS = True
