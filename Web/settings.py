@@ -5,7 +5,7 @@ import os
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '3q%frfi_urea*^-23@u&1thgjs(w7zqoagkv+f76ch9=o-idap'
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*']
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 5 * 60 * 60
@@ -71,7 +71,7 @@ DATABASES = {
         'NAME':     os.getenv('WEB_DB_NAME', 'pandian'),
         'USER':     os.getenv('WEB_DB_USER', 'root'),
         'PASSWORD': os.getenv('WEB_DB_PW', 'root'),
-        'HOST':     os.getenv('WEB_DB_ADDR', 'localhost'),
+        'HOST':     os.getenv('WEB_DB_ADDR', '127.0.0.1'),
         'PORT':     os.getenv('WEB_DB_PORT', '3306'),
     }
 }
@@ -110,7 +110,7 @@ USE_TZ = True
 #   https://docs.djangoproject.com/en/3.1/howto/static-files/
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 STATIC_URL = '/static/'
-STATIC_ROOT = './static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_DIRS = [
     BASE_DIR / "static_file"
 ]

@@ -9,9 +9,7 @@
 
     {% load static %}
     <link rel="icon" href="{% static 'images/lab.svg' %}">
-
     <title>Login</title>
-
     <style>
         {% load static %}
         @import url(https://fonts.googleapis.com/earlyaccess/cwtexyen.css);
@@ -138,44 +136,42 @@
     <div class="container">
         <div class="login-container">
             <div class="login-font">
-                login
+                登入
             </div>
             {% if user.is_authenticated %}
-                <p>You already login now</p>
-                <a href="{% url 'index' %}">return to index</a>
+                <p>已經是登入狀態</p>
+                <a href="{% url 'index' %}">回到首頁</a>
             {% else %}
 
                 {% if form.errors %}
-                    <p class="login-hint">username or password is incorrect.</p>
+                    <p class="login-hint">帳號或密碼錯誤</p>
                 {% endif %}
 
                 {% if next %}
                     {% if user.is_authenticated %}
-                        <p class="login-hint">Your account doesn't have access to this page. To proceed,
-                        please login with an account that has access.</p>
+                        <p class="login-hint">權限不足. 如需繼續, 請切換帳號</p>
                     {% else %}
-                        <p class="login-hint">Please login to see this page.</p>
+                        <p class="login-hint">登入後尚可閱覽</p>
                     {% endif %}
                 {% endif %}
                 <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
                     <div class="login-input">
                         <div class="login-username">
-                            <input type="text" name="username" placeholder="Username"
+                            <input type="text" name="username" placeholder="帳號"
                             autocapitalize="none" autocomplete="username"
-                            maxlength="150" required="" id="id_username">
+                            maxlength="150" required id="id_username">
                         </div>
                         <div class="login-password">
-                            <input type="password" name="password" placeholder="Password"
-                            autocomplete="current-password" required=""
+                            <input type="password" name="password" placeholder="密碼"
+                            autocomplete="current-password" required
                             id="id_password">
-                            <!-- onkeyup="value=value.replace(/[\W]/g,'')" -->
                         </div>
                     </div>
                     <div style="left: 5vw; position: relative;color: black;">
                         <input class="form-check-input" type="checkbox" id="remember">
                         <label class="form-check-label" for="remember">
-                            Remember me
+                            記住帳號
                         </label>
                     </div>
                     <div>
@@ -183,18 +179,15 @@
                         <input type="hidden" name="next" value="{{ next }}" />
                     </div>
                 </form>
-                {# Assumes you setup the password_reset view in your URLconf #}
-                <p class="login-forgot"><a href="{% url 'password_reset' %}">Lost password?</a></p>
+                <p class="login-forgot"><a href="{% url 'password_reset' %}">密碼丟失?</a></p>
                 {% endif %}
         </div>
     </div>
 
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
     integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
     crossorigin="anonymous"></script>
-
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
     integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
     crossorigin="anonymous"></script>
@@ -219,33 +212,23 @@
             });
         });
 
-
-        //兩個引數，一個是cookie的名子，一個是值
         function SetCookie(name,value){
-            var Days = 7;//此 cookie 將被儲存 7 天
-            var exp = new Date();//new Date("December 31, 9998");
+            var Days = 7;
+            var exp = new Date();
             exp.setTime(exp.getTime() + Days*24*60*60*1000);
-            
             document.cookie = name + "=" + escape (value) + ";expires=" + exp.toGMTString();
         }
 
-
-        // 刪除cookie依照名稱
         function delCookie(name){
             var exp = new Date();
             exp.setTime(exp.getTime() - 1);
             var cval = getCookie(name);
             if (cval != null) document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
         }
-
-        // 讀取cookies函式  
+ 
         function getCookie(name){
             var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
             if (arr != null) return unescape(arr[2]); return null;
-        }
-
-        // 自動登出
-        function auto_logout(){
         }
     </script>
 </body>
