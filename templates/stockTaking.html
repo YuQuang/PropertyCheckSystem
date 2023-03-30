@@ -168,6 +168,10 @@
                               @touchstart="touchStart($event, prop)" @touchend="touchEnd()" class="text-purple-800 bg-indigo-200 font-semibold px-2 rounded-full select-none cursor-pointer">
                               Obsolete
                         </span>
+                        <span v-if="prop.is_check == 'p'" @click="checkProp(prop)" @contextmenu="onLongTouch(prop)" oncontextmenu="return false;"
+                              @touchstart="touchStart($event, prop)" @touchend="touchEnd()" class="text-gray-800 bg-gray-200 font-semibold px-2 rounded-full select-none cursor-pointer">
+                              past
+                        </span>
                     </td>
                 </tr>
                 {% endverbatim %}
@@ -431,37 +435,11 @@
                     <div class="p-2 lg:w-1/3 md:w-1/2 w-full inline-block">
                         <div class="transform hover:scale-105 shadow-xl rounded-lg bg-white p-2">
                             <div class="flex justify-between">
-                                <svg enable-background="new 0 0 512 512" height="30px" viewBox="0 0 512 512" width="30px" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="m475 303.702h-465v-209.758c0-22.066 17.909-39.954 40-39.954h385c22.091 0 40 17.888 40 39.954z" fill="#a4caff"/>
-                                    <path d="m435 363.633h-385c-22.091 0-40-17.888-40-39.954v-19.977h465v19.977c0 22.066-17.909 39.954-40 39.954z" fill="#e7e7ef"/>
-                                    <path d="m348.5 457.524h-212c0-22.066 17.909-39.954 40-39.954h132c22.091 0 40 17.888 40 39.954z" fill="#e7e7ef"/>
-                                    <path d="m482 457.524c11.046 0 20-8.944 20-19.977v-229.734c0-11.033-8.954-19.977-20-19.977h-130c-11.046 0-20 8.944-20 19.977v229.734c0 11.033 8.954 19.977 20 19.977z" fill="#a4caff"/>
-                                    <path d="m202.5 363.633h80v53.938h-80z" fill="#e7e7ef"/>
-                                    <path d="m452 227.79h-70l-10-39.954h90z" fill="#e7e7ef"/>
-                                    <path d="m485 177.997v-84.055c0-6.742-1.32-13.284-3.931-19.437-2.52-5.943-6.13-11.287-10.72-15.871-4.59-4.586-9.93-7.946-15.89-10.463-6.16-2.597-12.71-3.68-19.46-3.68h-147.859c-5.51
-                                        0-10 4.485-10 9.988 0 5.513 4.49 9.988 10 9.988h.021 147.839c16.51 0 29.97 12.985 30 29.476v84.393h-113c-16.542 0-30 12.955-30 29.478v86.388h-302v-200.26c.03-16.491
-                                        13.49-29.476 30-29.476h147.14c5.52 0 10-4.485 10-9.988s-4.48-9.988-10-9.988h-147.14c-6.75 0-13.3 1.084-19.46 3.68-5.96 2.518-11.3 6-15.89 10.586-4.6 4.585-8.2 9.867-10.72
-                                        15.81-2.61 6.153-3.93 12.634-3.93 19.376v229.736c0 27.538 22.43 50.43 50 50.43h142v33.961h-15.5c-27.57 0-50 22.404-50 49.942 0 5.516 4.477 9.988 10 9.988h345.5c16.542
-                                        0 30-13.93 30-30.453v-229.733c0-15.512-11.861-28.307-27-29.816zm-435 176.135c-16.542 0-30-13.93-30-30.453v-9.501h302v39.954zm272
-                                        19.977v35.569c-4.296-1.083-8.823-1.608-13.5-1.608h-16.5v-33.961zm-50 0v33.961h-60v-33.961zm-123.787 73.914c4.127-11.986 15.249-19.977
-                                        28.287-19.977h132c4.857 0 9.44 1.07 13.5 3.018v6.483c0 3.684.673 7.213 1.896 10.476zm300.857-249.711-4.878 19.977h-54.385l-4.878-19.977zm42.93
-                                        239.723c0 5.517-4.477 9.988-10 9.988h-130c-5.523 0-10-4.472-10-9.988v-229.735c0-5.517 4.477-9.988 10-9.988h12.314l7.984 32.144c1.112 4.446 5.112
-                                        7.809 9.701 7.809h70c4.589 0 8.589-3.363 9.701-7.809l7.984-32.144h12.316c5.523 0 10 4.472 10 9.988z"/>
-                                    <circle cx="242.14" cy="54" r="10"/>
-                                    <path d="m424.52 271.247c-1.899-2.167-4.64-3.406-7.529-3.406-2.421 0-4.761.88-6.58 2.478-2.011 1.758-3.21 4.185-3.391 6.852-.17 2.667.7 5.233 2.46
-                                        7.242l17.44 19.897-11.83 28.906-34.39 5.804c-4.101.689-7.381 3.895-8.15 7.98l-7.37 38.736c-.5 2.627.05 5.284 1.55 7.491s3.78 3.696 6.4 4.195c.62.11
-                                        1.25.17 1.88.17 4.79 0 8.92-3.416 9.81-8.121l6.08-31.913 26.329-4.447 8.881 14.555c1.83 2.997 5.03 4.785 8.551 4.785 1.83 0 3.63-.499 5.199-1.458
-                                        2.28-1.388 3.881-3.586 4.511-6.173.63-2.598.21-5.274-1.181-7.552l-9.787-16.025 14.378-35.095c1.439-3.526.779-7.491-1.74-10.358z"/>
-                                    <path d="m233.11 259.168c.189.011.378.016.565.016 5.268 0 9.679-4.113 9.976-9.432l3.152-56.446 30.624-9.955c3.165-1.029 5.61-3.319
-                                        6.522-6.518l13.599-47.44h38.452c5.522 0 10-4.472 10-9.988s-4.478-9.988-10-9.988h-46c-4.468 0-8.394 2.717-9.617 7.008l-14.208 49.698-71.588
-                                        23.211-13.1-42.833c-1.614-5.274-7.204-8.255-12.486-6.647-5.282 1.613-8.254 7.189-6.64 12.466l10.563 34.508-50.035-15.408c-4.094-1.26-8.535.222-11.046
-                                        3.688l-18.245 25.178c-3.238 4.468-2.237 10.713 2.237 13.947 1.772 1.282 3.823 1.898 5.855 1.898 3.098 0 6.154-1.434 8.109-4.133l14.045-19.382 61.211
-                                        18.847c1.97.607 4.08.59 6.041-.048l35.307-11.478-2.72 48.702c-.308 5.508 3.913 10.222 9.427 10.529z"/>
-                                </svg>
+                                <img src="/static/images/oldIcon.png" style="height: 30px; width: 30px;" />
                             </div>
                             <div class="w-full flex-1">
-                                <div class="text-3xl font-bold leading-8">{{ brokenProp }}</div>
-                                <div class="mt-1 text-base text-gray-600">Broken</div>
+                                <div class="text-3xl font-bold leading-8">{{ pastProp }}</div>
+                                <div class="mt-1 text-base text-gray-600">Past</div>
                             </div>
                         </div>
                     </div>
@@ -574,8 +552,8 @@
                         {% verbatim %}
                         <dl>
                             <div class="bg-gray-100 px-4 py-5">
-                                <div class="relative w-auto">
-                                    <img :src="currentData.image">
+                                <div class="relative">
+                                    <img class="mx-auto" :src="currentData.image">
                                 </div>
                             </div>
                             <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -1172,6 +1150,7 @@
                     <li class="border-black border-2 rounded-lg m-2 p-4 hover:bg-black transition duration-300 hover:text-white cursor-pointer shadow-lg" @click="changeStatus(2)">損毀</li>
                     <li class="border-black border-2 rounded-lg m-2 p-4 hover:bg-black transition duration-300 hover:text-white cursor-pointer shadow-lg" @click="changeStatus(3)">遺失</li>
                     <li class="border-black border-2 rounded-lg m-2 p-4 hover:bg-black transition duration-300 hover:text-white cursor-pointer shadow-lg" @click="changeStatus(4)">報廢</li>
+                    <li class="border-black border-2 rounded-lg m-2 p-4 hover:bg-black transition duration-300 hover:text-white cursor-pointer shadow-lg" @click="changeStatus(5)">舊產</li>
                 </ul>
             </div>
         </div>
@@ -1312,6 +1291,7 @@
                 missingProp: 0,
                 notCheckedProp: 0,
                 checkedProp: 0,
+                pastProp: 0,
 
                 // 排列視窗
                 isSortModel: false,
@@ -1414,6 +1394,7 @@
                     self.isloading = true;
                     self.notCheckedProp = 0;
                     self.checkedProp = 0;
+                    self.pastProp = 0;
                     self.obsoleteProp = 0;
                     self.missingProp = 0;
                     self.brokenProp = 0;
@@ -1423,6 +1404,7 @@
                         else if(element.is_check == 'o') self.obsoleteProp++;
                         else if(element.is_check == 'm') self.missingProp++;
                         else if(element.is_check == 'b') self.brokenProp++;
+                        else if(element.is_check == 'p') self.pastProp++;
                     });
                     
                     this.showWaiting(false);
@@ -1676,6 +1658,7 @@
                 else if(this.currentData.is_check == 'o') this.obsoleteProp--;
                 else if(this.currentData.is_check == 'm') this.missingProp--;
                 else if(this.currentData.is_check == 'v') this.checkedProp--;
+                else if(this.currentData.is_check == 'p') this.checkedProp--;
 
                 if(!this.nowCheckedList.includes(this.currentData) && this.currentData != "")
                     this.nowCheckedList.push(this.currentData);
@@ -1698,6 +1681,11 @@
                     case 4:
                         this.currentData.is_check = 'o';
                         this.obsoleteProp++;
+                        this.currentData.action_user = this.userInfo.userName;
+                        break;
+                    case 5:
+                        this.currentData.is_check = 'p';
+                        this.pastProp++;
                         this.currentData.action_user = this.userInfo.userName;
                         break;
                 }
