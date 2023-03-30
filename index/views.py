@@ -1237,7 +1237,7 @@ def getCheckProperty(request):
         if singleProperty.image != None:
             singleDict.setdefault('image', '/' + singleProperty.image.image.__str__())
         else:
-            singleDict.setdefault('image', "https://i.imgur.com/WNL6utH.jpeg")
+            singleDict.setdefault('image', "/static/images/noImage.jpg")
 
         data.append(singleDict)
     result = {'result': 'success', 'data': data}
