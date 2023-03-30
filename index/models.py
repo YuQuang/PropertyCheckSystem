@@ -518,6 +518,7 @@ class CurrentCheckProperty(models.Model):
             ('m', 'Missing'),
             ('b', 'Broken'),
             ('o', 'Obsolete'),
+            ('p', 'past'),
         )
     status = models.CharField(
             max_length=1,
