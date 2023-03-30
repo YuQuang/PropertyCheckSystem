@@ -24,6 +24,13 @@
 ### 前端環境
 > Vue.JS 3.0.11
 
+### 環境變數
+- WEB_DB_NAME default is pandian
+- WEB_DB_USER default is root
+- WEB_DB_PW   default is root
+- WEB_DB_ADDR default is 127.0.0.1
+- WEB_DB_PORT default is 3306
+
 ### 安裝MySQL or MariaDB
 ``` shell
 # 安裝MySQL
