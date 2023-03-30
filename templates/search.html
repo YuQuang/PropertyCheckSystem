@@ -370,7 +370,7 @@
                                 <div class="mx-auto" style="width: 70%;">
                                     <img :src="image" />
                                     <input type="file" class="absolute left-0 top-0 w-full h-full opacity-0"
-                                           accept="image/gif, image/jpeg, image/png" @change="getImg($event)" >
+                                           id="reviceImage" accept="image/gif, image/jpeg, image/png" @change="getImg($event)" >
                                 </div>
                             </div>
                             <div class="bg-gray-100 px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -1050,6 +1050,7 @@
             // 顯示修改視窗
             showRevise(status){
                 this.isReviseModel = status;
+                document.getElementById("reviceImage").value = "";
                 if(status == true){
                     this.image = this.sampleImage;
                     this.product_name = this.currentData.product_name;
@@ -1093,8 +1094,6 @@
                     },
                     R.keys(data)
                 )
-                
-                console.log(this.readCookie('csrftoken'))
 
                 axios({
                     method: "post",
@@ -1121,7 +1120,10 @@
                 })
                 .catch((err)=>{
                     alert(`Server response ${err.response.status}.`)
-                });
+                })
+                .final(()=>{
+                    document.getElementById("reviceImage").value = "";
+                })
             },
             // 同步更新用戶端資料
             syncData(){
