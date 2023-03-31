@@ -256,6 +256,7 @@
             let is_check_o_length = 0;
             let is_check_x_length = 0;
             let is_check_m_length = 0;
+            let is_check_p_length = 0;
 
             let overLimited = 0;
             let underlimited = 0;
@@ -267,6 +268,7 @@
                 else if(d.is_check == "o") is_check_o_length++;
                 else if(d.is_check == "x") is_check_x_length++;
                 else if(d.is_check == "m") is_check_m_length++;
+                else if(d.is_check == "p") is_check_p_length++;
 
                 if(label_position[d.label_position] == undefined) label_position[d.label_position] = 0;
                 else label_position[d.label_position]++;
@@ -301,6 +303,7 @@
                     { value: is_check_m_length, name: '丟失' },
                     { value: is_check_o_length, name: '報廢' },
                     { value: is_check_b_length, name: '損毀' },
+                    { value: is_check_p_length, name: '舊產' },
                 ],
                 emphasis: {
                     itemStyle: {
