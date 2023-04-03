@@ -616,7 +616,7 @@
                                     const ACTime = new Date(strTime)
                                     ACTime.setFullYear(ACTime.getFullYear() - 1911)
                                     const ROCyear = ACTime.getFullYear().toString().padStart(3, '0')
-                                    const ROCmonth = ACTime.getMonth().toString().padStart(2, '0')
+                                    const ROCmonth = (ACTime.getMonth() + 1).toString().padStart(2, '0')
                                     const ROCdate = ACTime.getDate().toString().padStart(2, '0')
                                     return `${ROCyear}${ROCmonth}${ROCdate}`
                                 }
