@@ -26,17 +26,17 @@
                     分隔標題
                 -->
                 <div class="w-full text-center text-2xl font-bold">
-                    產品相關訊息
+                    產品相關訊息(必填)
                     <div class="w-full bg-gray-600 h-1 rounded-full"></div>
                 </div>
                 <!-- 產品名稱 -->
                 <div class="sm:w-1/2 w-full md:text-left">
-                    <h2 class="text-lg title-font text-gray-800 tracking-widest">Name</h2>
+                    <h2 class="text-lg title-font text-gray-800 tracking-widest">財產名稱*</h2>
                     <input class="w-2/3" type="text" v-model="productName"/>
                 </div>
                 <!-- 產品品牌 -->  
                 <div class="sm:w-1/2 w-full md:text-left"> 
-                    <h2 class="text-lg title-font text-gray-800 tracking-widest">Brand</h2>
+                    <h2 class="text-lg title-font text-gray-800 tracking-widest">廠牌型式*</h2>
                     <input v-model="productBrand" class="w-2/3" type="text" list="brandSelect">
                     <datalist id="brandSelect">
                         <option disabled selected>Choose</option>
@@ -49,12 +49,12 @@
                 </div>
                 <!-- 產品流水號 -->
                 <div class="sm:w-1/2 w-full md:text-left"> 
-                    <h2 class="text-lg title-font text-gray-800 tracking-widest">Serial</h2>
+                    <h2 class="text-lg title-font text-gray-800 tracking-widest">序號*</h2>
                     <input class="w-2/3" type="text" v-model="productSerial"/>
                 </div>
                 <!-- 產品編號 -->
                 <div class="sm:w-1/2 w-full md:text-left"> 
-                    <h2 class="text-lg title-font text-gray-800 tracking-widest">Number</h2>
+                    <h2 class="text-lg title-font text-gray-800 tracking-widest">財產編號*</h2>
                     <input class="w-2/3" type="text" v-model="productNumber"/>
                 </div>
                 <!--
@@ -62,35 +62,35 @@
                 -->
                 <div class="w-full flex flex-wrap mt-7">
                     <div class="md:w-1/3 w-1/3 bg-gray-600 h-1 rounded-full self-center"></div>
-                    <div class="md:w-1/3 w-1/3 text-center text-2xl font-bold">細節</div>
+                    <div class="md:w-1/3 w-1/3 text-center text-2xl font-bold">細節(選填)</div>
                     <div class="md:w-1/3 w-1/3 bg-gray-600 h-1 rounded-full self-center"></div>
                 </div>
                 <!-- 產品取得日期 -->
                 <div class="lg:w-1/2 sm:w-1/2 w-full md:text-left">
-                    <span class="text-base title-font text-gray-800 mr-3">GetDate</span>
+                    <span class="text-base title-font text-gray-800 mr-3">取得日期</span>
                     <input class="w-2/3" type="date" v-model="productGetDate"/>
                 </div>
                 <!-- 產品年限 -->
                 <div class="lg:w-1/2 sm:w-1/2 w-full md:text-left"> 
                     <span class="text-lg title-font text-gray-800 mr-2">
-                    Expiry</span>
+                    年限</span>
                     <input v-model="productExpiry" class="w-1/3" type="number" min="0"/>
                     <span class="text-lg title-font text-gray-800">
-                    /years</span>
+                    /年</span>
                 </div>
                 <!-- 產品價格 -->
                 <div class="lg:w-1/2 sm:w-1/2 w-full md:text-left">
-                    <span class="text-lg title-font text-gray-800 tracking-widest mr-3">Price$</span>
+                    <span class="text-lg title-font text-gray-800 tracking-widest mr-3">單價$</span>
                     <input v-model="productPrice" class="w-2/3" type="number" min="0"/>
                 </div>
                 <!-- 產品數量 -->
                 <div class="lg:w-1/2 sm:w-1/2 w-full md:text-left">
-                    <span class="text-lg title-font text-gray-800 mr-3">amount</span>
+                    <span class="text-lg title-font text-gray-800 mr-3">數量</span>
                     <input v-model="productAmount" class="w-2/3" type="number" min="0"/>
                 </div>
                 <!-- 產品位置 -->
                 <div class="sm:w-1/2 w-full flex items-center">
-                    <span class="mr-3">Position</span>
+                    <span class="mr-3">存置位置</span>
                     <input v-model="productPosition" type="text" class="w-3/4" list="PositionSelect">
                     <datalist id="PositionSelect">
                         <option disabled selected>Choose</option>
@@ -103,7 +103,7 @@
                 </div>
                 <!-- 產品真實位置 -->
                 <div class="sm:w-1/2 w-full flex items-center"> 
-                    <span class="mr-3">RealPosition</span>
+                    <span class="mr-3">實際位置</span>
                     <input v-model="productRealPosition" class="w-3/4" type="text" list="RealPositionSelect">
                     <datalist id="RealPositionSelect">
                         <option disabled selected>Choose</option>
@@ -119,7 +119,7 @@
                 -->
                 <div class="w-full flex flex-wrap mt-7">
                     <div class="w-1/3 bg-gray-600 h-1 rounded-full self-center"></div>
-                    <div class="w-1/3 text-center text-2xl font-bold">備註</div>
+                    <div class="w-1/3 text-center text-2xl font-bold">備註(選填)</div>
                     <div class="w-1/3 bg-gray-600 h-1 rounded-full self-center"></div>
                 </div>
                 <!-- 送出按鈕 -->
@@ -127,7 +127,7 @@
                 <div class="w-full flex flex-wrap mt-7">
                     <div class="w-1/5 bg-gray-600 h-1 rounded-full self-center"></div>
                     <div class="w-1/5 "></div>
-                    <button @click="saveSingleData()" class="w-1/5 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">Send</button>
+                    <button @click="saveSingleData()" class="w-1/5 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">送出</button>
                     <div class="w-1/5 "></div>
                     <div class="w-1/5 bg-gray-600 h-1 rounded-full self-center"></div>
                 </div>
@@ -248,7 +248,7 @@
                 },
                 // 清除表格資料
                 clearForm(){
-                    this.productImg = "https://hbimg.huabanimg.com/e83292f9395ca9e261afdbc75874d9ee3e27c6d187388-pnMfk1_fw658";
+                    this.productImg = "{% static 'images/uploadFile.jpg' %}";
                     this.productName =  "";
                     this.productBrand =  "";
                     this.productSerial = "";
@@ -291,7 +291,12 @@
                         result = res.data.result;
                         // 成功則顯示成功，然後退出
                         if(result != "failed"){
-                            alert(result);
+                            Swal.fire({
+                                title: '新增成功!',
+                                icon: `success`,
+                                confirmButtonText: 'OK',
+                                footer: `<a href="/search?search=${this.productNumber}">立即查看新增的財產!</a>`
+                            })
                             self.clearForm();
                             mySocket.send(JSON.stringify({"action": "newNotify"}));
                             return
@@ -299,16 +304,44 @@
                         // 失敗看原因
                         reason = res.data.reason;
                         if(reason == "InfoEmpty"){
-                            alert("Name, Serial, Number其中一欄為空");
+                            Swal.fire({
+                                title: 'Oops...',
+                                text: 'Name, Serial, Number其中一欄為空',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            })
                         }else if(reason == "Duplicated"){
-                            alert("已經有這筆資料位於資料庫內");
+                            Swal.fire({
+                                title: 'Oops...',
+                                text: '已經有這筆資料',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            })
                         }
                     })
                     .catch((err)=>{
                         status = err.response.status;
-                        if(status == 403) alert("你!沒有!權限!");
-                        else if(status == 413) alert("檔案大小過大");
-                        else alert(status);
+                        if(status == 403)
+                            Swal.fire({
+                                title: 'Oops...',
+                                text: '權限不足',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            })
+                        else if(status == 413) 
+                            Swal.fire({
+                                title: 'Oops...',
+                                text: '檔案過大',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            })
+                        else
+                            Swal.fire({
+                                title: 'Oops...',
+                                text: '發生不明錯誤',
+                                icon: `${status}`,
+                                confirmButtonText: 'OK',
+                            })
                     });
                 },
                 // 取得當前日期
