@@ -5,12 +5,12 @@
   "main": "tailwind.config.js",
   "dependencies": {
     "autoprefixer": "^10.2.5",
-    "tailwindcss": "^2.1.1"
+    "tailwindcss": "^3.3.1"
   },
   "devDependencies": {},
   "scripts": {
     "start": "sudo venv/bin/daphne -e ssl:443:privateKey=cert/cert.key:certKey=cert/cert.crt Web.asgi:application",
-    "tailwind": "tailwindcss build ./static/css/main.css -o ./static/css/app.css"
+    "tailwind": "tailwindcss build -i ./static_file/css/main.css -o ./static_file/css/app.css"
   },
   "author": "",
   "license": "ISC"
