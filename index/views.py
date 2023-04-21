@@ -554,6 +554,12 @@ def saveData(request):
         """
         duplicate = Property.objects.filter(serial_number=number, property_number=product_number).first()
         if duplicate != None:
+            duplicate.tip = tip
+            duplicate.number = number
+            duplicate.quantity = quantity
+            duplicate.age_limit = age_limit
+            duplicate.single_value = single_value
+            duplicate.save()
             # 檢查重複產品是否有盤點資料(沒有則創建)
             checkProp = CurrentCheckProperty.objects.filter(prop=duplicate)
             if not checkProp.exists():
