@@ -554,11 +554,10 @@ def saveData(request):
         """
         duplicate = Property.objects.filter(serial_number=number, property_number=product_number).first()
         if duplicate != None:
-            duplicate.tip = tip
-            duplicate.number = number
+            duplicate.tips = tip
             duplicate.quantity = quantity
-            duplicate.age_limit = age_limit
-            duplicate.single_value = single_value
+            duplicate.expiry_date = age_limit
+            duplicate.price = single_value
             duplicate.save()
             # 檢查重複產品是否有盤點資料(沒有則創建)
             checkProp = CurrentCheckProperty.objects.filter(prop=duplicate)
@@ -641,11 +640,6 @@ def saveData(request):
         totalSaveData.append(preSaveData)
         
     Property.objects.bulk_create(totalSaveData)
-    # except Exception as e:
-    #     exc_type, exc_obj, exc_tb = sys.exc_info()
-    #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-    #     print(exc_type, fname, exc_tb.tb_lineno)
-    #     return JsonResponse({'result': 'failed'})
     """
     # 建立盤點部分關聯資料
     """
@@ -962,7 +956,7 @@ def updateSingleData(request):
     """""""""""""""""""""""""""""""""""""""""""""
     if expiryDate != None:
         try:
-            expiryDate = float(expiryDate)
+            expiryDate = int(expiryDate)
             prop.expiry_date = expiryDate
         except Exception as e:
             print("expiryDate 格式不符")
@@ -1168,7 +1162,6 @@ def deleteDataBySerial(request):
     """
     serial_number = request.GET.get('serial_number')
     property_number = request.GET.get('property_number')
-    print(serial_number, property_number)
 
     result = Property.objects.filter(serial_number=serial_number, property_number=property_number).first()
     if not result: return JsonResponse({'result': 'not_found'})
