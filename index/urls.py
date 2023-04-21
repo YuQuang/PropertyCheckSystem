@@ -52,6 +52,7 @@ urlpatterns = [
     path('getData/', views.getData, name='getData'),
     path('getSingleData/', views.getSingleData, name='getSingleData'),
     path('deleteData/', views.deleteData, name='deleteData'),
+    path('deleteDataBySerial/', views.deleteDataBySerial, name='deleteDataBySerial'),
     # 取得 等待審核租借、租借中、等待審核歸還、已歸還
     path('getLoanProperty/', views.getLoanProperty, name='getLoanProperty'),
     # 歸還與租借

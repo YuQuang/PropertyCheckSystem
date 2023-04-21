@@ -1153,6 +1153,40 @@ def getData(request):
 
     return JsonResponse(result)
 
+@API_CheckLogin
+def deleteDataBySerial(request):
+    """
+    # 取得單一資料
+    # (需要登入)
+    # (need login)
+    """
+    serial_number = request.GET.get('serial_number')
+    property_number = request.GET.get('property_number')
+
+    result = Property.objects.filter(serial_number=serial_number, property_number=property_number).first()
+    if not result: return JsonResponse({'result': 'not_found'})
+
+    data = {}
+    data.setdefault('id', result.id.__str__())
+    data.setdefault('is_check', result.check.__str__())
+    data.setdefault('product_name', result.name.__str__())
+    data.setdefault('serial_number', result.serial_number.__str__())
+    data.setdefault('property_number', result.property_number.__str__())
+    data.setdefault('tip', result.tips.__str__())
+    data.setdefault('status', result.status.__str__())
+    data.setdefault('keeper', result.keeper.__str__())
+    data.setdefault('price', result.price.__str__())
+    data.setdefault('quantity', result.quantity.__str__())
+    data.setdefault('get_date', result.get_date.__str__())
+    data.setdefault('expiry_date', result.expiry_date.__str__())
+    data.setdefault('position', result.position.__str__())
+    data.setdefault('label_position', result.label_position.__str__())
+    data.setdefault('brand', result.brand.__str__())
+    data.setdefault('unit', result.quantity_unit.__str__())
+    result.delete()
+    
+    return JsonResponse({'result': 'success', 'data': data})
+
 # 取得單一財產資訊
 # (需要登入)
 @API_CheckLogin

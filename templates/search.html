@@ -630,7 +630,7 @@
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Dates")
                 const fixHeader = [
                     ["機關名稱", "國立勤益科技大學", "", "盤點代碼", `${new Date().getFullYear()-1911}${new Date().getMonth().toString().padStart(2,"0")}`, "", "", "", "", "", "", "", "", "", ""],
-                    ["盤點狀態", "財產名稱", "財產編號", "序號", "備註", "取得日期", "年限", "數量", "單價", "實際地點", "廠牌型式", "存置地點", "單位", "租借狀態"]
+                    ["盤點狀態", "財產名稱", "序號", "財產編號", "備註", "取得日期", "年限", "數量", "單價", "實際地點", "廠牌型式", "存置地點", "單位", "租借狀態"]
                 ];
                 XLSX.utils.sheet_add_aoa(worksheet, fixHeader, { origin: "A1" });
                 const wopts = { bookType:'xlsx', bookSST:false, type:'binary' }
