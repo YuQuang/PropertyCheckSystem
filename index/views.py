@@ -1162,6 +1162,7 @@ def deleteDataBySerial(request):
     """
     serial_number = request.GET.get('serial_number')
     property_number = request.GET.get('property_number')
+    print(serial_number, property_number)
 
     result = Property.objects.filter(serial_number=serial_number, property_number=property_number).first()
     if not result: return JsonResponse({'result': 'not_found'})
