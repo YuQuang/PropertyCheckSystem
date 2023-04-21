@@ -866,7 +866,7 @@ def updateSingleData(request):
     realPosition = request.POST.get('realPosition')
     tips = request.POST.get('tips')
     getDate = request.POST.get('getDate')
-    expiryDate = request.POST.get('expiryDate')
+    expireDate = request.POST.get('expireDate')
     amount = request.POST.get('amount')
     price = request.POST.get('price')
     unit = request.POST.get('unit')
@@ -954,10 +954,10 @@ def updateSingleData(request):
     """""""""""""""""""""""""""""""""""""""""""""
         檢查數字是否正確
     """""""""""""""""""""""""""""""""""""""""""""
-    if expiryDate != None:
+    if expireDate != None:
         try:
-            expiryDate = int(expiryDate)
-            prop.expiry_date = expiryDate
+            expireDate = int(expireDate)
+            prop.expiry_date = expireDate
         except Exception as e:
             print("expiryDate 格式不符")
 
