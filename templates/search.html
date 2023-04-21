@@ -882,10 +882,8 @@
             },
             // 搜尋
             search(event) {
-                if (event.keyCode == 13) {    // Enter keycode is 13
-                    // 搜尋結果，並將頁面重設為第一頁
+                if (event.key == 'Enter' || event.keyCode == 13)
                     window.location.href = location.protocol + '//' + location.host + location.pathname + "?page=1&search=" + this.searchInput;
-                }
             },
             // 刪除一項產品
             deleteData() {
