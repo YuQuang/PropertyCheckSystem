@@ -882,6 +882,7 @@
             },
             // 搜尋
             search(event) {
+                alert(`${event.key}, ${event.keyCode}`)
                 if (event.key == 'Enter' || event.keyCode == 13)
                     window.location.href = location.protocol + '//' + location.host + location.pathname + "?page=1&search=" + this.searchInput;
             },
