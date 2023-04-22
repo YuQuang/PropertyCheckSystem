@@ -554,6 +554,7 @@ def saveData(request):
         """
         duplicate = Property.objects.filter(serial_number=number, property_number=product_number).first()
         if duplicate != None:
+            duplicate.is_check = is_check
             duplicate.tips = tip
             duplicate.quantity = quantity
             duplicate.expiry_date = age_limit
