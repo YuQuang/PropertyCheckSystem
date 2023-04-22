@@ -45,7 +45,7 @@
                 <button class="max-w-fit bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" @click="downloadExcel">
                     匯出
                 </button>
-                <input v-model="searchInput" v-on:keydown.enter="search" class="py-3 px-4 bg-white rounded-lg placeholder-gray-400
+                <input id="searchField" v-model="searchInput" class="py-3 px-4 bg-white rounded-lg placeholder-gray-400
                     text-gray-900 appearance-none shadow-md w-full focus:outline-none
                     focus:ring-2 focus:ring-blue-600 col-span-3" placeholder="Search">
             </div>
@@ -1194,6 +1194,12 @@
             .then((res)=>{self.brandList = res.data.brand});
             axios.get(this.getUnitUrl)
             .then((res)=>{self.unitList = res.data.unit});
+            
+            document.getElementById("searchField").addEventListener('keydown', (event)=>{
+                if (event.key == 'Enter' | event.keyCode == 13) {
+                    window.location.href = location.protocol + '//' + location.host + location.pathname + "?page=1&search=" + this.searchInput;
+                }
+            })
         },
         created() {
             this.Load(undefined,true);
