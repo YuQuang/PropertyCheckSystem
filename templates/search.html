@@ -45,9 +45,14 @@
                 <button class="max-w-fit bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" @click="downloadExcel">
                     匯出
                 </button>
-                <input id="searchField" v-model="searchInput" class="py-3 px-4 bg-white rounded-lg placeholder-gray-400
-                    text-gray-900 appearance-none shadow-md w-full focus:outline-none
-                    focus:ring-2 focus:ring-blue-600 col-span-3" placeholder="Search">
+                <div class="col-span-3 grid grid-cols-4 gap-1">
+                    <input v-model="searchInput" v-on:keydown.enter="search" class="py-3 px-4 bg-white rounded-lg placeholder-gray-400
+                        text-gray-900 appearance-none shadow-md focus:outline-none
+                        focus:ring-2 focus:ring-blue-600 col-span-3" placeholder="Search">
+                    <button class="max-w-fit bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow" @click="search">
+                        搜尋
+                    </button>
+                </div>
             </div>
         </div>
         <!-- 卡片樣本迴圈生成 -->
@@ -814,10 +819,6 @@
                     });
 
             },
-            /*
-            # 通知部分
-            # 彈跳通知
-            */
             // 顯示通知
             showAlert(msg, bgColor = "bg-green-500", duration = 3000){
                 this.alertColor = bgColor;
@@ -859,6 +860,9 @@
                 else
                     this.spinCircleStatus = "hidden";
             },
+            search(){
+                window.location.href = location.protocol + '//' + location.host + location.pathname + "?page=1&search=" + this.searchInput;
+            },
             // 動態更新畫面(不重新要求資料)，但會更改上方URL參數
             changePage(numPage) {
                 if (numPage < 1 || isNaN(numPage))
@@ -879,10 +883,6 @@
                 queryParams.set("page", this.now_page);
                 // Replace current querystring with the new one.
                 history.replaceState(null, null, "?" + queryParams.toString());
-            },
-            // 搜尋
-            search() {
-                window.location.href = location.protocol + '//' + location.host + location.pathname + "?page=1&search=" + this.searchInput;
             },
             // 刪除一項產品
             deleteData() {
@@ -1194,12 +1194,6 @@
             .then((res)=>{self.brandList = res.data.brand});
             axios.get(this.getUnitUrl)
             .then((res)=>{self.unitList = res.data.unit});
-            
-            document.getElementById("searchField").addEventListener('keydown', (event)=>{
-                if (event.key == 'Enter' | event.keyCode == 13) {
-                    window.location.href = location.protocol + '//' + location.host + location.pathname + "?page=1&search=" + this.searchInput;
-                }
-            })
         },
         created() {
             this.Load(undefined,true);
